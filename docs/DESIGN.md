@@ -1,4 +1,4 @@
-# Design System — Agent Platform Advisor
+# Design System do Agent Platform Advisor
 
 ## Contexto do produto
 
@@ -14,7 +14,7 @@
 - **Direção:** Warm Charcoal Instrument (instrumento em carvão quente).
 - **Nível de decoração:** intencional. Use divisores finos, trilhos de pontuação, textura sutil de grade e leituras diagnósticas. Não use blobs decorativos, seções hero com gradiente, brilhos (glows) nem ornamentos de ícone dentro de círculo.
 - **Sensação:** a aplicação deve parecer um console de decisão de engenharia. O usuário deve sentir que a ferramenta está medindo o cenário dele, e não vendendo um produto genérico de IA.
-- **Postura na categoria:** manter fluência Microsoft por meio de confiança, clareza e acessibilidade. Afastar-se do visual padrão de ferramenta de IA (fundo quase preto + brilho azul de sinal) usando um workspace em carvão fosco e quente com um único azul Microsoft contido como sinal — sem brilhos.
+- **Postura na categoria:** manter fluência Microsoft por meio de confiança, clareza e acessibilidade. Afastar-se do visual padrão de ferramenta de IA (fundo quase preto + brilho azul de sinal) usando um workspace em carvão fosco e quente com um único azul Microsoft contido como sinal, sem brilhos.
 - **Referências:** princípios do Fluent 2, páginas de produto do Microsoft 365 Copilot, páginas do Copilot Studio, superfícies do Microsoft Foundry e orientações atuais de dashboards de IA corporativa.
 
 ## Tipografia
@@ -44,9 +44,9 @@
 | body-sm | `--fs-body-sm` | .9375rem / 15px | 400-500 | Texto de apoio, descrições de opção, botões |
 | caption | `--fs-caption` | .875rem / 14px | 400 | Detalhes secundários |
 | mono | `--fs-mono` | .8125rem / 13px | 500-600 | IDs de plataforma, contadores, rótulos de pontuação |
-| mono-sm | `--fs-mono-sm` | .75rem / 12px | 500-600 | Selos e legendas — **o menor tamanho permitido** |
+| mono-sm | `--fs-mono-sm` | .75rem / 12px | 500-600 | Selos e legendas (**o menor tamanho permitido**) |
 
-- **Sempre use `rem`, nunca `px`, para `font-size`.** Os tamanhos são declarados uma única vez como tokens `--fs-*` no `:root` e referenciados em todo o resto, para que a preferência de tamanho de fonte do navegador escale a aplicação inteira. `html { font-size: 100% }` — não redefina para `62.5%` nem para um valor fixo em px.
+- **Sempre use `rem`, nunca `px`, para `font-size`.** Os tamanhos são declarados uma única vez como tokens `--fs-*` no `:root` e referenciados em todo o resto, para que a preferência de tamanho de fonte do navegador escale a aplicação inteira. `html { font-size: 100% }`. Não redefina para `62.5%` nem para um valor fixo em px.
 - **12px é o piso.** Nenhum texto abaixo de `--fs-mono-sm`, incluindo selos, eyebrows e legendas. Pequeno + caixa alta + espaçado + `--muted-foreground` é a combinação menos legível do sistema; não empilhe as quatro coisas abaixo de 13px.
 - **Nunca reduza a tipografia nos breakpoints mobile.** Ajustes responsivos podem reduzir os tamanhos de display/title por questão de comprimento de linha, mas body, caption e mono se mantêm em qualquer viewport.
 - **Medida de linha:** limite o texto corrido a ~70ch. O container tem 1024px de largura, o que gera linhas de ~95ch no tamanho body.
@@ -102,7 +102,7 @@
 - **Página Explorar:** agrupe por modelo mental, não em uma galeria plana.
   - Usar agentes: Microsoft 365 Copilot, Copilot Cowork, Microsoft Scout.
   - Criar agentes: Agent Builder, Copilot Studio, Microsoft Foundry, Databricks Agent Bricks.
-  - Os grupos têm tamanhos diferentes (3 e 4), então a grade usa trilhas `auto-fit` em vez de um número fixo de colunas — a trilha não usada colapsa e cada grupo preenche uma linha, sem deixar um card órfão.
+  - Os grupos têm tamanhos diferentes (3 e 4), então a grade usa trilhas `auto-fit` em vez de um número fixo de colunas: a trilha não usada colapsa e cada grupo preenche uma linha, sem deixar um card órfão.
   - Explorar é a única tela que usa a largura de instrumento de 1200px; todas as outras seções mantêm a largura de leitura de 1024px. Aplicado via `.main-container--wide` em `showSection()`.
 - **Wizard:** o usuário deve sempre saber qual é a pergunta atual, o progresso atual e como cada resposta afeta a confiança da recomendação.
 - **Resultados:** a recomendação vencedora deve parecer um relatório diagnóstico: delta de pontuação, por que venceu, notas de regra rígida e próximos passos.
@@ -199,7 +199,7 @@ A implementação atual ainda pode usar o sistema Fluent-light antigo até o red
 |---|---|---|
 | 2026-07-30 | Interface e documentação traduzidas para português do Brasil | Público-alvo desta versão é brasileiro. Nomes de produto (Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, Agent Builder, Databricks Agent Bricks, Cowork, Scout) e termos técnicos consagrados (lakehouse, RAG, MCP, Unity Catalog) permanecem em inglês. Rótulos de faixa passaram a "Encaixe forte / Bom encaixe / Encaixe parcial / Não recomendado", e `badgeClass()` no `apa.js` passou a casar por essas palavras. |
 | 2026-07-28 | Explorar usa a largura de instrumento de 1200px; todas as outras seções ficam em 1024px | Uma quarta plataforma de construção ficava órfã na própria linha dentro do container de largura de leitura. Explorar é uma comparação lado a lado, que é exatamente o caso que as regras de layout já reservam para o workspace mais largo. |
-| 2026-07-28 | Databricks Agent Bricks adicionado ao grupo Criar agentes com uma marca provisória | O advisor agora pontua uma plataforma não-Microsoft para cenários ancorados no lakehouse. O `images/databricks.svg` é um glifo plano de lakehouse em camadas na cor de sinal do Databricks (`#FF3621`) — deliberadamente não é uma imitação do logotipo deles. Troque pelo ativo oficial da marca quando houver um disponível. Nenhuma decoração nova foi introduzida: ele usa o mesmo tratamento plano de tile separado por hairline das outras plataformas. |
+| 2026-07-28 | Databricks Agent Bricks adicionado ao grupo Criar agentes com uma marca provisória | O advisor agora pontua uma plataforma não-Microsoft para cenários ancorados no lakehouse. O `images/databricks.svg` é um glifo plano de lakehouse em camadas na cor de sinal do Databricks (`#FF3621`) e deliberadamente não imita o logotipo deles. Troque pelo ativo oficial da marca quando houver um disponível. Nenhuma decoração nova foi introduzida: ele usa o mesmo tratamento plano de tile separado por hairline das outras plataformas. |
 | 2026-07-20 | Direção Fluent-light substituída por Graphite Decision Instrument | Criado pelo /design-consultation depois que o usuário optou por começar do zero e escolheu "software sério de decisão para quem constrói e compra IA Microsoft" como coisa memorável. |
 | 2026-07-20 | IBM Plex Sans + IBM Plex Mono | Dá ao produto uma voz técnica e de engenharia sem depender da Segoe como assinatura visual. |
 | 2026-07-20 | Grafite escuro + cor de sinal azul-Azure | Aumenta a memorabilidade e reduz o risco de "AI slop", preservando uma pista de confiança próxima à Microsoft. |

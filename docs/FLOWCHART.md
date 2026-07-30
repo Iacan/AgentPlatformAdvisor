@@ -16,7 +16,7 @@ uma das quatro plataformas da avaliação pontuada:
 | **DBX** | Databricks Agent Bricks | Agentes construídos e servidos no lakehouse, governados pelo Unity Catalog |
 
 **Databricks Agent Bricks (DBX)** é a única opção não-Microsoft da matriz. Ele só
-pontua alto quando o cenário está ancorado na plataforma de dados — conhecimento
+pontua alto quando o cenário está ancorado na plataforma de dados: conhecimento
 governado pelo Unity Catalog, grandes coleções de documentos, ou o time de plataforma
 de dados como responsável pela construção. Como não consegue se fundamentar em conteúdo
 do Microsoft 365 nem publicar no chat do Microsoft 365 Copilot, três regras rígidas o
@@ -25,7 +25,7 @@ Copilot). Dois critérios de desempate favorecem o DBX: `q3g` (conhecimento no l
 empate CS/DBX) e `q1e` (time de plataforma de dados, empate Foundry/DBX).
 
 O **Microsoft 365 Copilot**, o **Copilot Cowork** e o **Microsoft Scout** não fazem parte
-da pontuação de 0 a 15 — são alcançados apenas pelo wizard de ponto de entrada.
+da pontuação de 0 a 15. Eles são alcançados apenas pelo wizard de ponto de entrada.
 
 Símbolos usados no diagrama: ⚠️ = a resposta dispara uma regra rígida · 🔀 = a resposta
 dispara um desempate ou preferência por perfil.
@@ -47,7 +47,7 @@ flowchart TD
     DELEGATE2 -->|"Cadência respondida → revela Alcance"| REACH{"**Alcance**\nAté onde ele precisa alcançar?"}
     REACH -->|"Cadência: contínua OU Alcance: multiambiente"| SCOUT["**Microsoft Scout**\nAutopilot sempre ativo no desktop, navegador e M365\n(preview do Frontier)"]
     REACH -->|"Cadência: sob demanda E Alcance: Microsoft 365"| COWORK["**Copilot Cowork**\nEntregas M365 de várias etapas sob demanda"]
-    REACH -->|"Sinais indefinidos"| BOTH["**Ambos** — par complementar\nScout monitora · Cowork entrega"]
+    REACH -->|"Sinais indefinidos"| BOTH["**Ambos**, como par complementar\nScout monitora · Cowork entrega"]
 
     Q1["**Q1: quem vai criar este agente?**"]
     Q1 -->|"Usuário de negócio / sem código"| Q1A["AB:3 · CS:1 · Foundry:0 · DBX:1"]

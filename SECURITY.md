@@ -4,7 +4,7 @@
 
 **Por favor, não reporte vulnerabilidades de segurança por meio de issues públicas do GitHub.**
 
-Use o canal privado de relato do próprio GitHub — na aba **Security** deste repositório, em
+Use o canal privado de relato do próprio GitHub, na aba **Security** deste repositório, em
 [Report a vulnerability](https://github.com/Iacan/AgentPlatformAdvisor/security/advisories/new).
 Isso mantém o relato privado até que exista uma correção.
 
@@ -23,5 +23,5 @@ navegador e nos parâmetros do link compartilhado.
 
 Vulnerabilidades nos produtos Microsoft, Databricks ou em qualquer outro serviço citado
 no conteúdo do advisor estão fora do escopo deste repositório e devem ser reportadas ao
-fornecedor correspondente — no caso da Microsoft, pelo
+fornecedor correspondente. No caso da Microsoft, pelo
 [https://aka.ms/SECURITY.md](https://aka.ms/SECURITY.md).

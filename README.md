@@ -10,8 +10,8 @@ A ferramenta está publicada em [https://iacan.github.io/AgentPlatformAdvisor/](
 
 O Agent Platform Advisor é uma aplicação web estática de página única que ajuda as pessoas a navegar pelo cenário de agentes da Microsoft. Ele atende a duas intenções distintas:
 
-1. **Realizar trabalho** — um wizard de ponto de entrada direciona o usuário final ao lugar certo para fazer o trabalho — **Microsoft 365 Copilot**, **Copilot Cowork** ou **Microsoft Scout** — com base em como o trabalho deve acontecer, e não em qual produto ele conhece pelo nome. Quando o resultado é o Microsoft 365 Copilot, ele também indica por qual superfície começar: Copilot Chat ou um agente nativo como Researcher, Analyst, Facilitator ou Interpreter.
-2. **Criar agentes** — responda a uma avaliação pontuada que recomenda **Agent Builder**, **Copilot Studio**, **Microsoft Foundry** ou **Databricks Agent Bricks**.
+1. **Realizar trabalho**. Um wizard de ponto de entrada direciona o usuário final ao lugar certo para fazer o trabalho (**Microsoft 365 Copilot**, **Copilot Cowork** ou **Microsoft Scout**) com base em como o trabalho deve acontecer, e não em qual produto ele conhece pelo nome. Quando o resultado é o Microsoft 365 Copilot, ele também indica por qual superfície começar: Copilot Chat ou um agente nativo como Researcher, Analyst, Facilitator ou Interpreter.
+2. **Criar agentes**. Responda a uma avaliação pontuada que recomenda **Agent Builder**, **Copilot Studio**, **Microsoft Foundry** ou **Databricks Agent Bricks**.
 
 A página inicial apresenta as formas de usar ou criar agentes:
 
@@ -29,9 +29,9 @@ A página inicial apresenta as formas de usar ou criar agentes:
 
 A partir de **Começar**, o usuário escolhe um de três caminhos:
 
-1. **Wizard de ponto de entrada** ("Me ajude a encontrar o lugar certo para realizar meu trabalho") — pergunta o quanto você quer participar e então direciona para o Microsoft 365 Copilot (destacando o Copilot Chat ou os agentes nativos), Cowork, Scout ou o par Cowork+Scout. Não pontuado.
-2. **Avaliação de agente personalizado** — executa o wizard pontuado de 5 perguntas para Agent Builder, Copilot Studio, Foundry e Databricks Agent Bricks.
-3. **Explorar o que é possível** — compara as formas de usar ou criar agentes antes de decidir fazer a avaliação.
+1. **Wizard de ponto de entrada** ("Me ajude a encontrar o lugar certo para realizar meu trabalho"). Pergunta o quanto você quer participar e então direciona para o Microsoft 365 Copilot (destacando o Copilot Chat ou os agentes nativos), Cowork, Scout ou o par Cowork+Scout. Não pontuado.
+2. **Avaliação de agente personalizado**. Executa o wizard pontuado de 5 perguntas para Agent Builder, Copilot Studio, Foundry e Databricks Agent Bricks.
+3. **Explorar o que é possível**. Compara as formas de usar ou criar agentes antes de decidir fazer a avaliação.
 
 A avaliação de agente personalizado pergunta sobre:
 
