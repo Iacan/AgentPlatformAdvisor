@@ -1,0 +1,102 @@
+```mermaid
+flowchart TD
+    START([Start]) --> PRESCREEN{"**Prescreen: Where would you like to begin?**"}
+
+    PRESCREEN -->|Help me find the right place to get work done| DELEGATE{"**Entry-point wizard**\nWhere should you get this work done?\n(non-scored)"}
+    PRESCREEN -->|Explore what's possible| EXPLORE["Explore grid\n(all platforms + Cowork + Scout)"]
+    PRESCREEN -->|Build a custom agent| Q1
+
+    DELEGATE -->|"Involvement: stay hands-on / iterate"| INTERACTIVE{"**Interactive follow-up**\nWhat kind of task?"}
+    DELEGATE -->|"Involvement: hand it off"| DELEGATE2{"**Delegate follow-up**\nCadence (asked first)"}
+    INTERACTIVE -->|"General help"| CHAT["**Microsoft 365 Copilot**\nStart Here: Copilot Chat\nAsk, summarize, draft in the flow of work"]
+    INTERACTIVE -->|"Specialized job (research, data, meetings, translation)"| M365AGENTS["**Microsoft 365 Copilot**\nStart Here: built-in agents\nResearcher · Analyst · Facilitator · Interpreter …"]
+    DELEGATE2 -->|"Any cadence answered → reveal Reach"| REACH{"**Reach**\nWhere does it need to reach?"}
+    REACH -->|"Cadence: continuous OR Reach: cross-environment"| SCOUT["**Microsoft Scout**\nAlways-on Autopilot across desktop, browser, M365\n(Frontier preview)"]
+    REACH -->|"Cadence: on-demand AND Reach: Microsoft 365"| COWORK["**Copilot Cowork**\nOn-demand multi-step M365 deliverables"]
+    REACH -->|"Undecided signals"| BOTH["**Both** — complementary pair\nScout monitors · Cowork delivers"]
+
+    Q1["**Q1: Who is building this agent?**"]
+    Q1 -->|Business user / no code| Q1A["AB:3 · CS:1 · Foundry:0 · DBX:1"]
+    Q1 -->|Low-code maker / IT pro| Q1B["AB:1 · CS:3 · Foundry:0 · DBX:1"]
+    Q1 -->|"🔀 Professional developer"| Q1C["AB:0 · CS:2 · Foundry:3 · DBX:2\n→ TIEBREAKER: AB tie → prefer CS"]
+    Q1 -->|"🔀 Data scientist / AI-ML"| Q1D["AB:0 · CS:1 · Foundry:3 · DBX:3\n→ PERSONA PREF: CS always over AB\n→ TIEBREAKER: CS/Foundry tie → prefer CS"]
+    Q1 -->|"🔀 Data platform / data engineering team"| Q1E["AB:0 · CS:1 · Foundry:2 · DBX:3\n→ TIEBREAKER: Foundry/DBX tie → prefer DBX"]
+
+    Q1A & Q1B & Q1C & Q1D & Q1E --> Q8
+
+    Q8["**Q8: Who will use this agent?**"]
+    Q8 -->|Me or small internal team| Q8A["AB:3 · CS:2 · Foundry:1 · DBX:1"]
+    Q8 -->|Department / broad internal audience| Q8C["AB:1 · CS:3 · Foundry:2 · DBX:2"]
+    Q8 -->|"⚠️ External users"| Q8B["AB:0 · CS:3 · Foundry:3 · DBX:2\n→ HARD RULE: AB=0"]
+    Q8 -->|Not decided yet| Q8D["AB:2 · CS:2 · Foundry:1 · DBX:1"]
+
+    Q8A & Q8C & Q8B & Q8D --> Q2
+
+    Q2["**Q2: Where will users interact?**"]
+    Q2 -->|"⚠️ Microsoft 365 Copilot chat"| Q2A["AB:3 · CS:3 · Foundry:2 · DBX:0\n→ HARD RULE: DBX=0"]
+    Q2 -->|"⚠️ Custom app / website"| Q2B["AB:0 · CS:3 · Foundry:3 · DBX:3\n→ HARD RULE: AB=0"]
+    Q2 -->|"⚠️ Background / event-triggered"| Q2C["AB:0 · CS:3 · Foundry:3 · DBX:2\n→ HARD RULE: AB=0"]
+    Q2 -->|Multiple places / undecided| Q2D["AB:1 · CS:3 · Foundry:3 · DBX:1"]
+    Q2 -->|"⚠️ Data & analytics environment"| Q2E["AB:0 · CS:1 · Foundry:2 · DBX:3\n→ HARD RULE: AB=0"]
+
+    Q2A & Q2B & Q2C & Q2D & Q2E --> Q4
+
+    Q4["**Q4: What should this agent do?**"]
+    Q4 -->|Q&A, lookups, summaries| Q4A["AB:3 · CS:3 · Foundry:1 · DBX:2"]
+    Q4 -->|Multi-turn conversation| Q4B["AB:2 · CS:3 · Foundry:2 · DBX:2"]
+    Q4 -->|Create/analyze content in Copilot| Q4E["AB:3 · CS:2 · Foundry:2 · DBX:1"]
+    Q4 -->|"⚠️ Multi-step action workflows"| Q4C["AB:0 · CS:3 · Foundry:3 · DBX:2\n→ HARD RULE: AB=0"]
+    Q4 -->|"⚠️ Complex workflows / multi-agent"| Q4D["AB:0 · CS:2 · Foundry:3 · DBX:3\n→ HARD RULE: AB=0"]
+    Q4 -->|"⚠️ Reason over large volumes of enterprise data"| Q4F["AB:0 · CS:1 · Foundry:2 · DBX:3\n→ HARD RULE: AB=0"]
+
+    Q4A & Q4B & Q4E & Q4C & Q4D & Q4F --> Q3
+
+    Q3["**Q3: What information does the agent need?**"]
+    Q3 -->|"⚠️ Microsoft 365 content"| Q3A["AB:3 · CS:2 · Foundry:1 · DBX:0\n→ HARD RULE: DBX=0"]
+    Q3 -->|"⚠️ Connector-backed business systems"| Q3B["AB:2 · CS:3 · Foundry:2 · DBX:0\n→ HARD RULE: DBX=0"]
+    Q3 -->|"⚠️ Dataverse / custom connectors / APIs"| Q3C["AB:0 · CS:3 · Foundry:2 · DBX:1\n→ HARD RULE: AB=0"]
+    Q3 -->|"⚠️ M365 + connector-backed systems"| Q3D["AB:2 · CS:3 · Foundry:2 · DBX:0\n→ HARD RULE: DBX=0"]
+    Q3 -->|Public websites / uploaded files| Q3E["AB:3 · CS:2 · Foundry:1 · DBX:1"]
+    Q3 -->|"⚠️ Custom RAG / private indexes"| Q3F["AB:0 · CS:1 · Foundry:3 · DBX:2\n→ HARD RULE: AB=0"]
+    Q3 -->|"🔀 Lakehouse / Unity Catalog / Delta tables"| Q3G["AB:0 · CS:1 · Foundry:2 · DBX:3\n→ HARD RULE: AB=0\n→ TIEBREAKER: CS/DBX tie → prefer DBX"]
+
+    Q3A & Q3B & Q3C & Q3D & Q3E & Q3F & Q3G --> SCORE
+
+    SCORE["**Apply Hard Rules + Sum Scores**\nPre-sum: zero out platforms per hard rules\nMax possible: 15 pts per platform"]
+
+    SCORE --> PREF["**Persona Preferences**\nSoft overrides: force ranking order\nwithout changing scores\n(e.g. q1d → CS always over AB)"]
+
+    PREF --> RESULT["**Recommendation Thresholds**\n12–15: Strong fit\n8–11: Good fit\n4–7: Partial fit\n0–3: Not recommended"]
+
+    RESULT --> NOTES["**Post-processing**\nCross-question contradiction notes\nWinner-persona mismatch warnings\nTie handling → complementary pairs"]
+
+    style Q1C fill:#e8f0fe,stroke:#4a86e8
+    style Q1D fill:#e8f0fe,stroke:#4a86e8
+    style Q1E fill:#e8f0fe,stroke:#4a86e8
+    style Q3G fill:#e8f0fe,stroke:#4a86e8
+    style SCOUT fill:#ECEBFB,stroke:#5B5FC7
+    style COWORK fill:#ECEBFB,stroke:#5B5FC7
+    style CHAT fill:#ECEBFB,stroke:#5B5FC7
+    style M365AGENTS fill:#ECEBFB,stroke:#5B5FC7
+    style BOTH fill:#ECEBFB,stroke:#5B5FC7
+    style DELEGATE fill:#ECEBFB,stroke:#5B5FC7
+    style DELEGATE2 fill:#ECEBFB,stroke:#5B5FC7
+    style INTERACTIVE fill:#ECEBFB,stroke:#5B5FC7
+    style Q8B fill:#fff3cd,stroke:#ffc107
+    style Q2A fill:#fff3cd,stroke:#ffc107
+    style Q2B fill:#fff3cd,stroke:#ffc107
+    style Q2C fill:#fff3cd,stroke:#ffc107
+    style Q2E fill:#fff3cd,stroke:#ffc107
+    style Q4C fill:#fff3cd,stroke:#ffc107
+    style Q4D fill:#fff3cd,stroke:#ffc107
+    style Q4F fill:#fff3cd,stroke:#ffc107
+    style Q3A fill:#fff3cd,stroke:#ffc107
+    style Q3B fill:#fff3cd,stroke:#ffc107
+    style Q3C fill:#fff3cd,stroke:#ffc107
+    style Q3D fill:#fff3cd,stroke:#ffc107
+    style Q3F fill:#fff3cd,stroke:#ffc107
+    style SCORE fill:#e8f4fd,stroke:#0078D4
+    style PREF fill:#e8f0fe,stroke:#4a86e8
+    style RESULT fill:#d4edda,stroke:#28a745
+    style NOTES fill:#f8f0fb,stroke:#6f42c1
+```
