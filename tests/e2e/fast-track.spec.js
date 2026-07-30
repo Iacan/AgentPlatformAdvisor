@@ -67,6 +67,6 @@ test.describe('Microsoft 365 Copilot built-in agents (via entry-point wizard)', 
   test('built-in agents result updates tab title', async ({ page }) => {
     await openWizard(page);
     await chooseBuiltInAgents(page);
-    await expect(page).toHaveTitle(/APA:.*recommended/);
+    await expect(page).toHaveTitle(/APA:.*recomendado/);
   });
 });

@@ -51,7 +51,7 @@ window.addEventListener('popstate', (e) => {
 });
 
 function updateProgressBar(sectionId) {
-  const steps = ['Welcome', 'Assessment', 'Recommendation'];
+  const steps = ['Início', 'Avaliação', 'Recomendação'];
   const activeIndex = {
     'loading-section': 0,
     'error-section': 0,
@@ -130,10 +130,14 @@ function sumRawScores(answersMap, questions, zeroed) {
   return totals;
 }
 
+// Mirrors the lowest recommendation_thresholds label in apa.yaml — used as the
+// fallback when no threshold matches and to detect a too-weak runner-up.
+const NOT_RECOMMENDED_LABEL = 'Não recomendado';
+
 function getThresholdLabel(score, thresholds) {
   const rounded = Math.round(score);
   const t = thresholds.find(t => rounded >= t.min && rounded <= t.max);
-  return t ? t.label : 'Not recommended';
+  return t ? t.label : NOT_RECOMMENDED_LABEL;
 }
 
 // Returns platforms sorted by final score descending: [{id, score, label}, ...]
@@ -262,16 +266,17 @@ const PLATFORM_ICONS = {
 const ENTRY_POINT_PLATFORMS = ['m365_copilot', 'cowork', 'scout'];
 
 function badgeClass(label) {
-  if (label.startsWith('Strong'))   return 'badge-strong';
-  if (label.startsWith('Good'))     return 'badge-good';
-  if (label.startsWith('Partial'))  return 'badge-possible';
+  const l = label.toLowerCase();
+  if (l.includes('forte'))   return 'badge-strong';
+  if (l.includes('bom'))     return 'badge-good';
+  if (l.includes('parcial')) return 'badge-possible';
   return 'badge-not';
 }
 
 
 function buildPlatformCard(platformId, ranked, answersMap, isPrimary, showBadge, startKey) {
   const rec = apa.recommendations[platformId];
-  if (!rec) return `<div class="rec-card"><p>Platform data unavailable.</p></div>`;
+  if (!rec) return `<div class="rec-card"><p>Dados da plataforma indisponíveis.</p></div>`;
   const rankEntry = ranked.find(r => r.id === platformId);
   // Entry-point destinations are single-card results with nothing to compare against,
   // so their accordions start expanded — the card is the whole page. Scored platform
@@ -286,12 +291,12 @@ function buildPlatformCard(platformId, ranked, answersMap, isPrimary, showBadge,
     : '';
 
   const factorsHtml = factors.length > 0 ? `
-    <div class="rec-section-title">Why this was recommended</div>
+    <div class="rec-section-title">Por que isso foi recomendado</div>
     <ul class="rec-list">${factors.map(f => `<li>${f}</li>`).join('')}</ul>` : '';
 
   const resourcesHtml = rec.resources_url
     ? `<a class="rec-resources-link" href="${rec.resources_url}" target="_blank" rel="noopener noreferrer">
-        Explore ${rec.headline} resources →</a>`
+        Explorar recursos de ${rec.headline} →</a>`
     : '';
 
   const bestFor = (rec.best_for || []).map(f => `<li>${f}</li>`).join('');
@@ -300,7 +305,7 @@ function buildPlatformCard(platformId, ranked, answersMap, isPrimary, showBadge,
   // static spotlight: it tells the user which surface of this platform to open first.
   const startHere = startKey && rec.start_here ? rec.start_here[startKey] : null;
   const spotlight = startHere || rec.spotlight;
-  const spotlightEyebrow = startHere ? 'Start Here' : 'Featured Capability';
+  const spotlightEyebrow = startHere ? 'Comece por aqui' : 'Recurso em destaque';
   const spotlightHtml = spotlight ? (() => {
     const nameHtml = spotlight.url
       ? `<a href="${spotlight.url}" target="_blank" rel="noopener noreferrer">${spotlight.label}</a>`
@@ -317,7 +322,7 @@ function buildPlatformCard(platformId, ranked, answersMap, isPrimary, showBadge,
   const firstPartyHtml = (rec.first_party_agents || []).length > 0 ? `
     <details class="rec-accordion"${detailsOpen}>
       <summary class="rec-accordion-trigger">
-        <span class="rec-section-title">${rec.first_party_label || 'Available First-Party Copilot Agents'}</span>
+        <span class="rec-section-title">${rec.first_party_label || 'Agentes nativos do Copilot disponíveis'}</span>
         <span class="rec-accordion-count">${rec.first_party_agents.length}</span>
         <svg class="rec-accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
       </summary>
@@ -332,7 +337,7 @@ function buildPlatformCard(platformId, ranked, answersMap, isPrimary, showBadge,
   const templatesHtml = (rec.templates || []).length > 0 ? `
     <details class="rec-accordion"${detailsOpen}>
       <summary class="rec-accordion-trigger">
-        <span class="rec-section-title">Available Templates</span>
+        <span class="rec-section-title">Modelos disponíveis</span>
         <span class="rec-accordion-count">${rec.templates.length}</span>
         <svg class="rec-accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
       </summary>
@@ -366,7 +371,7 @@ function buildPlatformCard(platformId, ranked, answersMap, isPrimary, showBadge,
       ${factorsHtml}
       ${bestFor ? `<details class="rec-accordion"${detailsOpen}>
         <summary class="rec-accordion-trigger">
-          <span class="rec-section-title">Best For</span>
+          <span class="rec-section-title">Ideal para</span>
           <span class="rec-accordion-count">${(rec.best_for || []).length}</span>
           <svg class="rec-accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
         </summary>
@@ -374,7 +379,7 @@ function buildPlatformCard(platformId, ranked, answersMap, isPrimary, showBadge,
       </details>` : ''}
       ${watchOut ? `<details class="rec-accordion"${detailsOpen}>
         <summary class="rec-accordion-trigger">
-          <span class="rec-section-title">Important Considerations</span>
+          <span class="rec-section-title">Pontos de atenção</span>
           <span class="rec-accordion-count">${(rec.watch_out_for || []).length}</span>
           <svg class="rec-accordion-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
         </summary>
@@ -383,8 +388,8 @@ function buildPlatformCard(platformId, ranked, answersMap, isPrimary, showBadge,
       ${firstPartyHtml}
       ${templatesHtml}
       ${isPrimary ? `<div class="rec-card-share">
-        <button id="decision-card-share" class="btn-decision btn-decision-primary" aria-label="Copy shareable link to clipboard" onclick="copyShareLink()">
-          📋 Share your results
+        <button id="decision-card-share" class="btn-decision btn-decision-primary" aria-label="Copiar link compartilhável para a área de transferência" onclick="copyShareLink()">
+          📋 Compartilhar seu resultado
         </button>
       </div>` : ''}
     </div>`;
@@ -428,13 +433,13 @@ async function boot() {
 
     // YAML schema validation
     if (!apa.questions || !Array.isArray(apa.questions) || apa.questions.length === 0)
-      throw new Error('Missing or empty "questions" array');
+      throw new Error('Lista "questions" ausente ou vazia');
     if (!apa.scoring || !apa.scoring.recommendation_thresholds)
-      throw new Error('Missing "scoring.recommendation_thresholds"');
+      throw new Error('"scoring.recommendation_thresholds" ausente');
     if (!apa.recommendations || typeof apa.recommendations !== 'object')
-      throw new Error('Missing "recommendations" object');
+      throw new Error('Objeto "recommendations" ausente');
     if (!apa.meta || !apa.meta.platforms)
-      throw new Error('Missing "meta.platforms"');
+      throw new Error('"meta.platforms" ausente');
 
     setupListeners();
 
@@ -472,7 +477,7 @@ async function boot() {
     }
   } catch (err) {
     document.getElementById('error-message').textContent =
-      `Could not load advisor data: ${err.message}`;
+      `Não foi possível carregar os dados do advisor: ${err.message}`;
     showSection('error-section');
   }
 }
@@ -613,13 +618,13 @@ function renderExploration() {
   if (!groupsContainer) return;
   const explorationGroups = [
     {
-      title: 'Use agents',
-      description: 'Start with built-in or ready-made agents that work inside Microsoft 365 or across your work environment.',
+      title: 'Usar agentes',
+      description: 'Comece com agentes nativos ou prontos que funcionam dentro do Microsoft 365 ou por todo o seu ambiente de trabalho.',
       platforms: ['m365_copilot', 'cowork', 'scout']
     },
     {
-      title: 'Build agents',
-      description: 'Choose a platform for creating, extending, governing, and operating agents for your scenario.',
+      title: 'Criar agentes',
+      description: 'Escolha uma plataforma para criar, estender, governar e operar agentes no seu cenário.',
       platforms: ['agent_builder', 'copilot_studio', 'foundry', 'databricks']
     }
   ];
@@ -634,7 +639,7 @@ function renderExploration() {
         ? `<a href="${rec.spotlight.url}" target="_blank" rel="noopener noreferrer">${rec.spotlight.label}</a>`
         : rec.spotlight.label;
       return `<div class="exploration-card-spotlight">
-        <span class="exploration-card-spotlight-eyebrow">Featured</span>
+        <span class="exploration-card-spotlight-eyebrow">Destaque</span>
         <span class="exploration-card-spotlight-name">${nameHtml}</span>
         <span class="exploration-card-spotlight-tagline">${rec.spotlight.tagline}</span>
       </div>`;
@@ -645,7 +650,7 @@ function renderExploration() {
         <h3 class="exploration-card-title">${rec.headline}</h3>
         <p class="exploration-card-summary">${summary}</p>
         ${spotlightChip}
-        <a href="${url}" target="_blank" rel="noopener noreferrer" class="exploration-card-link">Explore resources →</a>
+        <a href="${url}" target="_blank" rel="noopener noreferrer" class="exploration-card-link">Explorar recursos →</a>
       </div>`;
   };
   groupsContainer.innerHTML = explorationGroups.map(group => `
@@ -666,7 +671,7 @@ function renderQuestion() {
   const total = apa.questions.length;
 
   document.getElementById('question-counter').textContent =
-    `Question ${currentQuestionIndex + 1} of ${total}`;
+    `Pergunta ${currentQuestionIndex + 1} de ${total}`;
   document.getElementById('question-title').textContent = question.label;
   document.getElementById('question-subtitle').textContent = question.prompt || '';
 
@@ -701,7 +706,7 @@ function renderQuestion() {
   const nextBtn = document.getElementById('next-btn');
   nextBtn.disabled = !answers[question.id];
   nextBtn.textContent = currentQuestionIndex === total - 1
-    ? 'Get Recommendation ▶' : 'Next ▶';
+    ? 'Ver recomendação ▶' : 'Avançar ▶';
 
   document.getElementById('prev-btn').disabled = false;
 }
@@ -735,11 +740,11 @@ function handlePrev() {
 
 // Short labels for questions in the per-question grid
 const Q_SHORT_LABELS = {
-  q1: 'Builder',
-  q8: 'Audience',
-  q2: 'Deployment',
-  q4: 'Task type',
-  q3: 'Data access',
+  q1: 'Quem cria',
+  q8: 'Público',
+  q2: 'Implantação',
+  q4: 'Tipo de tarefa',
+  q3: 'Acesso a dados',
 };
 
 // Returns all hard-rule labels that zeroed a platform
@@ -774,9 +779,9 @@ function getScoreReason(platformId, ranked, answersMap) {
     const labels = getHardRuleLabels(platformId, answersMap);
     if (labels.length > 0) return labels.map(l => `⚠️ ${l}`).join('<br>');
     if (platformId === 'm365_copilot' && !fastTrack) {
-      return 'Only available via the entry-point wizard — excluded from custom agent assessment.';
+      return 'Disponível apenas pelo caminho de ponto de entrada — fora da avaliação de agente personalizado.';
     }
-    return rec ? rec.scoring_summary : 'Not applicable for this scenario.';
+    return rec ? rec.scoring_summary : 'Não se aplica a este cenário.';
   }
 
   if (!rankEntry) return rec ? rec.scoring_summary : '';
@@ -790,10 +795,10 @@ function getScoreReason(platformId, ranked, answersMap) {
   const zeroCount = perQ.filter(q => q.score === 0).length;
 
   if (isWinner) {
-    if (perfectCount === 5) return 'Perfect fit — scored highest on every dimension.';
-    if (perfectCount >= 4) return 'Strong match across nearly all dimensions.';
+    if (perfectCount === 5) return 'Encaixe perfeito — pontuação máxima em todas as dimensões.';
+    if (perfectCount >= 4) return 'Forte aderência em quase todas as dimensões.';
     const tops = contribs.slice(0, 2).map(c => `<em>${c.questionLabel.replace(/\?$/, '')}</em>`);
-    return `Strongest on ${tops.join(' and ')}.`;
+    return `Mais forte em ${tops.join(' e ')}.`;
   }
 
   // Runner-up or lower: explain gap relative to winner
@@ -811,16 +816,16 @@ function getScoreReason(platformId, ranked, answersMap) {
       .map(q => Q_SHORT_LABELS[q.qId] || q.qId);
 
     if (gap <= 2 && weakQs.length > 0) {
-      return `Close — lost ground on ${weakQs.join(' and ').toLowerCase()}.`;
+      return `Ficou perto — perdeu terreno em ${weakQs.join(' e ').toLowerCase()}.`;
     }
     if (zeroCount >= 3) {
-      return rec ? rec.scoring_summary : 'Limited fit for this scenario.';
+      return rec ? rec.scoring_summary : 'Encaixe limitado para este cenário.';
     }
     if (weakQs.length > 0) {
-      return `Weaker fit on ${weakQs.join(' and ').toLowerCase()}.`;
+      return `Encaixe mais fraco em ${weakQs.join(' e ').toLowerCase()}.`;
     }
     const tops = contribs.slice(0, 2).map(c => `<em>${c.questionLabel.replace(/\?$/, '')}</em>`);
-    if (tops.length > 0) return `Best on ${tops.join(' and ')}, but outscored overall.`;
+    if (tops.length > 0) return `Melhor em ${tops.join(' e ')}, mas superado no total.`;
   }
 
   return rec ? rec.scoring_summary : '';
@@ -844,10 +849,10 @@ function buildPerQuestionGrid(answersMap) {
     const shortLabel = Q_SHORT_LABELS[q.id] || q.label;
 
     const cells = platforms.map(p => {
-      if (zeroed[p.id]) return '<td class="pq-cell"><span class="pq-dot pq-zeroed" title="Disqualified">—</span></td>';
+      if (zeroed[p.id]) return '<td class="pq-cell"><span class="pq-dot pq-zeroed" title="Desqualificado">—</span></td>';
       const score = option.scores[p.id] ?? 0;
       const cls = score === 3 ? 'pq-strong' : score === 2 ? 'pq-moderate' : score === 1 ? 'pq-weak' : 'pq-none';
-      const title = score === 3 ? 'Strong fit' : score === 2 ? 'Moderate fit' : score === 1 ? 'Weak fit' : 'No fit';
+      const title = score === 3 ? 'Encaixe forte' : score === 2 ? 'Encaixe moderado' : score === 1 ? 'Encaixe fraco' : 'Sem encaixe';
       return `<td class="pq-cell"><span class="pq-dot ${cls}" title="${title} (${score}/3)"></span></td>`;
     }).join('');
 
@@ -870,7 +875,7 @@ function buildScoreComparison(ranked, answersMap) {
     .map(p => {
     const rankEntry = ranked.find(r => r.id === p.id);
     const score = rankEntry ? rankEntry.score : 0;
-    const label = rankEntry ? rankEntry.label : 'Not recommended';
+    const label = rankEntry ? rankEntry.label : NOT_RECOMMENDED_LABEL;
     const pct = zeroed[p.id] ? 0 : Math.round((score / maxScore) * 100);
     const icon = PLATFORM_ICONS[p.id] || '';
     const reason = getScoreReason(p.id, ranked, answersMap);
@@ -899,24 +904,26 @@ function buildScoreComparison(ranked, answersMap) {
   let closeCallout = '';
   if (top && second && !zeroed[second.id] && (top.score - second.score) <= 2 && second.score > 0) {
     const gap = Math.abs(top.score - second.score);
-    const gapText = gap === 0 ? 'Zero points separate' : `Only ${gap} point${gap !== 1 ? 's' : ''} separate${gap === 1 ? 's' : ''}`;
-    closeCallout = `<p class="sc-close-callout">📊 ${gapText} the top two platforms — your choice may come down to team skills and existing tooling.</p>`;
+    const gapText = gap === 0
+      ? 'Nenhum ponto separa'
+      : `Apenas ${gap} ponto${gap !== 1 ? 's' : ''} separa${gap !== 1 ? 'm' : ''}`;
+    closeCallout = `<p class="sc-close-callout">📊 ${gapText} as duas primeiras plataformas — sua escolha pode depender das competências do time e das ferramentas que já usa.</p>`;
   }
 
   return `
     <div class="sc-panel">
-      <div class="sc-heading">Score Breakdown</div>
+      <div class="sc-heading">Detalhamento da pontuação</div>
       ${rows}
       ${closeCallout}
       <div class="sc-grid-section">
-        <div class="sc-grid-heading">Per-question fit</div>
+        <div class="sc-grid-heading">Encaixe por pergunta</div>
         ${buildPerQuestionGrid(answersMap)}
         <div class="pq-legend">
-          <span class="pq-dot pq-strong"></span> Strong
-          <span class="pq-dot pq-moderate"></span> Moderate
-          <span class="pq-dot pq-weak"></span> Weak
-          <span class="pq-dot pq-none"></span> None
-          <span class="pq-dot pq-zeroed">—</span> Disqualified
+          <span class="pq-dot pq-strong"></span> Forte
+          <span class="pq-dot pq-moderate"></span> Moderado
+          <span class="pq-dot pq-weak"></span> Fraco
+          <span class="pq-dot pq-none"></span> Nenhum
+          <span class="pq-dot pq-zeroed">—</span> Desqualificado
         </div>
       </div>
     </div>`;
@@ -960,10 +967,10 @@ function renderDelegateRecommendation() {
   const secondLabel = document.getElementById('rec-second-label');
   if (ids.length > 1) {
     pairBanner.innerHTML =
-      '<strong>Consider both.</strong> Scout can be the always-on layer that monitors and coordinates, ' +
-      'while Cowork assembles the Microsoft 365 deliverables on demand.';
+      '<strong>Considere os dois.</strong> O Scout pode ser a camada sempre ativa que monitora e coordena, ' +
+      'enquanto o Cowork monta as entregas do Microsoft 365 sob demanda.';
     pairBanner.classList.remove('hidden');
-    secondLabel.textContent = 'Also consider';
+    secondLabel.textContent = 'Considere também';
     secondLabel.classList.remove('hidden');
     document.getElementById('rec-second-card').innerHTML =
       buildPlatformCard(ids[1], [], {}, false, false);
@@ -1018,7 +1025,7 @@ function renderRecommendation() {
 
   if (!top || !second) {
     document.getElementById('rec-primary-card').innerHTML =
-      '<div class="rec-card"><p>Unable to generate a recommendation. Please contact the CAT team.</p></div>';
+      '<div class="rec-card"><p>Não foi possível gerar uma recomendação. Entre em contato com a equipe responsável.</p></div>';
     return;
   }
 
@@ -1029,7 +1036,7 @@ function renderRecommendation() {
   const secondLabel = document.getElementById('rec-second-label');
 
   // Hide secondary card when second platform is "Not recommended" (score 0-5)
-  if (second.label === 'Not recommended') {
+  if (second.label === NOT_RECOMMENDED_LABEL) {
     pairBanner.classList.add('hidden');
     secondLabel.classList.add('hidden');
     document.getElementById('rec-second-card').innerHTML = '';
@@ -1065,7 +1072,7 @@ function renderRecommendation() {
     if (whyNot) bannerHtml += `<p class="why-not-sentence">${whyNot}</p>`;
     pairBanner.innerHTML = bannerHtml;
     pairBanner.classList.remove('hidden');
-    secondLabel.textContent = 'Complementary platform:';
+    secondLabel.textContent = 'Plataforma complementar:';
     secondLabel.classList.remove('hidden');
   } else if (isPair) {
     // Close scores but not a valid pair — still show "Why not?"
@@ -1076,11 +1083,11 @@ function renderRecommendation() {
     } else {
       pairBanner.classList.add('hidden');
     }
-    secondLabel.textContent = 'Also consider:';
+    secondLabel.textContent = 'Considere também:';
     secondLabel.classList.remove('hidden');
   } else {
     pairBanner.classList.add('hidden');
-    secondLabel.textContent = 'Also consider:';
+    secondLabel.textContent = 'Considere também:';
     secondLabel.classList.remove('hidden');
   }
 
@@ -1110,9 +1117,9 @@ function updateTabTitle() {
   if (!recommendedPlatformId) return;
   const platformMeta = (apa.meta.platforms || []).find(p => p.id === recommendedPlatformId);
   if (platformMeta) {
-    document.title = `APA: ${platformMeta.label} recommended`;
+    document.title = `APA: ${platformMeta.label} recomendado`;
   } else if (apa.recommendations[recommendedPlatformId]) {
-    document.title = `APA: ${apa.recommendations[recommendedPlatformId].headline} recommended`;
+    document.title = `APA: ${apa.recommendations[recommendedPlatformId].headline} recomendado`;
   }
 }
 
@@ -1247,8 +1254,8 @@ function formatDateDisplay(yyyymmdd) {
   const y = yyyymmdd.substring(0, 4);
   const m = parseInt(yyyymmdd.substring(4, 6), 10);
   const d = parseInt(yyyymmdd.substring(6, 8), 10);
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return `${months[m - 1]} ${d}, ${y}`;
+  const months = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  return `${d} de ${months[m - 1]} de ${y}`;
 }
 
 // Compute key factors using delta algorithm: (winning_platform_score − best_runner_up_score)
@@ -1303,7 +1310,7 @@ function computeWhyNot(winner, runner, answersMap) {
 
   if (!bestDelta || bestDelta.delta <= 0) return null;
   const dimension = Q_SHORT_LABELS[bestDelta.qId] || bestDelta.questionLabel;
-  return `${winnerMeta.label} edged out ${runnerMeta.label} on <strong>${dimension.toLowerCase()}</strong> — you selected "${bestDelta.optionLabel}".`;
+  return `${winnerMeta.label} superou ${runnerMeta.label} em <strong>${dimension.toLowerCase()}</strong> — você selecionou "${bestDelta.optionLabel}".`;
 }
 
 function renderDecisionCard() {
@@ -1317,8 +1324,8 @@ function renderDecisionCard() {
   // Temporal change banner
   const bannerEl = document.getElementById('decision-card-banner');
   if (isURLLoaded && originalPlatformId && originalPlatformId !== recommendedPlatformId) {
-    const dateStr = originalDate ? formatDateDisplay(originalDate) : 'a previous visit';
-    bannerEl.innerHTML = `Your recommendation has changed since ${dateStr}. The platform landscape has been updated. <a href="javascript:void(0)" onclick="restart()">Retake assessment →</a>`;
+    const dateStr = originalDate ? formatDateDisplay(originalDate) : 'uma visita anterior';
+    bannerEl.innerHTML = `Sua recomendação mudou desde ${dateStr}. O cenário de plataformas foi atualizado. <a href="javascript:void(0)" onclick="restart()">Refazer avaliação →</a>`;
     bannerEl.style.display = '';
     if (typeof clarity === 'function') clarity('set', 'temporal_change', 'true');
   } else {
@@ -1328,7 +1335,7 @@ function renderDecisionCard() {
   // Schema drift note
   const driftEl = document.getElementById('decision-card-drift');
   if (window._decisionCardDrift) {
-    driftEl.textContent = 'ℹ Some evaluation criteria have been updated since this recommendation was generated.';
+    driftEl.textContent = 'ℹ Alguns critérios de avaliação foram atualizados desde que esta recomendação foi gerada.';
     driftEl.style.display = '';
   } else {
     driftEl.style.display = 'none';
@@ -1349,7 +1356,7 @@ function copyShareLink() {
 
   function showSuccess() {
     if (typeof clarity === 'function') clarity('set', 'card_shared', 'true');
-    btn.textContent = '✓ Copied!';
+    btn.textContent = '✓ Copiado!';
     btn.classList.add('btn-decision-copied');
     setTimeout(() => {
       btn.textContent = originalText;
@@ -1358,7 +1365,7 @@ function copyShareLink() {
   }
 
   function showError() {
-    btn.textContent = 'Copy failed';
+    btn.textContent = 'Falha ao copiar';
     btn.classList.add('btn-decision-error');
     setTimeout(() => {
       btn.textContent = originalText;

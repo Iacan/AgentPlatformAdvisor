@@ -1,246 +1,266 @@
 # Changelog
 
-All notable changes to Agent Platform Advisor are documented in this file.
+Todas as mudanças relevantes do Agent Platform Advisor estão documentadas neste arquivo.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), organized by repository commit date.
+O formato é baseado no [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), organizado pela data do commit no repositório.
+
+## 2026-07-30
+
+### Alterado
+
+- **Aplicação e documentação traduzidas para português do Brasil.** Toda a interface visível ao usuário foi traduzida: `index.html`, os textos gerados em `assets/apa.js` e todo o conteúdo do `apa.yaml` (perguntas, opções, recomendações, regras rígidas, justificativas e notas contextuais). Os `id`s, as pontuações e as URLs do `apa.yaml` foram preservados sem alteração, de modo que links compartilhados antigos continuam resolvendo para as mesmas respostas e recomendações.
+  - Nomes de produto permanecem em inglês (Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, Agent Builder, Databricks Agent Bricks, Copilot Cowork, Microsoft Scout, Copilot Chat), assim como os termos técnicos consagrados: lakehouse, Unity Catalog, tabelas Delta, RAG, MCP, computer use, prompt agents, toolboxes.
+  - **Rótulos de faixa traduzidos** para "Encaixe forte / Bom encaixe / Encaixe parcial / Não recomendado". Isso exigiu duas mudanças de código, porque a lógica dependia do texto em inglês: `badgeClass()` agora casa pelas palavras `forte` / `bom` / `parcial` em vez dos prefixos `Strong` / `Good` / `Partial`, e a checagem do card secundário passou a usar a constante `NOT_RECOMMENDED_LABEL`, que espelha a menor faixa do `apa.yaml` — antes eram três literais `'Not recommended'` espalhados pelo arquivo.
+  - `formatDateDisplay()` passou a produzir datas no formato brasileiro (`1 de jan de 2026`), e `<html lang>` e `og:locale` passaram a `pt-BR` / `pt_BR`.
+  - Os 45 testes end-to-end foram reapontados para os textos em português e continuam passando. As asserções que dependiam de texto em inglês eram: contador de perguntas, rótulo de faixa, "Start Here", "Copied", "Take your own assessment", "recommendation has changed", "Retake assessment", o formato de data, o título da aba e o nome do grupo "Build agents".
+- **Links da documentação no rodapé repontados** para este repositório. O link "Abra uma issue" apontava para `github.com/microsoft/cat/issues`, um repositório diferente do projeto; agora aponta para as issues deste repositório.
+- **Crédito de autoria** desta versão atribuído a Iacan Ramos, no rodapé, na meta tag `og:author` e no README. A licença MIT original (Copyright Microsoft Corporation) permanece intacta em `LICENSE`.
+- **Publicado no GitHub Pages** a partir da branch `main` (raiz), em `https://iacan.github.io/AgentPlatformAdvisor/`.
+
+### Corrigido
+
+- **`docs/FLOWCHART.md` ganhou uma legenda das plataformas.** O diagrama usava as siglas `AB`, `CS`, `Foundry` e `DBX` em todas as caixas de pontuação sem nunca dizer o que significavam — `DBX` (Databricks Agent Bricks) em particular aparecia 14 vezes sem uma única menção ao nome do produto. A legenda também explica quando o Agent Bricks pontua, quais quatro regras rígidas o zeram e quais dois desempates o favorecem.
+- **`docs/SCORING.md` dizia "todas as 1.920 combinações possíveis"** logo acima de uma tabela cujos números somam 4.200 — e de uma nota, no parágrafo seguinte, explicando justamente que o espaço havia crescido de 1.920 para 4.200 quando o Agent Bricks acrescentou q1e, q2e, q4f e q3g. O total foi corrigido para 4.200.
+- **A contagem de testes no README** dizia "39 testes em 6 arquivos de spec"; são 45 testes em 7 arquivos desde que `databricks-path.spec.js` foi adicionado. O README também não mencionava que a aplicação precisa ser servida por HTTP — abrir o `index.html` por `file://` faz o `fetch` do `apa.yaml` falhar e a tela de erro aparecer. Agora há uma nota explícita.
 
 ## 2026-07-28
 
-### Added
+### Adicionado
 
-- **Databricks Agent Bricks joins the scored build assessment** as a fifth platform (`databricks`) and the first non-Microsoft option in the matrix. It covers the scenario the advisor previously had no answer for: the agent's value comes from the data estate, not from Microsoft 365 — knowledge governed in Unity Catalog, built and served by the team that owns it. Sourced from the [Agent Bricks product page](https://www.databricks.com/product/artificial-intelligence/agent-bricks) and [Databricks documentation](https://docs.databricks.com/aws/en/generative-ai/agent-bricks/).
-  - **The questions were extended rather than added to** — still five questions and a 0–15 scale, so shared links, thresholds, and the score UI are unchanged. Four new options give the data-platform scenario somewhere to land: **q1e** (data platform / data engineering team), **q2e** (delivery in the data and analytics environment), **q4f** (reason over large volumes of enterprise data — extraction across document collections, natural-language questions over governed tables, quality tuning on your own data), and **q3g** (lakehouse / Unity Catalog / Delta tables). All four are appended last within their question, so existing answer indices and share links keep resolving to the same options.
-  - **Agent Bricks is disqualified where it genuinely cannot go**, using the same hard-rule mechanism that already enforces Agent Builder's limits: **q3a / q3b / q3d** (Microsoft 365 content and the Copilot connector catalog — Agent Bricks grounds on the lakehouse, not SharePoint, OneDrive, Teams, or Outlook) and **q2a** (Microsoft 365 Copilot chat — agents are served from Databricks with no native publishing path there). It therefore never competes for the classic Copilot scenario; it appears only when the user says the scenario is anchored in their data estate. The four new options also zero Agent Builder, which cannot reach any of them.
-  - **New tiebreakers and pairs:** lakehouse data (q3g) prefers Agent Bricks over Copilot Studio on a tie; a data platform team (q1e) prefers it over Foundry. Two complementary pairs were added — *Agent Bricks + Foundry* (lakehouse reasoning plus the Azure application, identity, and Microsoft 365 publishing) and *Copilot Studio + Agent Bricks* (reason over lakehouse data, deliver the answer in Teams).
-  - **New contradiction and persona notes:** lakehouse knowledge + Copilot chat delivery, business user + lakehouse, and data platform team + Microsoft 365 content; plus winner-persona warnings when Agent Bricks wins for a business user or a low-code maker, since it presumes a Databricks workspace, Unity Catalog permissions, and serving capacity.
-  - Added the platform card to the start page and the *Build agents* exploration group, plus `images/databricks.svg` — a placeholder lakehouse-layers mark in the Databricks signal colour, to be swapped for the official brand asset.
-  - **Explore now uses the wide workspace width.** A fourth Build card orphaned itself on its own row inside the 1024px reading container. `.exploration-grid` moved from a fixed 3 columns to `auto-fit` (which collapses the unused track, so the 3-card *Use* group still spans 3 across), and `showSection()` applies `.main-container--wide` on the explore section only — the 1200px instrument workspace width that `docs/DESIGN.md` already sanctions for comparison surfaces. Both groups now fill exactly one row at ≥1100px; prose-heavy wizard panels keep the 1024px reading width.
-  - Regenerated the distribution analysis in `docs/SCORING.md` by brute-forcing all combinations through the live `rankPlatforms()`: the space grew from 1,920 to 4,200 combos (5 × 4 × 5 × 6 × 7). Copilot Studio 68.7%, Foundry 20.3%, Agent Bricks 9.3%, Agent Builder 1.8%. Agent Builder's share fell from 3.1% only because the four new options all disqualify it — its scoring is unchanged.
-  - Dropped "Microsoft" from the start-page lead and the `description` / `og:description` meta tags ("recommend the best **Microsoft** platform for your agent needs" → "the best platform"), since the advisor can now land on a non-Microsoft platform. Known follow-up: `images/og-image.png` is a capture of the start page from when it showed six tiles, and its `og:image:alt` describes six — both need a refresh.
-  - New `tests/e2e/databricks-path.spec.js` covers the welcome card, the exploration group, a strong-fit lakehouse win, both disqualification paths, and clicking through the new wizard options (45 tests passing).
+- **O Databricks Agent Bricks entra na avaliação pontuada de construção** como quinta plataforma (`databricks`) e primeira opção não-Microsoft da matriz. Ele cobre o cenário para o qual o advisor não tinha resposta: o valor do agente vem do patrimônio de dados, e não do Microsoft 365 — conhecimento governado no Unity Catalog, construído e servido pelo time que é dono dele. Baseado na [página do produto Agent Bricks](https://www.databricks.com/product/artificial-intelligence/agent-bricks) e na [documentação da Databricks](https://docs.databricks.com/aws/en/generative-ai/agent-bricks/).
+  - **As perguntas foram estendidas, e não acrescentadas** — continuam sendo cinco perguntas e escala de 0 a 15, então links compartilhados, faixas e a interface de pontuação seguem inalterados. Quatro novas opções dão lugar ao cenário de plataforma de dados: **q1e** (time de plataforma/engenharia de dados), **q2e** (entrega no ambiente de dados e analytics), **q4f** (raciocinar sobre grandes volumes de dados corporativos — extração em coleções de documentos, perguntas em linguagem natural sobre tabelas governadas, ajuste de qualidade com os próprios dados) e **q3g** (lakehouse / Unity Catalog / tabelas Delta). As quatro foram acrescentadas ao final de suas perguntas, então os índices de resposta e os links compartilhados existentes continuam resolvendo para as mesmas opções.
+  - **O Agent Bricks é desqualificado onde genuinamente não alcança**, usando o mesmo mecanismo de regra rígida que já aplica os limites do Agent Builder: **q3a / q3b / q3d** (conteúdo do Microsoft 365 e catálogo de conectores do Copilot — o Agent Bricks se fundamenta no lakehouse, não em SharePoint, OneDrive, Teams ou Outlook) e **q2a** (chat do Microsoft 365 Copilot — os agentes são servidos pelo Databricks, sem caminho nativo de publicação ali). Por isso, ele nunca disputa o cenário clássico do Copilot; só aparece quando o usuário informa que o cenário está ancorado no seu patrimônio de dados. As quatro novas opções também zeram o Agent Builder, que não alcança nenhuma delas.
+  - **Novos desempates e pares:** dados no lakehouse (q3g) preferem o Agent Bricks ao Copilot Studio em caso de empate; um time de plataforma de dados (q1e) o prefere ao Foundry. Dois pares complementares foram adicionados — *Agent Bricks + Foundry* (raciocínio no lakehouse mais a aplicação Azure, identidade e publicação no Microsoft 365) e *Copilot Studio + Agent Bricks* (raciocinar sobre os dados do lakehouse e entregar a resposta no Teams).
+  - **Novas notas de contradição e de perfil:** conhecimento no lakehouse + entrega no chat do Copilot, usuário de negócio + lakehouse, e time de plataforma de dados + conteúdo do Microsoft 365; além de avisos de descompasso quando o Agent Bricks vence para um usuário de negócio ou um criador low-code, já que ele pressupõe um workspace Databricks, permissões do Unity Catalog e capacidade de serving.
+  - Card da plataforma adicionado à página inicial e ao grupo de exploração *Criar agentes*, além de `images/databricks.svg` — uma marca provisória de camadas de lakehouse na cor de sinal da Databricks, a ser trocada pelo ativo oficial da marca.
+  - **A tela Explorar passou a usar a largura ampla do workspace.** Um quarto card de construção ficava órfão na própria linha dentro do container de leitura de 1024px. O `.exploration-grid` saiu de 3 colunas fixas para `auto-fit` (que colapsa a trilha não usada, então o grupo *Usar* com 3 cards continua ocupando 3 colunas), e o `showSection()` aplica `.main-container--wide` apenas na seção de exploração — a largura de instrumento de 1200px que o `docs/DESIGN.md` já autoriza para superfícies de comparação. Os dois grupos agora preenchem exatamente uma linha a partir de 1100px; painéis do wizard com muito texto mantêm a largura de leitura de 1024px.
+  - Análise de distribuição do `docs/SCORING.md` regerada por força bruta de todas as combinações através do `rankPlatforms()` real: o espaço cresceu de 1.920 para 4.200 combinações (5 × 4 × 5 × 6 × 7). Copilot Studio 68,7%, Foundry 20,3%, Agent Bricks 9,3%, Agent Builder 1,8%. A fatia do Agent Builder caiu de 3,1% apenas porque as quatro novas opções o desqualificam — sua pontuação não mudou.
+  - Removida a palavra "Microsoft" da chamada da página inicial e das meta tags `description` / `og:description` ("recomendar a melhor plataforma **Microsoft** para suas necessidades de agente" → "a melhor plataforma"), já que o advisor agora pode chegar a uma plataforma não-Microsoft. Pendência conhecida: `images/og-image.png` é uma captura da página inicial de quando ela mostrava seis blocos, e o `og:image:alt` descreve seis — ambos precisam ser atualizados.
+  - Novo `tests/e2e/databricks-path.spec.js` cobre o card de boas-vindas, o grupo de exploração, uma vitória de encaixe forte no lakehouse, os dois caminhos de desqualificação e a navegação pelas novas opções do wizard (45 testes passando).
 
 ## 2026-07-24
 
-### Changed
+### Alterado
 
-- **New favicon built from the app's own robot-face mark.** The previous `favicon.png` was the shared CAT icon at an odd 232×193, declared as `type="image/x-icon"` though it was a PNG. The replacement is the header logo's robot redrawn as a *solid* white head on the `#0078D4` tile, with the eyes and smile knocked out in blue and the side nubs kept as filled bars. Solid shapes were necessary: the outlined head reads as a robot at 32px but collapses into mush below ~24px, and dropping the outline entirely (so the tile acts as the head) reads as a generic smiley rather than an agent. Ships `favicon.svg` (scalable, used by Chrome/Firefox at every size), 16px/32px PNG fallbacks, and a full-bleed 180px `apple-touch-icon.png` with square corners, since iOS applies its own mask.
-- **Repointed the Open Graph URLs at the live site.** `og:image`, `twitter:image`, and `og:url` all pointed under `microsoft.github.io/cat/agent-platform-advisor/`, which is now only a meta-refresh redirect stub — the app is served from `microsoft.github.io/AgentPlatformAdvisor/`. The old `og:image` path 404s, so link previews had no image to fetch regardless of which file it named; `og:url` also advertised the stub as the canonical URL. All three now use the `AgentPlatformAdvisor` host.
-- **Replaced the Open Graph preview image with a screenshot of the app.** The card previously pointed at the shared `powercattools.png` CAT logo, which said nothing about this tool; links now unfurl to `images/og-image.png`, a 1200×630 capture of the start page showing the six platforms the advisor chooses between. Corrected `og:image:height` (was declared as `1200` for a 1200×1200 image), added `og:image:type` and a descriptive `og:image:alt`, and added `twitter:card="summary_large_image"` so X/Twitter renders the wide card instead of a thumbnail.
-- **Refreshed `README.md` and `.github/copilot-instructions.md`** for the merged Microsoft 365 Copilot destination: the entry-point wizard now lists three destinations plus a starting surface, the share-link section documents `dt=m365_copilot` / `st=chat|agents` and the legacy `ft=1` / `dt=copilot_chat` links, and the test count is corrected to 39. The Copilot instructions also gained a local-dev note (the app must be served over HTTP or the `apa.yaml` fetch fails), a share-link parameter table, a spec-file map, single-test commands, and corrected design facts (IBM Plex fonts, warm charcoal canvas, rem `--fs-*` tokens with a 12px floor) that had drifted from `docs/DESIGN.md`.
-- **Entry-point recommendation cards now open their accordions by default.** Microsoft 365 Copilot, Cowork, and Scout are single-card results with nothing to compare against — the card *is* the page — so *Best For*, *Important Considerations*, and the capability list start expanded instead of hiding the substance behind three clicks. Scored platform cards (Agent Builder, Copilot Studio, Foundry) stay collapsed so the comparison stays scannable. Driven by a new `ENTRY_POINT_PLATFORMS` constant in `apa.js`, replacing the `platformId === 'm365_copilot'` special case.
-- **Merged the `copilot_chat` destination into `m365_copilot`.** Copilot Chat is a surface *of* Microsoft 365 Copilot — as is each built-in agent — so modeling it as a sibling destination to Cowork and Scout claimed a product boundary that doesn't exist (and, after the headline rename, produced two identically-titled cards). The entry-point wizard's hands-on path now always resolves to the single **Microsoft 365 Copilot** card.
-  - The **task type** answer no longer picks a destination; it picks which surface the card tells you to **Start Here** with, rendered through the previously unused `spotlight` slot: general help → **Copilot Chat**, specialized task → **built-in agents** (Researcher, Analyst, Facilitator, Interpreter).
-  - Added `recommendations.m365_copilot.start_here.{chat,agents}` to `apa.yaml` and folded the old `copilot_chat` guidance into `m365_copilot`'s new `best_for` / `watch_out_for`; deleted the `copilot_chat` recommendation block.
-  - `resolveDelegateStart()` in `apa.js` derives the surface; `buildPlatformCard()` takes a `startKey` and labels the spotlight **Start Here** (a static `spotlight` still renders as *Featured Capability*).
-  - Share links carry the surface as `&st=chat|agents`. The legacy `?dt=copilot_chat` link still works and resolves to Microsoft 365 Copilot with the Copilot Chat surface featured.
-  - Cowork's and Scout's "use X instead" notes now point to *Microsoft 365 Copilot (Copilot Chat)* rather than a sibling product. Updated `docs/SCORING.md`, `docs/FLOWCHART.md`, the prescreen copy, and `tests/e2e/delegate-path.spec.js` (39 tests passing).
-- **Renamed the `copilot_chat` destination headline to "Microsoft 365 Copilot"** (was "Copilot Chat"), which makes it share a headline with the `m365_copilot` destination. Updated `tests/e2e/delegate-path.spec.js` so the two are no longer distinguished by headline substring alone: a new `expectPrimaryCard()` helper asserts the exact `.rec-platform-name` text plus a description phrase unique to each destination ("conversational Microsoft 365 Copilot experience" vs. "Built-in, permission-aware AI across Microsoft 365"), so the two paths can't silently swap.
-- **Rebuilt the type scale on rem tokens and raised every size one step.** An audit found the CSS had drifted a full step below the scale documented in `docs/DESIGN.md` — body copy shipped at 14px (20 rules) against a documented 15px, captions at 12px, and badges/eyebrows at 10-11px — and every one of the 74 `font-size` declarations used `px`, so a reader's browser font-size preference had no effect.
-  - Added `--fs-display` … `--fs-mono-sm` rem tokens on `:root` and `html { font-size: 100% }`; all 74 declarations now reference a token.
-  - Sizes move up one step: body 14 → 15/16px, caption 13 → 14px, mono 12 → 13px, and everything at 10-11px comes up to a **12px floor** (`.sc-badge`, `.pq-legend`, `.rec-spotlight-eyebrow`, `.exploration-card-spotlight-eyebrow`).
-  - Removed the two responsive overrides that *shrank* text on small screens (`.progress-bar` → 11px at 768px, `.sc-badge` → 10px at 480px).
-  - Capped running prose at `70ch` — the 1024px container was producing ~95ch lines.
-  - Updated the `docs/DESIGN.md` type scale with the token names plus rules on rem-only sizing, the 12px floor, no mobile shrinkage, and measure.
-- **Made the start-page platform tiles read as informational, not clickable.** They were styled as bordered, filled cards with a hover border-color change, which implied they were selectable. Removed the hover treatment and the card chrome (filled background, full border, rounded corners) in favor of flat, center-aligned entries separated by a hairline top rule, plus `cursor: default`. Added a lead-in line — "Here's what the advisor chooses between — select **Get Started** below to find your fit." — so the section reads as a preview of the destinations rather than a menu.
-- **Center-aligned the start-page platform previews** — icon, title, and description all sit on a shared center axis (`.platform-preview-icon` is a centered flex box; `.platform-preview` is `text-align: center`).
-- **Increased the platform preview card title** from 16px to 20px, matching the `subhead` type token in `docs/DESIGN.md`, so platform names read as card titles rather than body copy.
-- **Increased the delegate group label size** from 11px to 13px (weight 500 → 600) so the "…" section dividers above the delegate platform grid are legible at a glance.
-- **Swapped the teal signal color for Microsoft blue** at the user's request: the accent used for selected options, progress, the winning platform, focus rings, and primary CTAs is now `#0078D4` (hover `#2B9AEE`, dim `#0B5187`) in dark mode and `#005A9E` in light mode. Warm charcoal canvas, neutrals, typography, and the no-glow rule are unchanged; `--success` / `--warning` / `--error` semantics are untouched. Updated `docs/DESIGN.md`.
+- **Novo favicon construído a partir da própria marca de rosto de robô da aplicação.** O `favicon.png` anterior era o ícone compartilhado do CAT em estranhos 232×193, declarado como `type="image/x-icon"` embora fosse um PNG. A substituição é o robô do logo do cabeçalho redesenhado como uma cabeça branca *sólida* sobre o bloco `#0078D4`, com os olhos e o sorriso vazados em azul e as saliências laterais mantidas como barras preenchidas. Formas sólidas eram necessárias: a cabeça em contorno lê como robô a 32px, mas vira borrão abaixo de ~24px, e remover o contorno de vez (deixando o bloco atuar como a cabeça) lê como um smiley genérico em vez de um agente. Entrega `favicon.svg` (escalável, usado pelo Chrome/Firefox em todos os tamanhos), fallbacks PNG de 16px/32px e um `apple-touch-icon.png` de 180px sangrado com cantos retos, já que o iOS aplica sua própria máscara.
+- **URLs de Open Graph repontadas para o site publicado.** `og:image`, `twitter:image` e `og:url` apontavam para `microsoft.github.io/cat/agent-platform-advisor/`, que hoje é apenas um stub de redirecionamento por meta-refresh — a aplicação é servida em `microsoft.github.io/AgentPlatformAdvisor/`. O caminho antigo do `og:image` retornava 404, então as prévias de link não tinham imagem para buscar, independentemente do arquivo apontado; o `og:url` também anunciava o stub como URL canônica. Os três passaram a usar o host `AgentPlatformAdvisor`.
+- **Imagem de prévia do Open Graph substituída por uma captura da aplicação.** O card apontava antes para o logo compartilhado `powercattools.png` do CAT, que não dizia nada sobre esta ferramenta; os links agora abrem `images/og-image.png`, uma captura 1200×630 da página inicial mostrando as seis plataformas entre as quais o advisor escolhe. Corrigido o `og:image:height` (declarado como `1200` para uma imagem 1200×1200), adicionados `og:image:type` e um `og:image:alt` descritivo, e adicionado `twitter:card="summary_large_image"` para que o X/Twitter renderize o card largo em vez de uma miniatura.
+- **`README.md` e `.github/copilot-instructions.md` atualizados** para o destino unificado do Microsoft 365 Copilot: o wizard de ponto de entrada passou a listar três destinos mais uma superfície inicial, a seção de links de compartilhamento documenta `dt=m365_copilot` / `st=chat|agents` e os links antigos `ft=1` / `dt=copilot_chat`, e a contagem de testes foi corrigida para 39. As instruções do Copilot também ganharam uma nota de desenvolvimento local (a aplicação precisa ser servida por HTTP, senão o `fetch` do `apa.yaml` falha), uma tabela de parâmetros de link, um mapa dos arquivos de spec, comandos para rodar um único teste e fatos de design corrigidos (fontes IBM Plex, canvas em carvão quente, tokens rem `--fs-*` com piso de 12px) que haviam divergido do `docs/DESIGN.md`.
+- **Cards de recomendação do ponto de entrada agora abrem seus acordeões por padrão.** Microsoft 365 Copilot, Cowork e Scout são resultados de card único, sem nada com que comparar — o card *é* a página — então *Ideal para*, *Pontos de atenção* e a lista de recursos começam expandidos, em vez de esconder a substância atrás de três cliques. Cards de plataformas pontuadas (Agent Builder, Copilot Studio, Foundry) permanecem recolhidos para manter a comparação legível. Conduzido por uma nova constante `ENTRY_POINT_PLATFORMS` no `apa.js`, substituindo o caso especial `platformId === 'm365_copilot'`.
+- **Destino `copilot_chat` unificado ao `m365_copilot`.** O Copilot Chat é uma superfície *do* Microsoft 365 Copilot — assim como cada agente nativo — então modelá-lo como destino irmão de Cowork e Scout afirmava uma fronteira de produto que não existe (e, após a renomeação do título, produzia dois cards com o mesmo nome). O caminho de participação ativa do wizard de ponto de entrada agora sempre resolve para o único card do **Microsoft 365 Copilot**.
+  - A resposta de **tipo de tarefa** não escolhe mais um destino; ela escolhe por qual superfície o card manda **começar**, renderizada pelo slot `spotlight` antes não utilizado: ajuda geral → **Copilot Chat**, tarefa especializada → **agentes nativos** (Researcher, Analyst, Facilitator, Interpreter).
+  - Adicionado `recommendations.m365_copilot.start_here.{chat,agents}` ao `apa.yaml` e incorporada a orientação antiga do `copilot_chat` nos novos `best_for` / `watch_out_for` do `m365_copilot`; bloco de recomendação `copilot_chat` removido.
+  - `resolveDelegateStart()` no `apa.js` deriva a superfície; `buildPlatformCard()` recebe um `startKey` e rotula o destaque como **Comece por aqui** (um `spotlight` estático continua sendo renderizado como *Recurso em destaque*).
+  - Links de compartilhamento carregam a superfície como `&st=chat|agents`. O link antigo `?dt=copilot_chat` continua funcionando e resolve para o Microsoft 365 Copilot com a superfície Copilot Chat em destaque.
+  - As notas "use X no lugar" do Cowork e do Scout agora apontam para *Microsoft 365 Copilot (Copilot Chat)* em vez de um produto irmão. Atualizados `docs/SCORING.md`, `docs/FLOWCHART.md`, os textos do prescreen e `tests/e2e/delegate-path.spec.js` (39 testes passando).
+- **Título do destino `copilot_chat` renomeado para "Microsoft 365 Copilot"** (era "Copilot Chat"), o que faz com que ele compartilhe o título com o destino `m365_copilot`. `tests/e2e/delegate-path.spec.js` foi atualizado para que os dois não sejam mais distinguidos apenas por trecho do título: um novo helper `expectPrimaryCard()` verifica o texto exato de `.rec-platform-name` mais uma frase de descrição única de cada destino, para que os dois caminhos não possam trocar de lugar silenciosamente.
+- **Escala tipográfica reconstruída sobre tokens rem, com todos os tamanhos elevados em um passo.** Uma auditoria descobriu que o CSS havia derivado um passo inteiro abaixo da escala documentada em `docs/DESIGN.md` — texto corrido em 14px (20 regras) contra os 15px documentados, captions em 12px e selos/eyebrows em 10-11px — e que todas as 74 declarações de `font-size` usavam `px`, então a preferência de tamanho de fonte do leitor não tinha efeito algum.
+  - Adicionados tokens rem `--fs-display` … `--fs-mono-sm` no `:root` e `html { font-size: 100% }`; as 74 declarações agora referenciam um token.
+  - Tamanhos sobem um passo: body 14 → 15/16px, caption 13 → 14px, mono 12 → 13px, e tudo que estava em 10-11px sobe para um **piso de 12px** (`.sc-badge`, `.pq-legend`, `.rec-spotlight-eyebrow`, `.exploration-card-spotlight-eyebrow`).
+  - Removidos os dois ajustes responsivos que *reduziam* o texto em telas pequenas (`.progress-bar` → 11px em 768px, `.sc-badge` → 10px em 480px).
+  - Texto corrido limitado a `70ch` — o container de 1024px produzia linhas de ~95ch.
+  - Escala tipográfica do `docs/DESIGN.md` atualizada com os nomes dos tokens e as regras de dimensionamento só em rem, piso de 12px, sem redução no mobile e medida de linha.
+- **Blocos de plataforma da página inicial passaram a parecer informativos, não clicáveis.** Eles eram estilizados como cards com borda e preenchimento e mudança de cor de borda no hover, o que sugeria que fossem selecionáveis. Removidos o tratamento de hover e o acabamento de card (fundo preenchido, borda completa, cantos arredondados) em favor de entradas planas, centralizadas e separadas por uma régua fina no topo, com `cursor: default`. Adicionada uma linha de introdução — "Estas são as opções que o advisor considera — clique em **Começar** abaixo para encontrar a sua." — para que a seção se leia como prévia dos destinos, e não como um menu.
+- **Prévias de plataforma da página inicial centralizadas** — ícone, título e descrição ficam em um eixo central compartilhado (`.platform-preview-icon` é uma caixa flex centralizada; `.platform-preview` usa `text-align: center`).
+- **Título do card de prévia de plataforma aumentado** de 16px para 20px, correspondendo ao token tipográfico `subhead` do `docs/DESIGN.md`, para que nomes de plataforma sejam lidos como títulos de card e não como texto corrido.
+- **Tamanho do rótulo de grupo de delegação aumentado** de 11px para 13px (peso 500 → 600) para que os divisores de seção acima da grade de plataformas de delegação sejam legíveis de imediato.
+- **Cor de sinal teal trocada pelo azul Microsoft** a pedido do usuário: o accent usado em opções selecionadas, progresso, plataforma vencedora, anéis de foco e CTAs primários agora é `#0078D4` (hover `#2B9AEE`, dim `#0B5187`) no modo escuro e `#005A9E` no modo claro. Canvas em carvão quente, neutros, tipografia e a regra de não usar brilhos permanecem inalterados; a semântica de `--success` / `--warning` / `--error` está intocada. `docs/DESIGN.md` atualizado.
 
 ## 2026-07-22
 
-### Changed
+### Alterado
 
-- **Replaced the two-question delegate path with an entry-point wizard** ("Where should you get this work done?") that helps end users choose between Copilot Chat, Microsoft 365 Copilot's built-in agents, Cowork, and Scout from work patterns instead of product names — addressing the pain point of Microsoft asking users to pick among too many entry points.
-  - New first question — **Involvement**: stay hands-on and iterate vs. hand it off to an agent.
-  - **Hands-on** now asks a follow-up — **Task type**: general help (→ **Copilot Chat**) vs. a specialized task (→ **Microsoft 365 Copilot built-in agents**: Researcher, Analyst, Facilitator, Interpreter, …).
-  - **Hand it off** asks Cadence + Reach (→ **Cowork**, **Scout**, or both). The wizard uses **progressive disclosure**: each follow-up is revealed only when its branch is chosen (smooth grid expand, respects `prefers-reduced-motion`), and collapsed follow-ups leave the tab order — no dimmed/greyed dead content. **Reach is now gated behind Cadence** — selecting "Hand off the whole task" reveals only the Cadence question; the Reach question ("Where does it need to reach?") appears once a cadence is picked, so both delegate follow-ups no longer show at once.
-  - **Removed the standalone "built-in Microsoft 365 Copilot experience" prescreen tile** — that destination is now reached through the wizard, eliminating the naming overlap with Copilot Chat. `m365_copilot` is reused as the wizard destination; the legacy `?ft=1` share link still resolves to the same card.
-  - Reframed the prescreen entry to **"Help me find the right place to get work done."**
-  - Added a `copilot_chat` recommendation block to `apa.yaml` with `use X instead when…` cross-references to the built-in agents, Cowork, and Scout (and vice versa).
-  - Shareable via `?dt=copilot_chat` and `?dt=m365_copilot`.
-  - Tightened the wizard option copy to echo the "Microsoft 365 Copilot: what to use and when" task vocabulary — general help (brainstorm, find info, catch up on email/meetings, draft & edit docs), on-demand (multi-step job / multiple artifacts in one go), and continuous (always-on, manage & coordinate my day) — so users self-identify faster.
-  - Updated `docs/SCORING.md` and `docs/FLOWCHART.md`; extended Playwright coverage for the entry-point wizard and built-in-agents destination.
-- **Refreshed the visual identity to the Warm Charcoal Instrument** (via `/design-shotgun`): the previous near-black `#0C0F14` canvas with a single cyan-blue signal glow read as the generic AI-tool aesthetic. New system keeps IBM Plex Sans/Mono but swaps to a warm matte charcoal canvas (`#1A1714`, no blue-black) with a single restrained **teal** signal (`#17B0A7`) and no colored glows.
-  - Retokenized dark + light `:root` palettes; removed the two blue `box-shadow` glows and the blue canvas grid tint.
-  - Updated `docs/DESIGN.md` (direction, color table, light-mode note, no-glow rule, Decisions Log). All 38 Playwright tests passing.
+- **Caminho de delegação de duas perguntas substituído por um wizard de ponto de entrada** ("Onde você deve realizar esse trabalho?") que ajuda o usuário final a escolher entre Copilot Chat, agentes nativos do Microsoft 365 Copilot, Cowork e Scout a partir de padrões de trabalho em vez de nomes de produto — endereçando a dor de a Microsoft pedir ao usuário que escolha entre pontos de entrada demais.
+  - Nova primeira pergunta — **Participação**: conduzir eu mesmo e iterar vs. delegar a um agente.
+  - **Participação ativa** agora faz um desdobramento — **Tipo de tarefa**: ajuda geral (→ **Copilot Chat**) vs. tarefa especializada (→ **agentes nativos do Microsoft 365 Copilot**: Researcher, Analyst, Facilitator, Interpreter, …).
+  - **Delegar** pergunta Cadência + Alcance (→ **Cowork**, **Scout** ou ambos). O wizard usa **revelação progressiva**: cada desdobramento só aparece quando seu ramo é escolhido (expansão suave da grade, respeitando `prefers-reduced-motion`), e desdobramentos recolhidos saem da ordem de tabulação — nada de conteúdo morto acinzentado. **O Alcance agora fica atrás da Cadência** — escolher "Delegar a tarefa inteira" revela apenas a pergunta de Cadência; a pergunta de Alcance ("Até onde ele precisa alcançar?") aparece depois que uma cadência é escolhida, de modo que os dois desdobramentos de delegação não aparecem mais ao mesmo tempo.
+  - **Removido o bloco de prescreen autônomo de "experiência nativa do Microsoft 365 Copilot"** — esse destino agora é alcançado pelo wizard, eliminando a sobreposição de nomes com o Copilot Chat. O `m365_copilot` é reaproveitado como destino do wizard; o link antigo `?ft=1` ainda resolve para o mesmo card.
+  - Entrada do prescreen reformulada para **"Me ajude a encontrar o lugar certo para realizar meu trabalho."**
+  - Adicionado um bloco de recomendação `copilot_chat` ao `apa.yaml` com referências cruzadas do tipo "use X no lugar quando…" para os agentes nativos, Cowork e Scout (e vice-versa).
+  - Compartilhável via `?dt=copilot_chat` e `?dt=m365_copilot`.
+  - Textos das opções do wizard ajustados para ecoar o vocabulário de tarefas do "Microsoft 365 Copilot: o que usar e quando" — ajuda geral (brainstorm, buscar informação, colocar e-mails/reuniões em dia, redigir e editar documentos), sob demanda (trabalho de várias etapas / vários artefatos de uma vez) e contínua (sempre ativo, gerenciar e coordenar meu dia) — para que os usuários se identifiquem mais rápido.
+  - `docs/SCORING.md` e `docs/FLOWCHART.md` atualizados; cobertura do Playwright estendida para o wizard de ponto de entrada e o destino de agentes nativos.
+- **Identidade visual atualizada para o Warm Charcoal Instrument** (via `/design-shotgun`): o canvas quase preto `#0C0F14` anterior, com um único brilho azul-ciano de sinal, remetia à estética genérica de ferramenta de IA. O novo sistema mantém IBM Plex Sans/Mono, mas troca para um canvas em carvão fosco e quente (`#1A1714`, sem preto-azulado) com um único sinal **teal** contido (`#17B0A7`) e nenhum brilho colorido.
+  - Paletas `:root` escura e clara retokenizadas; removidos os dois brilhos azuis de `box-shadow` e o tom azul da grade do canvas.
+  - `docs/DESIGN.md` atualizado (direção, tabela de cores, nota de modo claro, regra de não usar brilhos, Registro de decisões). Todos os 38 testes do Playwright passando.
+
 ## 2026-07-20
 
-### Added
+### Adicionado
 
-- Added a content-analysis task option for lightweight document, chart, image, and data-analysis scenarios.
-- Added a web/uploaded-files data option for scoped web sources, PDFs, Office files, and embedded content.
+- Adicionada uma opção de tarefa de análise de conteúdo para cenários leves de documento, gráfico, imagem e análise de dados.
+- Adicionada uma opção de dados de web/arquivos enviados para fontes web delimitadas, PDFs, arquivos do Office e conteúdo incorporado.
 
-### Changed
+### Alterado
 
-- **Implemented Graphite Decision Instrument design system** across the entire application:
-  - Dark graphite canvas (`#0C0F14`) with subtle grid texture as default theme
-  - IBM Plex Sans + IBM Plex Mono typography (replacing Segoe UI / Geist Mono)
-  - Azure-cyan `#2BA8FF` accent for all signal colors, progress, and CTAs
-  - Dark-first approach: dark is default, light mode is the alternate
-  - Updated type scale: title 36px, heading 26px, subhead 20px, body 15px
-  - Refined component styling: lit-edge cards, instrument-grade score bars, surface hierarchy
-  - Maintained full WCAG AA contrast compliance
-  - All 32 Playwright tests passing
-- Updated `README.md` to reflect the current evolution of the tool: built-in Copilot use, personal-agent delegation, ways to use or build agents, current platform positioning, delegate routing, and the latest test coverage.
-- Refreshed Agent Builder guidance and scoring for current capabilities: Microsoft 365 content, scoped web, uploaded files, Teams/Outlook/People knowledge, admin-enabled Microsoft 365 Copilot connectors, code interpreter, and image generation.
-- Repositioned Agent Builder beyond SharePoint/OneDrive-only scenarios and increased scores for small-team no-code knowledge, connector-backed, web/uploaded-file, and lightweight content/data-analysis scenarios.
-- Clarified that Agent Builder remains disqualified for external audiences, custom app deployment, background/event-driven execution, direct business system integrations, custom retrieval architectures, and multi-step action workflows that submit forms or update external systems.
-- Split internal audience guidance into small-team versus broad internal deployment and clarified connector-backed business systems, direct business integrations, and custom retrieval architectures.
-- Refreshed Copilot Studio guidance and scoring for the latest agent experience, generative orchestration, event-triggered workflows, computer use, MCP tools/resources, connected/child agents, A2A integrations, Microsoft IQ, Foundry IQ preview, per-user memory preview, model selection, built-in evaluation, monitoring, agent inventory, and Copilot Credits cost considerations.
-- Increased Copilot Studio scoring for background/event-triggered agents, Dataverse/custom connector/API integration, complex-but-low-code orchestration, and AI/ML personas, while preserving Foundry as the stronger fit for custom model training, arbitrary BYO model/runtime control, high-scale code-first orchestration, and custom retrieval architecture.
-- Split data-source guidance into business-system integration (Dataverse, custom connectors, direct APIs: Copilot Studio strongest) and custom retrieval architecture (custom RAG, Azure AI Search, private indexes, Foundry IQ, engineering-managed retrieval: Foundry strongest). The scored matrix now has 1,920 answer combinations.
-- Refreshed Microsoft Foundry guidance and scoring to reflect current Foundry Agent Service capabilities: prompt-based agents, hosted code agents, stable managed endpoints, publishing to Microsoft 365 Copilot and Teams, custom app/service integration, Foundry IQ, toolboxes, MCP, agent identities, RBAC, private networking, tracing, evaluation, optimization, monitoring, and Azure-scale production controls.
-- Increased Foundry scoring for custom app deployment, multi-surface deployment, Microsoft 365 Copilot/Teams publishing, developer-controlled content/data analysis, and Microsoft 365/web/file grounding, while keeping Foundry strongest for custom retrieval architecture and full-code production agents.
-- Removed over-specific Foundry memory-positioning language and replaced it with more conservative production-runtime guidance.
-- Refreshed Microsoft 365 Copilot guidance to cover Copilot Chat, Copilot Search, app-native Copilot experiences, Copilot Pages and Notebooks, and Microsoft-built agents as the built-in productivity layer for licensed internal users.
-- Added Copilot Search and Copilot Pages/Notebooks to the Microsoft 365 Copilot recommendation card, updated Researcher to use the official Learn page, and clarified Facilitator and Interpreter capabilities.
-- Added Cowork and Scout as their own cards on the Explore page.
-- Updated the recommendation-card accordion label so Microsoft 365 Copilot can show built-in capabilities alongside first-party agents.
-- Moved the "Use agents" home-page row above the "Build agents" row, with Microsoft 365 Copilot, Cowork, and Scout shown before Agent Builder, Copilot Studio, and Microsoft Foundry.
-- Reorganized the Explore page into a three-card desktop grid so the six cards form two rows of three.
-- Moved README, Changelog, Flowchart, and Scoring links from the header hamburger menu into a footer documentation row beneath the "Created by" credit.
-- Corrected the Explore starting-point copy to use the approved "ways to use or build agents" decision model.
-- Grouped the Explore page into "Use agents" and "Build agents" sections so the page reflects the current decision model instead of a flat gallery.
-- Replaced the design system with the Graphite Decision Instrument direction: dark graphite surfaces, IBM Plex typography, Azure-cyan signal color, decision rails, evidence panels, and stricter anti-slop rules.
-- Updated `docs/SCORING.md` and `docs/FLOWCHART.md` to match the current scoring matrix and recommendation guidance.
+- **Design system Graphite Decision Instrument implementado** em toda a aplicação:
+  - Canvas em grafite escuro (`#0C0F14`) com textura sutil de grade como tema padrão
+  - Tipografia IBM Plex Sans + IBM Plex Mono (substituindo Segoe UI / Geist Mono)
+  - Accent azul-ciano `#2BA8FF` para todas as cores de sinal, progresso e CTAs
+  - Abordagem dark-first: escuro é o padrão, claro é o alternativo
+  - Escala tipográfica atualizada: title 36px, heading 26px, subhead 20px, body 15px
+  - Estilo de componentes refinado: cards com arestas iluminadas, barras de pontuação de nível instrumento, hierarquia de superfícies
+  - Conformidade total de contraste WCAG AA mantida
+  - Todos os 32 testes do Playwright passando
+- `README.md` atualizado para refletir a evolução da ferramenta: uso do Copilot nativo, delegação a agente pessoal, formas de usar ou criar agentes, posicionamento atual das plataformas, roteamento de delegação e a cobertura de testes mais recente.
+- Orientação e pontuação do Agent Builder atualizadas para os recursos atuais: conteúdo do Microsoft 365, web delimitada, arquivos enviados, conhecimento de Teams/Outlook/Pessoas, conectores do Microsoft 365 Copilot habilitados pelo administrador, interpretador de código e geração de imagens.
+- Agent Builder reposicionado além dos cenários restritos a SharePoint/OneDrive, com aumento das pontuações para cenários no-code de conhecimento em times pequenos, apoiados em conectores, de web/arquivos enviados e de conteúdo/análise de dados leve.
+- Esclarecido que o Agent Builder continua desqualificado para públicos externos, implantação em app personalizado, execução em segundo plano/orientada a eventos, integrações diretas com sistemas de negócio, arquiteturas de recuperação personalizadas e fluxos de ação de várias etapas que enviam formulários ou atualizam sistemas externos.
+- Orientação de público interno dividida entre time pequeno e implantação interna ampla, com esclarecimentos sobre sistemas de negócio via conectores, integrações diretas e arquiteturas de recuperação personalizadas.
+- Orientação e pontuação do Copilot Studio atualizadas para a experiência de agente mais recente, orquestração generativa, fluxos disparados por evento, computer use, ferramentas/recursos MCP, agentes conectados/filhos, integrações A2A, Microsoft IQ, preview do Foundry IQ, preview de memória por usuário, seleção de modelos, avaliação nativa, monitoramento, inventário de agentes e considerações de custo dos Copilot Credits.
+- Pontuação do Copilot Studio aumentada para agentes em segundo plano/disparados por evento, integração com Dataverse/conectores personalizados/APIs, orquestração complexa mas low-code e perfis de IA/ML, preservando o Foundry como encaixe mais forte para treinamento de modelos personalizados, controle arbitrário de modelo/runtime próprio, orquestração code-first em larga escala e arquitetura de recuperação personalizada.
+- Orientação de fontes de dados dividida entre integração com sistemas de negócio (Dataverse, conectores personalizados, APIs diretas: Copilot Studio mais forte) e arquitetura de recuperação personalizada (RAG personalizado, Azure AI Search, índices privados, Foundry IQ, recuperação mantida pela engenharia: Foundry mais forte). A matriz pontuada passou a ter 1.920 combinações de respostas.
+- Orientação e pontuação do Microsoft Foundry atualizadas para refletir os recursos atuais do Foundry Agent Service: agentes baseados em prompt, agentes de código hospedados, endpoints gerenciados estáveis, publicação no Microsoft 365 Copilot e no Teams, integração com apps/serviços personalizados, Foundry IQ, toolboxes, MCP, identidades de agente, RBAC, rede privada, tracing, avaliação, otimização, monitoramento e controles de produção em escala Azure.
+- Pontuação do Foundry aumentada para implantação em app personalizado, implantação em múltiplas superfícies, publicação no Microsoft 365 Copilot/Teams, análise de conteúdo/dados controlada pelo desenvolvedor e fundamentação em Microsoft 365/web/arquivos, mantendo o Foundry como mais forte para arquitetura de recuperação personalizada e agentes de produção full-code.
+- Removida a linguagem excessivamente específica de posicionamento de memória do Foundry, substituída por orientação mais conservadora de runtime de produção.
+- Orientação do Microsoft 365 Copilot atualizada para cobrir Copilot Chat, Copilot Search, experiências de Copilot nativas dos apps, Copilot Pages e Notebooks, e agentes criados pela Microsoft como camada nativa de produtividade para usuários internos licenciados.
+- Copilot Search e Copilot Pages/Notebooks adicionados ao card de recomendação do Microsoft 365 Copilot, Researcher atualizado para usar a página oficial do Learn, e recursos do Facilitator e do Interpreter esclarecidos.
+- Cowork e Scout adicionados como cards próprios na página Explorar.
+- Rótulo do acordeão do card de recomendação atualizado para que o Microsoft 365 Copilot possa exibir recursos nativos ao lado dos agentes nativos.
+- Linha "Usar agentes" da página inicial movida para cima da linha "Criar agentes", com Microsoft 365 Copilot, Cowork e Scout exibidos antes de Agent Builder, Copilot Studio e Microsoft Foundry.
+- Página Explorar reorganizada em uma grade de três cards no desktop, para que os seis cards formem duas linhas de três.
+- Links de README, Changelog, Flowchart e Scoring movidos do menu hambúrguer do cabeçalho para uma linha de documentação no rodapé, abaixo do crédito de autoria.
+- Texto de ponto de partida da tela Explorar corrigido para usar o modelo de decisão aprovado, "formas de usar ou criar agentes".
+- Página Explorar agrupada em seções "Usar agentes" e "Criar agentes", para que a página reflita o modelo de decisão atual em vez de uma galeria plana.
+- Design system substituído pela direção Graphite Decision Instrument: superfícies em grafite escuro, tipografia IBM Plex, cor de sinal azul-ciano, trilhos de decisão, painéis de evidência e regras anti-slop mais rígidas.
+- `docs/SCORING.md` e `docs/FLOWCHART.md` atualizados para corresponder à matriz de pontuação e à orientação de recomendação atuais.
 
 ## 2026-07-14
 
-### Added
+### Adicionado
 
-- Added a separate Cowork and Scout delegate group on the landing page.
-- Added short captions beneath all platform and delegate tiles.
+- Adicionado um grupo separado de delegação com Cowork e Scout na página inicial.
+- Adicionadas legendas curtas abaixo de todos os blocos de plataforma e de delegação.
 
-### Changed
+### Alterado
 
-- Centered delegate cards beneath the four build platforms under an "Or delegate" divider.
-- Renamed `LICENSE.md` to `LICENSE`.
+- Cards de delegação centralizados abaixo das quatro plataformas de construção, sob um divisor "Ou delegue".
+- `LICENSE.md` renomeado para `LICENSE`.
 
 ## 2026-07-13
 
-### Added
+### Adicionado
 
-- Added Copilot Cowork and Microsoft Scout as delegate destinations in `apa.yaml`, with recommendation content and imagery.
-- Added a prescreen path for users who want a ready-made agent to do work for them.
-- Added cadence/reach routing for Cowork versus Scout: on-demand Microsoft 365 work routes to Cowork; continuous or cross-environment work routes to Scout; undecided signals show both.
-- Added shareable delegate result URLs via `dt=cowork|scout|both`.
-- Added end-to-end tests for delegate path routing and URL loading.
+- Copilot Cowork e Microsoft Scout adicionados como destinos de delegação no `apa.yaml`, com conteúdo de recomendação e imagens.
+- Adicionado um caminho de prescreen para usuários que querem um agente pronto que faça o trabalho por eles.
+- Adicionado roteamento de cadência/alcance entre Cowork e Scout: trabalho sob demanda no Microsoft 365 vai para o Cowork; trabalho contínuo ou multiambiente vai para o Scout; sinais indefinidos mostram os dois.
+- Adicionadas URLs compartilháveis de resultado de delegação via `dt=cowork|scout|both`.
+- Adicionados testes end-to-end para o roteamento do caminho de delegação e o carregamento por URL.
 
-### Changed
+### Alterado
 
-- Documented the delegate path in `docs/CHANGELOG.md`, `docs/FLOWCHART.md`, and `docs/SCORING.md`.
+- Caminho de delegação documentado em `docs/CHANGELOG.md`, `docs/FLOWCHART.md` e `docs/SCORING.md`.
 
 ## 2026-06-10
 
-### Added
+### Adicionado
 
-- Added `.github/improvements.md`.
+- Adicionado `.github/improvements.md`.
 
-### Changed
+### Alterado
 
-- Elevated Copilot Cowork across Microsoft 365 Copilot surfaces.
-- Added a dedicated Cowork spotlight on the Microsoft 365 Copilot recommendation card.
-- Updated Microsoft 365 Copilot recommendation, exploration, and start-page copy to lead with Cowork and first-party agents.
+- Copilot Cowork elevado nas superfícies do Microsoft 365 Copilot.
+- Adicionado um destaque dedicado ao Cowork no card de recomendação do Microsoft 365 Copilot.
+- Textos de recomendação, exploração e página inicial do Microsoft 365 Copilot atualizados para começar por Cowork e agentes nativos.
 
 ## 2026-05-09
 
-### Changed
+### Alterado
 
-- Bumped `fast-uri` from 3.1.0 to 3.1.2 in `package-lock.json`.
+- `fast-uri` atualizado de 3.1.0 para 3.1.2 no `package-lock.json`.
 
 ## 2026-04-30
 
-### Changed
+### Alterado
 
-- Updated recommendation and assessment text based on feedback.
+- Textos de recomendação e de avaliação atualizados com base em feedback.
 
 ## 2026-04-24
 
-### Added
+### Adicionado
 
-- Added the repository license.
-- Added bug report and feature request issue templates.
+- Adicionada a licença do repositório.
+- Adicionados templates de issue para relato de bug e pedido de funcionalidade.
 
-### Changed
+### Alterado
 
-- Updated issue templates.
+- Templates de issue atualizados.
 
 ## 2026-04-21
 
-### Changed
+### Alterado
 
-- Auto-expanded Microsoft 365 Copilot accordions on the fast-track recommendation path.
-- Updated Microsoft 365 Copilot recommendation content.
-- Adjusted Cowork information in the Microsoft 365 Copilot surfaces.
+- Acordeões do Microsoft 365 Copilot expandidos automaticamente no caminho de recomendação fast-track.
+- Conteúdo de recomendação do Microsoft 365 Copilot atualizado.
+- Informações do Cowork ajustadas nas superfícies do Microsoft 365 Copilot.
 
-### Fixed
+### Corrigido
 
-- Fixed README formatting.
+- Formatação do README corrigida.
 
 ## 2026-04-20
 
-### Added
+### Adicionado
 
-- Added a hamburger documentation menu in the header with links to README, Changelog, Flowchart, and Scoring docs.
-- Added `.github/copilot-instructions.md`.
+- Adicionado um menu hambúrguer de documentação no cabeçalho, com links para README, Changelog, Flowchart e Scoring.
+- Adicionado `.github/copilot-instructions.md`.
 
-### Changed
+### Alterado
 
-- Updated README to reflect v2 features and current state.
-- Updated changelog structure.
-- Updated the landing page.
-- Refreshed the prescreen UI with icons, colored accents, and updated typography.
+- README atualizado para refletir os recursos da v2 e o estado atual.
+- Estrutura do changelog atualizada.
+- Página inicial atualizada.
+- Interface do prescreen renovada com ícones, acentos coloridos e tipografia atualizada.
 
-### Removed
+### Removido
 
-- Removed `CLAUDE.md` after moving relevant instructions to `.github/copilot-instructions.md`.
+- `CLAUDE.md` removido após as instruções relevantes serem movidas para `.github/copilot-instructions.md`.
 
 ## 2026-04-10
 
-### Changed
+### Alterado
 
-- Removed the Agent Builder hard rule for connector-backed business systems (`q3b`), reflecting limited but non-zero connector capability.
-- Updated Agent Builder scoring for mixed Microsoft 365 plus connector-backed systems (`q3d`).
-- Updated `docs/FLOWCHART.md` and `docs/SCORING.md` for the scoring changes.
+- Removida a regra rígida do Agent Builder para sistemas de negócio via conectores (`q3b`), refletindo uma capacidade de conectores limitada, mas não nula.
+- Pontuação do Agent Builder atualizada para a combinação de Microsoft 365 e sistemas via conectores (`q3d`).
+- `docs/FLOWCHART.md` e `docs/SCORING.md` atualizados para as mudanças de pontuação.
 
-### Removed
+### Removido
 
-- Removed the duplicate root `CHANGELOG.md`; `docs/CHANGELOG.md` became the single changelog source.
+- Removido o `CHANGELOG.md` duplicado da raiz; o `docs/CHANGELOG.md` passou a ser a única fonte do changelog.
 
 ## 2026-04-08
 
-### Added
+### Adicionado
 
-- Added Clarity analytics.
-- Added documentation updates for scoring and flowchart behavior.
+- Adicionado o Clarity analytics.
+- Adicionadas atualizações de documentação para o comportamento de pontuação e do flowchart.
 
-### Changed
+### Alterado
 
-- Updated scoring and result logic.
-- Moved the share-results button into the recommendation flow.
-- Updated `apa.yaml`, `assets/apa.js`, `assets/apa.css`, `index.html`, and Playwright tests for the revised logic.
+- Lógica de pontuação e de resultado atualizada.
+- Botão de compartilhar resultados movido para dentro do fluxo de recomendação.
+- `apa.yaml`, `assets/apa.js`, `assets/apa.css`, `index.html` e os testes do Playwright atualizados para a lógica revisada.
 
 ## 2026-04-07
 
-### Added
+### Adicionado
 
-- Added the initial Agent Platform Advisor v2 static web app: `apa.yaml`, `assets/apa.css`, `assets/apa.js`, and `index.html`.
-- Added platform imagery for Agent Builder, Microsoft 365 Copilot, Copilot Studio, and Microsoft Foundry.
-- Added initial README and changelog files.
-- Added Microsoft-required `SECURITY.md`.
-- Added design, scoring, and flowchart docs under `docs/`.
-- Added Playwright configuration and end-to-end tests for fast-track, sharing, shared links, temporal changes, and wizard completion.
-- Added package manifest and lockfile.
-- Added favicon and image fixes.
-- Added a resources CTA button.
+- Adicionada a aplicação web estática inicial do Agent Platform Advisor v2: `apa.yaml`, `assets/apa.css`, `assets/apa.js` e `index.html`.
+- Adicionadas as imagens de plataforma para Agent Builder, Microsoft 365 Copilot, Copilot Studio e Microsoft Foundry.
+- Adicionados os arquivos iniciais de README e changelog.
+- Adicionado o `SECURITY.md` exigido pela Microsoft.
+- Adicionados os documentos de design, pontuação e flowchart em `docs/`.
+- Adicionadas a configuração do Playwright e os testes end-to-end para fast-track, compartilhamento, links compartilhados, mudanças temporais e conclusão do wizard.
+- Adicionados o manifesto de pacote e o lockfile.
+- Adicionadas correções de favicon e de imagens.
+- Adicionado um botão de CTA de recursos.
 
-### Changed
+### Alterado
 
-- Refined initial UI, CSS, and app behavior.
-- Updated `.gitignore`.
-- Updated README and app content after the initial import.
+- Interface, CSS e comportamento iniciais da aplicação refinados.
+- `.gitignore` atualizado.
+- README e conteúdo da aplicação atualizados após a importação inicial.
 
-### Removed
+### Removido
 
-- Removed temporary `TODOS.md`.
+- Removido o `TODOS.md` temporário.

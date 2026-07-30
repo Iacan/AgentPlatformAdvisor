@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
    <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
@@ -20,7 +20,7 @@
     <meta property="og:image:type" content="image/png" />
     <meta
       property="og:image:alt"
-      content="The Agent Platform Advisor start page, showing the six Microsoft agent platforms it chooses between"
+      content="Página inicial do Agent Platform Advisor, mostrando as plataformas de agentes da Microsoft entre as quais ele escolhe"
     />
     <meta name="twitter:card" content="summary_large_image" />
     <meta
@@ -35,7 +35,7 @@
     <meta
       name="description"
       property="og:description"
-      content="Answer a few questions about what you're trying to do, and we'll recommend the best agent platform for your scenario."
+      content="Responda algumas perguntas sobre o que você quer fazer e recomendamos a melhor plataforma de agentes para o seu cenário."
     />
     <meta
       name="url"
@@ -48,10 +48,10 @@
       property="og:site_name"
       content="Agent Platform Advisor"
     />
-    <meta name="locale" property="og:locale" content="en_US" />
-    <meta name="author" property="og:author" content="Robert Standefer" />
+    <meta name="locale" property="og:locale" content="pt_BR" />
+    <meta name="author" property="og:author" content="Iacan Ramos" />
     <meta name="publish_date" property="og:publish_date" content="2026-07-24" />
-    <meta name="description" content="Answer a few questions about what you're trying to do, and we'll recommend the best agent platform for your scenario." />
+    <meta name="description" content="Responda algumas perguntas sobre o que você quer fazer e recomendamos a melhor plataforma de agentes para o seu cenário." />
   <title>Agent Platform Advisor</title>
   <link rel="icon" type="image/svg+xml" href="images/favicon.svg">
   <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png">
@@ -86,11 +86,11 @@
                 <path d="M21 15h2"/>
               </svg>
             </div>
-            <a class="logo-text" id="logo-home-link" href="#" aria-label="Go to Get Started page">Agent Platform Advisor</a>
+            <a class="logo-text" id="logo-home-link" href="#" aria-label="Ir para a página inicial">Agent Platform Advisor</a>
           </div>
           <div id="progress-bar"><!-- rendered by JS --></div>
           <div class="header-actions">
-            <button class="theme-toggle" id="theme-toggle" aria-label="Switch color theme">
+            <button class="theme-toggle" id="theme-toggle" aria-label="Alternar tema de cores">
               <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
               </svg>
@@ -108,16 +108,16 @@
         <div id="loading-section"  class="fade-in">
           <div class="status-section">
             <div class="status-icon">⏳</div>
-            <p class="status-text">Loading advisor data…</p>
+            <p class="status-text">Carregando os dados do advisor…</p>
           </div>
         </div>
         <div id="error-section"    class="fade-in hidden">
           <div class="card">
             <div class="card-content error-content">
               <div class="status-icon">⚠️</div>
-              <h2 class="error-heading">Unable to load advisor</h2>
+              <h2 class="error-heading">Não foi possível carregar o advisor</h2>
               <p id="error-message" class="error-message"></p>
-              <button class="btn btn-primary" onclick="boot()">Try Again</button>
+              <button class="btn btn-primary" onclick="boot()">Tentar novamente</button>
             </div>
           </div>
         </div>
@@ -139,80 +139,80 @@
       Agent Platform Advisor
     </h1>
     <p class="welcome-description">
-      Answer a few questions about what you want from agents, and we'll recommend the best platform for your agent needs.
+      Responda algumas perguntas sobre o que você espera dos agentes e recomendamos a melhor plataforma para a sua necessidade.
     </p>
     <p class="platform-preview-intro">
-      Here's what the advisor chooses between — select <strong>Get Started</strong> below to find your fit.
+      Estas são as opções que o advisor considera — clique em <strong>Começar</strong> abaixo para encontrar a sua.
     </p>
     <div class="delegate-group">
-      <div class="delegate-group-label">Use agents</div>
+      <div class="delegate-group-label">Usar agentes</div>
       <div class="platform-grid platform-grid--delegate">
         <div class="platform-preview">
           <div class="platform-preview-icon">
             <img src="images/m365-copilot-logo.png" alt="Microsoft 365 Copilot" class="platform-preview-img">
           </div>
           <h3 class="platform-preview-title">Microsoft 365 Copilot</h3>
-          <p class="platform-preview-desc">Get answers, draft content, and surface insights in seconds with secure AI chat</p>
+          <p class="platform-preview-desc">Obtenha respostas, rascunhe conteúdo e revele insights em segundos com um chat de IA seguro</p>
         </div>
         <div class="platform-preview">
           <div class="platform-preview-icon">
             <img src="images/cowork.png" alt="Cowork" class="platform-preview-img">
           </div>
           <h3 class="platform-preview-title">Cowork</h3>
-          <p class="platform-preview-desc">Describe the outcome you want, grounded in the work in your emails, meetings, messages, files, and data.</p>
+          <p class="platform-preview-desc">Descreva o resultado que você quer, com base no trabalho nos seus e-mails, reuniões, mensagens, arquivos e dados.</p>
         </div>
         <div class="platform-preview">
           <div class="platform-preview-icon">
             <img src="images/scout.svg" alt="Scout" class="platform-preview-img">
           </div>
           <h3 class="platform-preview-title">Scout</h3>
-          <p class="platform-preview-desc">Use always-on agents that work autonomously, with their own identity, grounded in your enterprise data </p>
+          <p class="platform-preview-desc">Use agentes sempre ativos que trabalham de forma autônoma, com identidade própria, baseados nos dados da sua empresa</p>
         </div>
       </div>
     </div>
-    <div class="delegate-group-label">Build agents</div>
+    <div class="delegate-group-label">Criar agentes</div>
     <div class="platform-grid">
       <div class="platform-preview">
         <div class="platform-preview-icon">
           <img src="images/copilot.png" alt="Agent Builder" class="platform-preview-img">
         </div>
         <h3 class="platform-preview-title">Agent Builder</h3>
-        <p class="platform-preview-desc">Quickly build declarative agents by using natural language</p>
+        <p class="platform-preview-desc">Crie agentes declarativos rapidamente usando linguagem natural</p>
       </div>
       <div class="platform-preview">
         <div class="platform-preview-icon">
           <img src="images/copilot-studio.png" alt="Copilot Studio" class="platform-preview-img">
         </div>
         <h3 class="platform-preview-title">Copilot Studio</h3>
-        <p class="platform-preview-desc">Create custom agents with natural language or a graphical interface</p>
+        <p class="platform-preview-desc">Crie agentes personalizados com linguagem natural ou uma interface gráfica</p>
       </div>
       <div class="platform-preview">
         <div class="platform-preview-icon">
           <img src="images/foundry.svg" alt="Microsoft Foundry" class="platform-preview-img">
         </div>
         <h3 class="platform-preview-title">Microsoft Foundry</h3>
-        <p class="platform-preview-desc">Pro-code platform to build, ground, and govern AI apps and agents at scale</p>
+        <p class="platform-preview-desc">Plataforma pro-code para criar, fundamentar e governar apps e agentes de IA em escala</p>
       </div>
       <div class="platform-preview">
         <div class="platform-preview-icon">
           <img src="images/databricks.svg" alt="Databricks Agent Bricks" class="platform-preview-img">
         </div>
         <h3 class="platform-preview-title">Databricks Agent Bricks</h3>
-        <p class="platform-preview-desc">Build and govern agents on your lakehouse, grounded in the data your platform already controls</p>
+        <p class="platform-preview-desc">Crie e governe agentes no seu lakehouse, baseados nos dados que a sua plataforma já controla</p>
       </div>
     </div>
     <button class="btn btn-primary btn-lg" id="start-btn">
-      Get Started <span class="icon icon-chevron-right"></span>
+      Começar <span class="icon icon-chevron-right"></span>
     </button>
   </div>
 </div></div>
         <div id="prescreen-section" class="fade-in hidden"><div class="card">
   <div class="card-content card-content--centered">
     <h2 class="prescreen-heading">
-      Where would you like to begin?
+      Por onde você quer começar?
     </h2>
     <p class="prescreen-description">
-      Choose a starting point. This helps us tailor the best recommendation for you.
+      Escolha um ponto de partida. Isso nos ajuda a montar a melhor recomendação para você.
     </p>
     <div class="options-list">
       <div class="option-card prescreen-option prescreen-option--delegate" id="prescreen-delegate" role="button" tabindex="0" onclick="handlePrescreenDelegate()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handlePrescreenDelegate()}">
@@ -221,10 +221,10 @@
         </div>
         <div class="option-content">
           <div class="option-label">
-            Help me find the right place to get work done
+            Me ajude a encontrar o lugar certo para realizar meu trabalho
           </div>
           <div class="option-description">
-            Answer a few quick questions about how you want the work to happen, and we'll point you to the best place to do it
+            Responda algumas perguntas rápidas sobre como você quer que o trabalho aconteça e indicamos o melhor lugar para fazê-lo
           </div>
         </div>
       </div>
@@ -234,10 +234,10 @@
         </div>
         <div class="option-content">
           <div class="option-label">
-            I'd like to build a custom agent with specific requirements
+            Quero criar um agente personalizado com requisitos específicos
           </div>
           <div class="option-description">
-            Answer a few quick questions so we can recommend the right agent approach for your scenario
+            Responda algumas perguntas rápidas para recomendarmos a abordagem de agente certa para o seu cenário
           </div>
         </div>
       </div>
@@ -247,10 +247,10 @@
         </div>
         <div class="option-content">
           <div class="option-label">
-            I'm exploring what's possible with agents
+            Estou explorando o que é possível fazer com agentes
           </div>
           <div class="option-description">
-            Browse the ways to use or build agents and learn which scenarios each one is designed for
+            Conheça as formas de usar ou criar agentes e para quais cenários cada uma foi projetada
           </div>
         </div>
       </div>
@@ -259,33 +259,33 @@
 </div></div>
         <div id="delegate-section" class="fade-in hidden"><div class="card">
   <div class="card-content card-content--centered">
-    <a href="#" class="exploration-back" onclick="showSection('prescreen-section');pushState('prescreen-section');return false">← Back to options</a>
-    <h2 class="prescreen-heading">Where should you get this work done?</h2>
+    <a href="#" class="exploration-back" onclick="showSection('prescreen-section');pushState('prescreen-section');return false">← Voltar às opções</a>
+    <h2 class="prescreen-heading">Onde você deve realizar esse trabalho?</h2>
     <p class="prescreen-description">
-      Microsoft 365 Copilot, Cowork, and Scout are all places to get work done. Answer a couple of
-      quick questions and we'll point you to the best entry point — and where to start inside it.
+      Microsoft 365 Copilot, Cowork e Scout são todos lugares para realizar trabalho. Responda a duas
+      perguntas rápidas e indicamos o melhor ponto de entrada — e por onde começar dentro dele.
     </p>
     <div class="delegate-question">
-      <h3 class="delegate-question-title">How hands-on do you want to be?</h3>
+      <h3 class="delegate-question-title">Quão participativo você quer ser?</h3>
       <div class="options-list">
         <div class="option-card delegate-option" data-group="involvement" data-value="interactive" role="button" tabindex="0" onclick="selectDelegateOption(this,'involvement','interactive')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectDelegateOption(this,'involvement','interactive')}">
-          <div class="option-content"><div class="option-label">I'll ask questions and work through it myself</div></div>
+          <div class="option-content"><div class="option-label">Vou fazer perguntas e conduzir o trabalho eu mesmo</div></div>
         </div>
         <div class="option-card delegate-option" data-group="involvement" data-value="delegate" role="button" tabindex="0" onclick="selectDelegateOption(this,'involvement','delegate')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectDelegateOption(this,'involvement','delegate')}">
-          <div class="option-content"><div class="option-label">Hand off the whole task and give me the result</div></div>
+          <div class="option-content"><div class="option-label">Delegar a tarefa inteira e receber o resultado pronto</div></div>
         </div>
       </div>
     </div>
     <div id="interactive-followup" class="delegate-followup" aria-hidden="true">
     <div class="delegate-followup-inner">
     <div class="delegate-question">
-      <h3 class="delegate-question-title">What kind of task is it?</h3>
+      <h3 class="delegate-question-title">Que tipo de tarefa é essa?</h3>
       <div class="options-list">
         <div class="option-card delegate-option" data-group="taskType" data-value="general" role="button" tabindex="0" onclick="selectDelegateOption(this,'taskType','general')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectDelegateOption(this,'taskType','general')}">
-          <div class="option-content"><div class="option-label">General help — brainstorm, find info, catch up on email or meetings, draft and edit documents</div></div>
+          <div class="option-content"><div class="option-label">Ajuda geral — brainstorm, buscar informação, colocar e-mails ou reuniões em dia, redigir e editar documentos</div></div>
         </div>
         <div class="option-card delegate-option" data-group="taskType" data-value="specialized" role="button" tabindex="0" onclick="selectDelegateOption(this,'taskType','specialized')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectDelegateOption(this,'taskType','specialized')}">
-          <div class="option-content"><div class="option-label">A specialized task — deep research, data analysis, meeting facilitation, or translation</div></div>
+          <div class="option-content"><div class="option-label">Uma tarefa especializada — pesquisa aprofundada, análise de dados, facilitação de reuniões ou tradução</div></div>
         </div>
       </div>
     </div>
@@ -294,16 +294,16 @@
     <div id="delegate-followup" class="delegate-followup" aria-hidden="true">
     <div class="delegate-followup-inner">
     <div class="delegate-question">
-      <h3 class="delegate-question-title">Should it finish and hand back, or keep working over time?</h3>
+      <h3 class="delegate-question-title">Ele deve concluir e devolver, ou continuar trabalhando ao longo do tempo?</h3>
       <div class="options-list">
         <div class="option-card delegate-option" data-group="cadence" data-value="ondemand" role="button" tabindex="0" onclick="selectDelegateOption(this,'cadence','ondemand')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectDelegateOption(this,'cadence','ondemand')}">
-          <div class="option-content"><div class="option-label">Finish a multi-step job in one go — several artifacts, or a process across systems — and hand me the result</div></div>
+          <div class="option-content"><div class="option-label">Concluir um trabalho de várias etapas de uma vez — vários artefatos ou um processo entre sistemas — e me entregar o resultado</div></div>
         </div>
         <div class="option-card delegate-option" data-group="cadence" data-value="continuous" role="button" tabindex="0" onclick="selectDelegateOption(this,'cadence','continuous')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectDelegateOption(this,'cadence','continuous')}">
-          <div class="option-content"><div class="option-label">Stay always-on — manage and coordinate my day, following up and acting over time</div></div>
+          <div class="option-content"><div class="option-label">Ficar sempre ativo — gerenciar e coordenar o meu dia, acompanhando e agindo ao longo do tempo</div></div>
         </div>
         <div class="option-card delegate-option" data-group="cadence" data-value="unsure" role="button" tabindex="0" onclick="selectDelegateOption(this,'cadence','unsure')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectDelegateOption(this,'cadence','unsure')}">
-          <div class="option-content"><div class="option-label">Not sure yet</div></div>
+          <div class="option-content"><div class="option-label">Ainda não sei</div></div>
         </div>
       </div>
     </div>
@@ -312,16 +312,16 @@
     <div id="reach-followup" class="delegate-followup" aria-hidden="true">
     <div class="delegate-followup-inner">
     <div class="delegate-question">
-      <h3 class="delegate-question-title">Where does it need to reach?</h3>
+      <h3 class="delegate-question-title">Até onde ele precisa alcançar?</h3>
       <div class="options-list">
         <div class="option-card delegate-option" data-group="reach" data-value="m365" role="button" tabindex="0" onclick="selectDelegateOption(this,'reach','m365')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectDelegateOption(this,'reach','m365')}">
-          <div class="option-content"><div class="option-label">Inside Microsoft 365 — email, meetings, files, Teams</div></div>
+          <div class="option-content"><div class="option-label">Dentro do Microsoft 365 — e-mail, reuniões, arquivos, Teams</div></div>
         </div>
         <div class="option-card delegate-option" data-group="reach" data-value="cross" role="button" tabindex="0" onclick="selectDelegateOption(this,'reach','cross')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectDelegateOption(this,'reach','cross')}">
-          <div class="option-content"><div class="option-label">Also my desktop, browser, local files, and command line</div></div>
+          <div class="option-content"><div class="option-label">Também meu desktop, navegador, arquivos locais e linha de comando</div></div>
         </div>
         <div class="option-card delegate-option" data-group="reach" data-value="unsure" role="button" tabindex="0" onclick="selectDelegateOption(this,'reach','unsure')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectDelegateOption(this,'reach','unsure')}">
-          <div class="option-content"><div class="option-label">Not sure yet</div></div>
+          <div class="option-content"><div class="option-label">Ainda não sei</div></div>
         </div>
       </div>
     </div>
@@ -329,20 +329,20 @@
     </div>
     <div class="center assessment-nav">
       <button class="btn btn-primary" id="delegate-next-btn" disabled onclick="finishDelegate()">
-        See recommendation <span class="icon icon-chevron-right"></span>
+        Ver recomendação <span class="icon icon-chevron-right"></span>
       </button>
     </div>
   </div>
 </div></div>
         <div id="exploration-section" class="fade-in hidden"><div class="card">
   <div class="card-content card-content--centered">
-    <a href="#" class="exploration-back" onclick="showSection('prescreen-section');pushState('prescreen-section');return false">← Back to options</a>
-    <h2 class="welcome-heading" style="font-size:2rem">Explore ways to use or build agents</h2>
-    <p class="welcome-description">Compare available agents and platforms for building your own.</p>
+    <a href="#" class="exploration-back" onclick="showSection('prescreen-section');pushState('prescreen-section');return false">← Voltar às opções</a>
+    <h2 class="welcome-heading" style="font-size:2rem">Explore formas de usar ou criar agentes</h2>
+    <p class="welcome-description">Compare os agentes disponíveis e as plataformas para criar os seus.</p>
     <div class="exploration-groups" id="exploration-groups"></div>
     <div class="exploration-cta">
-      <h3 class="exploration-cta-heading">Not sure which fits? Let the assessment guide you</h3>
-      <button class="btn btn-primary btn-lg" onclick="handlePrescreenNo()">Start the Assessment →</button>
+      <h3 class="exploration-cta-heading">Não sabe qual escolher? Deixe a avaliação te guiar</h3>
+      <button class="btn btn-primary btn-lg" onclick="handlePrescreenNo()">Iniciar a avaliação →</button>
     </div>
   </div>
 </div></div>
@@ -354,21 +354,21 @@
     <div class="options-list" id="options-list"></div>
     <div class="center assessment-nav">
       <button class="btn btn-ghost" id="prev-btn">
-        <span class="icon icon-chevron-left"></span> Back
+        <span class="icon icon-chevron-left"></span> Voltar
       </button>
       <button class="btn btn-primary" id="next-btn" disabled>
-        Next <span class="icon icon-chevron-right"></span>
+        Avançar <span class="icon icon-chevron-right"></span>
       </button>
     </div>
   </div>
 </div></div>
         <div id="recommendation-section" class="fade-in hidden">
           <nav id="rec-nav" class="rec-nav" style="display:none">
-            <a href="javascript:void(0)" onclick="document.getElementById('rec-primary-card').scrollIntoView({behavior:'smooth',block:'start'})">Recommendation</a>
+            <a href="javascript:void(0)" onclick="document.getElementById('rec-primary-card').scrollIntoView({behavior:'smooth',block:'start'})">Recomendação</a>
             <span class="rec-nav-sep">·</span>
-            <a href="javascript:void(0)" id="rec-nav-also" style="display:none" onclick="document.getElementById('rec-second-card').scrollIntoView({behavior:'smooth',block:'start'})">Also Consider</a>
+            <a href="javascript:void(0)" id="rec-nav-also" style="display:none" onclick="document.getElementById('rec-second-card').scrollIntoView({behavior:'smooth',block:'start'})">Considere também</a>
             <span class="rec-nav-sep" id="rec-nav-also-sep" style="display:none">·</span>
-            <a href="javascript:void(0)" id="rec-nav-scores" onclick="document.getElementById('rec-score-comparison').scrollIntoView({behavior:'smooth',block:'start'})">Score Breakdown</a>
+            <a href="javascript:void(0)" id="rec-nav-scores" onclick="document.getElementById('rec-score-comparison').scrollIntoView({behavior:'smooth',block:'start'})">Detalhamento da pontuação</a>
           </nav>
           <div id="rec-cross-notes" class="cross-notes hidden"></div>
           <div id="rec-primary-card"></div>
@@ -377,30 +377,30 @@
           <div id="rec-second-card"></div>
           <div class="center">
             <button id="rec-score-toggle" class="btn btn-ghost score-toggle hidden" onclick="toggleScoreComparison()">
-              See how we scored this <span class="score-toggle-chevron">▾</span>
+              Veja como pontuamos <span class="score-toggle-chevron">▾</span>
             </button>
           </div>
           <div id="rec-score-comparison" class="score-comparison hidden"></div>
 
           <div id="rec-fasttrack-prompt" class="hidden fasttrack-prompt">
             <p class="fasttrack-text">
-              If you need more customization, try the full assessment
+              Se você precisar de mais personalização, faça a avaliação completa
             </p>
             <button class="btn btn-secondary" onclick="startFullAssessment()">
-              Take the Full Assessment
+              Fazer a avaliação completa
             </button>
           </div>
-          <div id="decision-card" class="decision-card-meta-section fade-in" style="display:none" role="region" aria-label="Recommendation summary">
+          <div id="decision-card" class="decision-card-meta-section fade-in" style="display:none" role="region" aria-label="Resumo da recomendação">
             <p id="decision-card-context" class="decision-card-context" style="display:none">
-              This recommendation was generated by the Agent Platform Advisor based on specific scenario answers.
-              <a href="javascript:void(0)" onclick="restart()">Take your own assessment →</a>
+              Esta recomendação foi gerada pelo Agent Platform Advisor com base nas respostas de um cenário específico.
+              <a href="javascript:void(0)" onclick="restart()">Faça sua própria avaliação →</a>
             </p>
             <div id="decision-card-banner" class="decision-card-banner" style="display:none" role="status" aria-live="polite"></div>
             <div id="decision-card-drift" class="decision-card-drift" style="display:none"></div>
           </div>
           <div class="center rec-actions">
             <button class="btn btn-ghost" onclick="restart()">
-              ↩ Start Over
+              ↩ Começar de novo
             </button>
           </div>
         </div>
@@ -408,16 +408,15 @@
     </main>
 
     <div class="footer">
-      Created by
-      <a href="https://www.linkedin.com/in/rstandefer/">Robert Standefer</a>
-      <div class="footer-doc-links" aria-label="Project documentation">
-        <a href="https://github.com/microsoft/AgentPlatformAdvisor/blob/main/README.md" target="_blank" rel="noopener">README</a>
-        <a href="https://github.com/microsoft/AgentPlatformAdvisor/blob/main/docs/CHANGELOG.md" target="_blank" rel="noopener">CHANGELOG</a>
-        <a href="https://github.com/microsoft/AgentPlatformAdvisor/blob/main/docs/FLOWCHART.md" target="_blank" rel="noopener">FLOWCHART</a>
-        <a href="https://github.com/microsoft/AgentPlatformAdvisor/blob/main/docs/SCORING.md" target="_blank" rel="noopener">SCORING</a>
+      Criado por Iacan Ramos
+      <div class="footer-doc-links" aria-label="Documentação do projeto">
+        <a href="https://github.com/Iacan/AgentPlatformAdvisor/blob/main/README.md" target="_blank" rel="noopener">README</a>
+        <a href="https://github.com/Iacan/AgentPlatformAdvisor/blob/main/docs/CHANGELOG.md" target="_blank" rel="noopener">CHANGELOG</a>
+        <a href="https://github.com/Iacan/AgentPlatformAdvisor/blob/main/docs/FLOWCHART.md" target="_blank" rel="noopener">FLOWCHART</a>
+        <a href="https://github.com/Iacan/AgentPlatformAdvisor/blob/main/docs/SCORING.md" target="_blank" rel="noopener">SCORING</a>
       </div>
-      <p>If you encounter a problem, please
-        <a href="https://github.com/microsoft/cat/issues/new">create an issue</a>
+      <p>Encontrou algum problema?
+        <a href="https://github.com/Iacan/AgentPlatformAdvisor/issues/new">Abra uma issue</a>
       </p>
     </div>
 

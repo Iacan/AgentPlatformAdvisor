@@ -17,8 +17,8 @@ test.describe('Temporal Change Detection', () => {
     // Temporal change banner should be visible
     const banner = page.locator('#decision-card-banner');
     await expect(banner).toBeVisible();
-    await expect(banner).toContainText('recommendation has changed');
-    await expect(banner).toContainText('Jan 1, 2026');
+    await expect(banner).toContainText('recomendação mudou');
+    await expect(banner).toContainText('1 de jan de 2026');
   });
 
   test('change banner contains retake link', async ({ page }) => {
@@ -27,10 +27,10 @@ test.describe('Temporal Change Detection', () => {
     const banner = page.locator('#decision-card-banner');
     await expect(banner).toBeVisible();
 
-    // Should contain a "Retake assessment" link
+    // Should contain um link "Refazer avaliação"
     const retakeLink = banner.locator('a');
     await expect(retakeLink).toBeVisible();
-    await expect(retakeLink).toContainText('Retake assessment');
+    await expect(retakeLink).toContainText('Refazer avaliação');
   });
 
   test('no change banner when recommendation matches original', async ({ page }) => {

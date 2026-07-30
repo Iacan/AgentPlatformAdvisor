@@ -23,7 +23,7 @@ test.describe('Shared Link Loading', () => {
 
     // "Take your own assessment" link should be visible (URL-loaded mode)
     await expect(page.locator('#decision-card-context')).toBeVisible();
-    await expect(page.locator('#decision-card-context')).toContainText('Take your own assessment');
+    await expect(page.locator('#decision-card-context')).toContainText('Faça sua própria avaliação');
   });
 
   test('renders platform recommendation card', async ({ page }) => {

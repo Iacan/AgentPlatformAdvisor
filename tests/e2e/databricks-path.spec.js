@@ -37,7 +37,7 @@ test.describe('Databricks Agent Bricks', () => {
     await expect(page.locator('#exploration-section')).toBeVisible();
 
     const buildGroup = page.locator('.exploration-section-group').filter({
-      has: page.locator('.exploration-group-title', { hasText: 'Build agents' }),
+      has: page.locator('.exploration-group-title', { hasText: 'Criar agentes' }),
     });
     await expect(
       buildGroup.locator('.exploration-card-title', { hasText: 'Databricks Agent Bricks' })
@@ -51,7 +51,7 @@ test.describe('Databricks Agent Bricks', () => {
 
     const primary = page.locator('#rec-primary-card .rec-card');
     await expect(primary.locator('.rec-platform-name')).toContainText('Databricks Agent Bricks');
-    await expect(primary.locator('.rec-badge')).toContainText('Strong fit');
+    await expect(primary.locator('.rec-badge')).toContainText('Encaixe forte');
   });
 
   test('is disqualified when the knowledge lives in Microsoft 365', async ({ page }) => {
@@ -63,7 +63,7 @@ test.describe('Databricks Agent Bricks', () => {
 
     const row = scoreRow(page, 'Databricks Agent Bricks');
     await expect(row.locator('.sc-score')).toHaveText('0/15');
-    await expect(row.locator('.sc-reason')).toContainText('Microsoft 365 content');
+    await expect(row.locator('.sc-reason')).toContainText('Conteúdo do Microsoft 365');
   });
 
   test('is disqualified when the agent must run inside Microsoft 365 Copilot chat', async ({ page }) => {
@@ -75,7 +75,7 @@ test.describe('Databricks Agent Bricks', () => {
     await expect(row.locator('.sc-reason')).toContainText('Microsoft 365 Copilot');
 
     // The contradiction between lakehouse data and Copilot-chat deployment is explained.
-    await expect(page.locator('#rec-cross-notes')).toContainText('no native Microsoft 365 Copilot publishing path');
+    await expect(page.locator('#rec-cross-notes')).toContainText('não têm caminho nativo de publicação no Microsoft 365 Copilot');
   });
 
   test('the new data-platform answers are selectable in the wizard', async ({ page }) => {

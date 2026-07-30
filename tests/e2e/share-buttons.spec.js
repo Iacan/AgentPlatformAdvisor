@@ -39,7 +39,7 @@ test.describe('Share Button', () => {
     await page.locator('#decision-card-share').click();
 
     // Button should show success feedback
-    await expect(page.locator('#decision-card-share')).toContainText('Copied');
+    await expect(page.locator('#decision-card-share')).toContainText('Copiado');
 
     // Verify clipboard contains a URL with expected params
     const clipboardText = await page.evaluate(() => navigator.clipboard.readText());
@@ -58,10 +58,10 @@ test.describe('Share Button', () => {
     const originalText = await btn.textContent();
 
     await btn.click();
-    await expect(btn).toContainText('Copied');
+    await expect(btn).toContainText('Copiado');
 
     // Wait for revert (2s timeout in code + buffer)
-    await expect(btn).toContainText(originalText?.trim() ?? 'Share your results', { timeout: 5000 });
+    await expect(btn).toContainText(originalText?.trim() ?? 'Compartilhar seu resultado', { timeout: 5000 });
   });
 
   test('share link from URL-loaded results contains all answers', async ({ page }) => {

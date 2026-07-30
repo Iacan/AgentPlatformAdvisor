@@ -1,208 +1,209 @@
 # Design System — Agent Platform Advisor
 
-## Product Context
+## Contexto do produto
 
-- **What this is:** A static, YAML-driven decision-support web app that recommends the right Microsoft agent experience for a scenario.
-- **Who it's for:** Microsoft enterprise customers, business users, IT pros, professional developers, architects, and data/ML engineers choosing how to use, delegate, or build agents.
-- **Space/industry:** Microsoft productivity, Copilot, enterprise AI tooling, and platform-selection guidance.
-- **Project type:** Single-page web app with a prescreen flow, scored wizard, recommendation results, and exploratory guidance.
-- **Distribution:** Static site on GitHub Pages, published by Robert Standefer.
-- **Memorable thing:** Serious decision software for Microsoft AI builders and buyers.
+- **O que é:** uma aplicação web estática, orientada por YAML, de apoio à decisão, que recomenda a experiência de agente da Microsoft certa para um cenário.
+- **Para quem:** clientes corporativos Microsoft, usuários de negócio, profissionais de TI, desenvolvedores profissionais, arquitetos e engenheiros de dados/ML escolhendo como usar, delegar ou criar agentes.
+- **Espaço/setor:** produtividade Microsoft, Copilot, ferramentas de IA corporativa e orientação na escolha de plataforma.
+- **Tipo de projeto:** aplicação de página única com fluxo de prescreen, wizard pontuado, resultados de recomendação e orientação exploratória.
+- **Distribuição:** site estático no GitHub Pages, publicado por Iacan Ramos.
+- **Coisa memorável:** software sério de decisão para quem constrói e compra IA Microsoft.
 
-## Aesthetic Direction
+## Direção estética
 
-- **Direction:** Warm Charcoal Instrument.
-- **Decoration level:** Intentional. Use thin dividers, score rails, subtle grid texture, and diagnostic readouts. Do not use decorative blobs, gradient hero sections, glows, or icon-in-circle ornament.
-- **Mood:** The app should feel like an engineered decision console. Users should feel the tool is measuring their scenario, not selling them a generic AI product.
-- **Category stance:** Stay Microsoft-literate through trust, clarity, and accessibility. Depart from the default AI-tool look (near-black canvas + blue signal glow) by using a warm, matte charcoal workspace with a single restrained Microsoft blue signal — no glows.
-- **Reference sources:** Fluent 2 design principles, Microsoft 365 Copilot product pages, Copilot Studio product pages, Microsoft Foundry surfaces, and current enterprise AI dashboard guidance.
+- **Direção:** Warm Charcoal Instrument (instrumento em carvão quente).
+- **Nível de decoração:** intencional. Use divisores finos, trilhos de pontuação, textura sutil de grade e leituras diagnósticas. Não use blobs decorativos, seções hero com gradiente, brilhos (glows) nem ornamentos de ícone dentro de círculo.
+- **Sensação:** a aplicação deve parecer um console de decisão de engenharia. O usuário deve sentir que a ferramenta está medindo o cenário dele, e não vendendo um produto genérico de IA.
+- **Postura na categoria:** manter fluência Microsoft por meio de confiança, clareza e acessibilidade. Afastar-se do visual padrão de ferramenta de IA (fundo quase preto + brilho azul de sinal) usando um workspace em carvão fosco e quente com um único azul Microsoft contido como sinal — sem brilhos.
+- **Referências:** princípios do Fluent 2, páginas de produto do Microsoft 365 Copilot, páginas do Copilot Studio, superfícies do Microsoft Foundry e orientações atuais de dashboards de IA corporativa.
 
-## Typography
+## Tipografia
 
-- **Display/Hero:** `"IBM Plex Sans", sans-serif` at 600-700 weight.
-  - Use for the product title, question text, recommendation headings, and large decision statements.
-  - Rationale: engineered, serious, and readable without falling into the default Segoe/Inter/Roboto convergence trap.
-- **Body/UI:** `"IBM Plex Sans", sans-serif` at 400-500 weight.
-  - Use for all body copy, option text, explanations, buttons, and UI labels that are not diagnostic metadata.
-- **Data/Tables/Labels:** `"IBM Plex Mono", "Geist Mono", "Cascadia Code", monospace`.
-  - Use for score numbers, platform IDs, step counters, fit deltas, diagnostic metadata, and compact labels.
-  - Always use `font-variant-numeric: tabular-nums` for numeric scores and score comparisons.
-- **Fallback:** Aptos or Segoe UI may appear after IBM Plex in the stack for Microsoft environments, but they are fallbacks, not the visual signature.
-- **Loading:** Use Google Fonts or a self-hosted font strategy with `font-display: swap`.
+- **Display/Hero:** `"IBM Plex Sans", sans-serif` em peso 600-700.
+  - Use para o título do produto, texto das perguntas, títulos de recomendação e afirmações grandes de decisão.
+  - Motivo: transmite engenharia, seriedade e legibilidade sem cair na convergência padrão Segoe/Inter/Roboto.
+- **Corpo/UI:** `"IBM Plex Sans", sans-serif` em peso 400-500.
+  - Use para todo o texto corrido, texto de opções, explicações, botões e rótulos de interface que não sejam metadados diagnósticos.
+- **Dados/Tabelas/Rótulos:** `"IBM Plex Mono", "Geist Mono", "Cascadia Code", monospace`.
+  - Use para números de pontuação, IDs de plataforma, contadores de etapa, deltas de encaixe, metadados diagnósticos e rótulos compactos.
+  - Sempre use `font-variant-numeric: tabular-nums` em pontuações numéricas e comparações de pontuação.
+- **Fallback:** Aptos ou Segoe UI podem aparecer depois da IBM Plex na pilha, para ambientes Microsoft, mas são fallbacks, não a assinatura visual.
+- **Carregamento:** use Google Fonts ou uma estratégia de fontes auto-hospedadas com `font-display: swap`.
   - `https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap`
 
-### Type Scale
+### Escala tipográfica
 
-| Token | CSS variable | Size | Weight | Use |
+| Token | Variável CSS | Tamanho | Peso | Uso |
 |---|---|---:|---:|---|
-| display | `--fs-display` | 3rem / 48px | 700 | First screen thesis, final recommendation headline |
-| title | `--fs-title` | 2.25rem / 36px | 700 | Page headings, major result titles |
-| heading | `--fs-heading` | 1.625rem / 26px | 600 | Question text, section headings |
-| subhead | `--fs-subhead` | 1.25rem / 20px | 600 | Card titles, panel headings |
-| body-lg | `--fs-body-lg` | 1.125rem / 18px | 400 | Lead copy, important explanations |
-| body | `--fs-body` | 1rem / 16px | 400 | Standard UI copy, option labels |
-| body-sm | `--fs-body-sm` | .9375rem / 15px | 400-500 | Supporting copy, option descriptions, buttons |
-| caption | `--fs-caption` | .875rem / 14px | 400 | Secondary details |
-| mono | `--fs-mono` | .8125rem / 13px | 500-600 | Platform IDs, counters, score labels |
-| mono-sm | `--fs-mono-sm` | .75rem / 12px | 500-600 | Badges and legends — **the smallest size permitted** |
+| display | `--fs-display` | 3rem / 48px | 700 | Tese da primeira tela, título da recomendação final |
+| title | `--fs-title` | 2.25rem / 36px | 700 | Títulos de página, títulos principais de resultado |
+| heading | `--fs-heading` | 1.625rem / 26px | 600 | Texto das perguntas, títulos de seção |
+| subhead | `--fs-subhead` | 1.25rem / 20px | 600 | Títulos de card, títulos de painel |
+| body-lg | `--fs-body-lg` | 1.125rem / 18px | 400 | Texto de abertura, explicações importantes |
+| body | `--fs-body` | 1rem / 16px | 400 | Texto padrão da interface, rótulos de opção |
+| body-sm | `--fs-body-sm` | .9375rem / 15px | 400-500 | Texto de apoio, descrições de opção, botões |
+| caption | `--fs-caption` | .875rem / 14px | 400 | Detalhes secundários |
+| mono | `--fs-mono` | .8125rem / 13px | 500-600 | IDs de plataforma, contadores, rótulos de pontuação |
+| mono-sm | `--fs-mono-sm` | .75rem / 12px | 500-600 | Selos e legendas — **o menor tamanho permitido** |
 
-- **Always use `rem`, never `px`, for `font-size`.** Sizes are declared once as `--fs-*` tokens on `:root` and referenced everywhere else, so a user's browser font-size preference scales the whole app. `html { font-size: 100% }` — do not reset it to `62.5%` or a fixed px value.
-- **12px is the floor.** No text below `--fs-mono-sm`, including badges, eyebrows, and legends. Small + uppercase + letter-spaced + `--muted-foreground` is the least legible combination in the system; do not stack all four below 13px.
-- **Never shrink type at mobile breakpoints.** Responsive overrides may reduce display/title sizes for line-length reasons, but body, caption, and mono sizes hold at every viewport.
-- **Measure:** cap running prose at ~70ch. The container is 1024px wide, which yields ~95ch lines at body size.
+- **Sempre use `rem`, nunca `px`, para `font-size`.** Os tamanhos são declarados uma única vez como tokens `--fs-*` no `:root` e referenciados em todo o resto, para que a preferência de tamanho de fonte do navegador escale a aplicação inteira. `html { font-size: 100% }` — não redefina para `62.5%` nem para um valor fixo em px.
+- **12px é o piso.** Nenhum texto abaixo de `--fs-mono-sm`, incluindo selos, eyebrows e legendas. Pequeno + caixa alta + espaçado + `--muted-foreground` é a combinação menos legível do sistema; não empilhe as quatro coisas abaixo de 13px.
+- **Nunca reduza a tipografia nos breakpoints mobile.** Ajustes responsivos podem reduzir os tamanhos de display/title por questão de comprimento de linha, mas body, caption e mono se mantêm em qualquer viewport.
+- **Medida de linha:** limite o texto corrido a ~70ch. O container tem 1024px de largura, o que gera linhas de ~95ch no tamanho body.
 
-## Color
+## Cor
 
-- **Approach:** Restrained warm-charcoal dark-primary system. One saturated signal color (blue), warm matte neutrals (no blue-black), no glows, semantic colors reserved for actual state.
+- **Abordagem:** sistema contido em carvão quente, com escuro como padrão. Uma cor de sinal saturada (azul), neutros quentes e foscos (sem preto-azulado), sem brilhos, cores semânticas reservadas para estado real.
 
-| Token | Hex | Use |
+| Token | Hex | Uso |
 |---|---|---|
-| `--canvas` | `#1A1714` | Page background (warm matte charcoal) |
-| `--surface` | `#221E1A` | Main panels and cards |
-| `--surface-raised` | `#2A241F` | Active panels, selected options, result readouts |
-| `--surface-hot` | `#332E28` | Hover/active surface state |
-| `--text` | `#ECE6DC` | Primary text (warm off-white) |
-| `--muted` | `#9C9384` | Secondary text and explanatory copy |
-| `--border` | `#332E28` | Default borders and dividers |
-| `--border-hot` | `#453E35` | Active borders and panel edges |
-| `--accent` | `#0078D4` | Primary signal: winner, progress, focus, score rails, primary CTA |
-| `--accent-strong` | `#2B9AEE` | Hover/focus highlights and high-emphasis labels |
-| `--accent-dim` | `#0B5187` | Low-emphasis progress fills and quiet data visualization |
-| `--success` | `#35C08A` | Strong fit, positive delta, success |
-| `--warning` | `#E0B24B` | Caveats, close calls, confidence warnings |
-| `--error` | `#E5695E` | Hard-rule conflicts and failures |
+| `--canvas` | `#1A1714` | Fundo da página (carvão fosco e quente) |
+| `--surface` | `#221E1A` | Painéis principais e cards |
+| `--surface-raised` | `#2A241F` | Painéis ativos, opções selecionadas, leituras de resultado |
+| `--surface-hot` | `#332E28` | Estado de hover/ativo da superfície |
+| `--text` | `#ECE6DC` | Texto primário (off-white quente) |
+| `--muted` | `#9C9384` | Texto secundário e explicativo |
+| `--border` | `#332E28` | Bordas e divisores padrão |
+| `--border-hot` | `#453E35` | Bordas ativas e arestas de painel |
+| `--accent` | `#0078D4` | Sinal primário: vencedor, progresso, foco, trilhos de pontuação, CTA principal |
+| `--accent-strong` | `#2B9AEE` | Destaques de hover/foco e rótulos de alta ênfase |
+| `--accent-dim` | `#0B5187` | Preenchimentos de progresso de baixa ênfase e visualização de dados discreta |
+| `--success` | `#35C08A` | Encaixe forte, delta positivo, sucesso |
+| `--warning` | `#E0B24B` | Ressalvas, decisões apertadas, avisos de confiança |
+| `--error` | `#E5695E` | Conflitos de regra rígida e falhas |
 
-- **Light mode:** Optional secondary mode, not the identity. If retained, invert the system deliberately instead of flattening to white cards. Use `#F4F7FB` canvas, `#FFFFFF` surface, `#172033` text, `#5D6B80` muted, and keep a deep blue `#005A9E` as the signal color.
-- **No glows:** Do not add colored `box-shadow` glows or `text-shadow` on the accent. The signal reads through hue and placement, not bloom.
-- **Contrast:** Body text must meet WCAG AA. Accent text on dark surfaces must be tested, not assumed.
+- **Modo claro:** modo secundário opcional, não a identidade. Se mantido, inverta o sistema deliberadamente em vez de achatar tudo em cards brancos. Use canvas `#F4F7FB`, superfície `#FFFFFF`, texto `#172033`, muted `#5D6B80`, e mantenha um azul profundo `#005A9E` como cor de sinal.
+- **Sem brilhos:** não adicione `box-shadow` colorido nem `text-shadow` no accent. O sinal se comunica por matiz e posicionamento, não por bloom.
+- **Contraste:** o texto corrido precisa atender ao WCAG AA. Texto em accent sobre superfícies escuras precisa ser testado, não presumido.
 
-## Spacing
+## Espaçamento
 
-- **Base unit:** 4px.
-- **Density:** Compact-comfortable. Tighter than a marketing page, less dense than a monitoring dashboard.
+- **Unidade base:** 4px.
+- **Densidade:** compacta-confortável. Mais apertada que uma página de marketing, menos densa que um dashboard de monitoramento.
 
-| Token | Value | Use |
+| Token | Valor | Uso |
 |---|---:|---|
-| 2xs | 2px | Fine borders, tiny offsets |
-| xs | 4px | Tight inline gaps |
-| sm | 8px | Label gaps, compact padding |
-| md | 16px | Option padding, form rhythm |
-| lg | 24px | Panel padding, section internals |
-| xl | 32px | Major content spacing |
-| 2xl | 48px | Screen section gaps |
-| 3xl | 64px | First viewport rhythm |
+| 2xs | 2px | Bordas finas, deslocamentos mínimos |
+| xs | 4px | Espaços inline apertados |
+| sm | 8px | Espaços de rótulo, padding compacto |
+| md | 16px | Padding de opção, ritmo de formulário |
+| lg | 24px | Padding de painel, interior de seções |
+| xl | 32px | Espaçamento de conteúdo principal |
+| 2xl | 48px | Espaços entre seções da tela |
+| 3xl | 64px | Ritmo do primeiro viewport |
 
 ## Layout
 
-- **Approach:** Hybrid instrument layout. Use grid discipline for readability, but avoid symmetric card catalogs as the primary mental model.
-- **Primary workspace:** A decision workspace with three zones when space allows:
-  - Left: intent or live fit rail.
-  - Center: current question, recommendation, or scenario explanation.
-  - Right: evidence panel, score rationale, warnings, or next-step details.
-- **Explore page:** Group by mental model, not a flat gallery.
-  - Use agents: Microsoft 365 Copilot, Copilot Cowork, Microsoft Scout.
-  - Build agents: Agent Builder, Copilot Studio, Microsoft Foundry, Databricks Agent Bricks.
-  - Group sizes differ (3 and 4), so the grid uses `auto-fit` tracks rather than a fixed column count — the unused track collapses and each group fills one row instead of leaving an orphan card.
-  - Explore is the one screen that takes the 1200px instrument width; every other section keeps the 1024px reading width. Applied via `.main-container--wide` in `showSection()`.
-- **Wizard:** The user should always know the current question, current progress, and how each answer affects recommendation confidence.
-- **Results:** The winning recommendation should feel like a diagnostic report: score delta, why it won, hard-rule notes, and next steps.
-- **Grid:** 12-column desktop grid, 8-column tablet grid, single-column mobile layout.
-- **Max content width:** 1200px for instrument workspace, 1024px for prose-heavy wizard panels.
-- **Border radius:** `sm: 4px`, `md: 8px`, `lg: 12px`, `full: 9999px`. Radius should express containment hierarchy, not bubbly decoration.
-- **Elevation:** Prefer borders, lit edges, and surface contrast over large shadows. Shadows may be used sparingly for modals.
+- **Abordagem:** layout híbrido de instrumento. Use disciplina de grade para legibilidade, mas evite catálogos simétricos de cards como modelo mental principal.
+- **Workspace principal:** um espaço de decisão com três zonas quando há espaço:
+  - Esquerda: trilho de intenção ou de encaixe ao vivo.
+  - Centro: pergunta atual, recomendação ou explicação do cenário.
+  - Direita: painel de evidências, justificativa da pontuação, avisos ou detalhes de próximos passos.
+- **Página Explorar:** agrupe por modelo mental, não em uma galeria plana.
+  - Usar agentes: Microsoft 365 Copilot, Copilot Cowork, Microsoft Scout.
+  - Criar agentes: Agent Builder, Copilot Studio, Microsoft Foundry, Databricks Agent Bricks.
+  - Os grupos têm tamanhos diferentes (3 e 4), então a grade usa trilhas `auto-fit` em vez de um número fixo de colunas — a trilha não usada colapsa e cada grupo preenche uma linha, sem deixar um card órfão.
+  - Explorar é a única tela que usa a largura de instrumento de 1200px; todas as outras seções mantêm a largura de leitura de 1024px. Aplicado via `.main-container--wide` em `showSection()`.
+- **Wizard:** o usuário deve sempre saber qual é a pergunta atual, o progresso atual e como cada resposta afeta a confiança da recomendação.
+- **Resultados:** a recomendação vencedora deve parecer um relatório diagnóstico: delta de pontuação, por que venceu, notas de regra rígida e próximos passos.
+- **Grade:** 12 colunas no desktop, 8 colunas no tablet, layout de coluna única no mobile.
+- **Largura máxima de conteúdo:** 1200px para o workspace de instrumento, 1024px para painéis do wizard com muito texto.
+- **Raio de borda:** `sm: 4px`, `md: 8px`, `lg: 12px`, `full: 9999px`. O raio deve expressar hierarquia de contenção, não decoração arredondada.
+- **Elevação:** prefira bordas, arestas iluminadas e contraste de superfície a sombras grandes. Sombras podem ser usadas com parcimônia em modais.
 
-## Motion
+## Movimento
 
-- **Approach:** Minimal-functional with one signature behavior: score/readout calibration.
-- **Easing:** enter `ease-out`, exit `ease-in`, move `cubic-bezier(0.4, 0, 0.2, 1)`.
-- **Duration:**
-  - micro: 50-100ms for hovers and focus.
-  - short: 150-220ms for option selection and panel changes.
-  - medium: 250-400ms for section transitions.
-  - long: 600-900ms for score rail calibration.
-- **Rules:**
-  - Animate transform, opacity, and score widths only.
-  - Do not use `transition: all`.
-  - Respect `prefers-reduced-motion`.
-  - Motion must explain state change. No decorative shimmer, bounce, or scroll theater.
+- **Abordagem:** mínimo-funcional, com um comportamento assinatura: calibração de pontuação/leitura.
+- **Easing:** entrada `ease-out`, saída `ease-in`, movimento `cubic-bezier(0.4, 0, 0.2, 1)`.
+- **Duração:**
+  - micro: 50-100ms para hovers e foco.
+  - curta: 150-220ms para seleção de opção e mudança de painel.
+  - média: 250-400ms para transições de seção.
+  - longa: 600-900ms para a calibração do trilho de pontuação.
+- **Regras:**
+  - Anime apenas transform, opacity e larguras de pontuação.
+  - Não use `transition: all`.
+  - Respeite `prefers-reduced-motion`.
+  - O movimento precisa explicar a mudança de estado. Nada de shimmer decorativo, bounce ou teatro de rolagem.
 
-## Components and Patterns
+## Componentes e padrões
 
-### Decision Rail
+### Trilho de decisão
 
-Use a persistent or contextual rail to show current platform fit. Each row includes:
-- Mono platform ID.
-- Current score or fit label.
-- Thin signal bar.
-- Optional delta from leader.
+Use um trilho persistente ou contextual para mostrar o encaixe atual das plataformas. Cada linha inclui:
+- ID da plataforma em monoespaçada.
+- Pontuação atual ou rótulo de encaixe.
+- Barra fina de sinal.
+- Delta opcional em relação ao líder.
 
-The rail turns the advisor into an instrument and reduces the generic quiz feel.
+O trilho transforma o advisor em um instrumento e reduz a sensação genérica de questionário.
 
-### Evidence Panel
+### Painel de evidências
 
-Use a side panel or expandable section for:
-- Why the leading recommendation changed.
-- Hard-rule exclusions.
-- Confidence warnings.
-- Source/rationale links.
-- Next actions.
+Use um painel lateral ou seção expansível para:
+- Por que a recomendação líder mudou.
+- Exclusões por regra rígida.
+- Avisos de confiança.
+- Links de fonte/justificativa.
+- Próximas ações.
 
-### Option Cards
+### Cards de opção
 
-Option cards are allowed only when they are the interaction. They must include a clear label, concise explanation, visible selected state, keyboard focus, and enough hit area for touch.
+Cards de opção são permitidos apenas quando eles *são* a interação. Precisam ter rótulo claro, explicação concisa, estado selecionado visível, foco por teclado e área de toque suficiente.
 
-### Explore Groups
+### Grupos da tela Explorar
 
-Explore should not be one undifferentiated six-card gallery. It must preserve the decision model:
-- Use agents.
-- Build agents.
+A tela Explorar não deve ser uma galeria indiferenciada de seis cards. Ela precisa preservar o modelo de decisão:
+- Usar agentes.
+- Criar agentes.
 
-Each group needs a short explanation of what the group means before listing products.
+Cada grupo precisa de uma explicação curta do que ele significa antes de listar os produtos.
 
-## Anti-Slop Rules
+## Regras anti-slop
 
-Never introduce these patterns without explicit approval:
+Nunca introduza estes padrões sem aprovação explícita:
 
-- Purple/violet gradients as the default AI signal.
-- Generic three-column feature grids with icon, title, and two-line description.
-- Icons in colored circles as decoration.
-- Centered-everything hero sections.
-- Decorative blobs, waves, floating orbs, or soft abstract AI shapes.
-- Uniform large border radius on every element.
-- Gradient CTA buttons.
-- Stock-photo-style hero imagery.
-- Vague marketing copy like "unlock the power of AI" or "built for the future."
-- Flat white card galleries as the primary information architecture.
+- Gradientes roxo/violeta como sinal padrão de IA.
+- Grades genéricas de três colunas com ícone, título e descrição de duas linhas.
+- Ícones dentro de círculos coloridos como decoração.
+- Seções hero com tudo centralizado.
+- Blobs decorativos, ondas, orbes flutuantes ou formas abstratas de IA.
+- Raio de borda grande e uniforme em todos os elementos.
+- Botões de CTA com gradiente.
+- Imagens hero em estilo banco de imagens.
+- Texto de marketing vago como "libere o poder da IA" ou "feito para o futuro".
+- Galerias de cards brancos e planos como arquitetura de informação principal.
 
-## Accessibility
+## Acessibilidade
 
-- All interactive targets must be at least 44px tall or wide.
-- Every custom interactive element must have keyboard support and visible `:focus-visible`.
-- Body text contrast must meet 4.5:1. Large text and UI components must meet 3:1.
-- Do not encode status with color alone. Pair color with label, icon, or text.
-- Preserve visible labels. Never use placeholders as labels.
-- Support reduced motion.
+- Todos os alvos interativos devem ter pelo menos 44px de altura ou largura.
+- Todo elemento interativo personalizado precisa ter suporte a teclado e `:focus-visible` visível.
+- O contraste do texto corrido precisa atingir 4,5:1. Textos grandes e componentes de interface precisam atingir 3:1.
+- Não codifique status apenas com cor. Combine cor com rótulo, ícone ou texto.
+- Preserve rótulos visíveis. Nunca use placeholders como rótulos.
+- Suporte a movimento reduzido.
 
-## Migration Guidance
+## Orientação de migração
 
-The current implementation may still use the older Fluent-light system until a redesign lands. Future visual work should migrate toward this system in coherent sections, not one token at a time. Prioritize:
+A implementação atual ainda pode usar o sistema Fluent-light antigo até o redesenho ser concluído. Trabalhos visuais futuros devem migrar para este sistema em seções coerentes, não um token por vez. Priorize:
 
-1. Explore page grouping and decision-model language.
-2. Result page diagnostic report styling.
-3. Wizard progress and score calibration behavior.
-4. Dark graphite token implementation.
-5. Typography migration to IBM Plex Sans and IBM Plex Mono.
+1. Agrupamento e linguagem de modelo de decisão na página Explorar.
+2. Estilo de relatório diagnóstico na página de resultados.
+3. Progresso do wizard e comportamento de calibração da pontuação.
+4. Implementação dos tokens de grafite escuro.
+5. Migração tipográfica para IBM Plex Sans e IBM Plex Mono.
 
-## Decisions Log
+## Registro de decisões
 
-| Date | Decision | Rationale |
+| Data | Decisão | Justificativa |
 |---|---|---|
-| 2026-07-28 | Explore uses the 1200px instrument width; every other section stays at 1024px | A fourth Build platform orphaned itself on its own row in the reading-width container. Explore is a side-by-side comparison, which is exactly the case the layout rules already carve out for the wider workspace. |
-| 2026-07-28 | Added Databricks Agent Bricks to the Build agents group with a placeholder mark | The advisor now scores a non-Microsoft platform for lakehouse-anchored scenarios. `images/databricks.svg` is a flat layered-lakehouse glyph in the Databricks signal colour (`#FF3621`) — deliberately not an imitation of their logo. Swap it for the official brand asset when one is available. No new decoration was introduced: it sits in the same flat, hairline-separated tile treatment as the other platforms. |
-| 2026-07-20 | Replaced Fluent-light direction with Graphite Decision Instrument | Created by /design-consultation after the user chose to start fresh and selected "serious decision software for Microsoft AI builders and buyers" as the memorable thing. |
-| 2026-07-20 | IBM Plex Sans + IBM Plex Mono | Gives the product an engineered, technical voice without relying on Segoe as the visual signature. |
-| 2026-07-20 | Dark graphite + Azure-cyan signal color | Raises memorability and lowers AI-slop risk while preserving a Microsoft-adjacent trust cue. |
-| 2026-07-24 | Rebuilt the type scale on rem tokens and raised every size one step | An audit found the code had drifted a full step below the documented scale (body shipped at 14px, captions at 12px, some labels at 10-11px) and used `px` everywhere, so browser font-size preferences did nothing. All 74 declarations now reference `--fs-*` rem tokens, with a 12px floor and no downward mobile overrides. |
-| 2026-07-24 | Swapped the teal signal for Microsoft blue `#0078D4` | User asked for the green/teal highlight to be blue. Warm charcoal canvas, neutrals, typography, and no-glow rule are unchanged; only the signal hue moved (dark `#0078D4` / `#2B9AEE` / `#0B5187`, light `#005A9E`). Success/warning/error semantics untouched. |
-| 2026-07-22 | Replaced Graphite/Azure-cyan with Warm Charcoal + teal signal (via /design-shotgun) | The near-black `#0C0F14` canvas + single cyan-blue glow read as the generic AI-tool look the user rejects. New system: warm matte charcoal `#1A1714` (no blue-black), single restrained teal `#17B0A7` signal, no glows. IBM Plex Sans/Mono retained. User rejected: generic-AI-dark, Blueprint (light/amber), signal-red, sage, bone, brass-gold, and emerald before landing on teal. |
-| 2026-07-20 | Explore by Use agents / Build agents | Keeps the information architecture aligned with how users decide, instead of flattening everything into a six-card gallery. |
+| 2026-07-30 | Interface e documentação traduzidas para português do Brasil | Público-alvo desta versão é brasileiro. Nomes de produto (Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, Agent Builder, Databricks Agent Bricks, Cowork, Scout) e termos técnicos consagrados (lakehouse, RAG, MCP, Unity Catalog) permanecem em inglês. Rótulos de faixa passaram a "Encaixe forte / Bom encaixe / Encaixe parcial / Não recomendado", e `badgeClass()` no `apa.js` passou a casar por essas palavras. |
+| 2026-07-28 | Explorar usa a largura de instrumento de 1200px; todas as outras seções ficam em 1024px | Uma quarta plataforma de construção ficava órfã na própria linha dentro do container de largura de leitura. Explorar é uma comparação lado a lado, que é exatamente o caso que as regras de layout já reservam para o workspace mais largo. |
+| 2026-07-28 | Databricks Agent Bricks adicionado ao grupo Criar agentes com uma marca provisória | O advisor agora pontua uma plataforma não-Microsoft para cenários ancorados no lakehouse. O `images/databricks.svg` é um glifo plano de lakehouse em camadas na cor de sinal do Databricks (`#FF3621`) — deliberadamente não é uma imitação do logotipo deles. Troque pelo ativo oficial da marca quando houver um disponível. Nenhuma decoração nova foi introduzida: ele usa o mesmo tratamento plano de tile separado por hairline das outras plataformas. |
+| 2026-07-20 | Direção Fluent-light substituída por Graphite Decision Instrument | Criado pelo /design-consultation depois que o usuário optou por começar do zero e escolheu "software sério de decisão para quem constrói e compra IA Microsoft" como coisa memorável. |
+| 2026-07-20 | IBM Plex Sans + IBM Plex Mono | Dá ao produto uma voz técnica e de engenharia sem depender da Segoe como assinatura visual. |
+| 2026-07-20 | Grafite escuro + cor de sinal azul-Azure | Aumenta a memorabilidade e reduz o risco de "AI slop", preservando uma pista de confiança próxima à Microsoft. |
+| 2026-07-24 | Escala tipográfica reconstruída sobre tokens rem e todos os tamanhos elevados em um passo | Uma auditoria descobriu que o código havia derivado um passo inteiro abaixo da escala documentada (body em 14px, captions em 12px, alguns rótulos em 10-11px) e usava `px` em todo lugar, então as preferências de tamanho de fonte do navegador não faziam efeito. As 74 declarações agora referenciam tokens rem `--fs-*`, com piso de 12px e sem reduções no mobile. |
+| 2026-07-24 | Sinal teal trocado pelo azul Microsoft `#0078D4` | O usuário pediu que o destaque verde/teal fosse azul. Canvas em carvão quente, neutros, tipografia e a regra de não usar brilhos permanecem inalterados; só a matiz do sinal mudou (escuro `#0078D4` / `#2B9AEE` / `#0B5187`, claro `#005A9E`). Semântica de sucesso/aviso/erro intocada. |
+| 2026-07-22 | Graphite/azul-ciano substituído por Warm Charcoal + sinal teal (via /design-shotgun) | O canvas quase preto `#0C0F14` + o brilho azul-ciano único remetiam ao visual genérico de ferramenta de IA que o usuário rejeita. Novo sistema: carvão fosco e quente `#1A1714` (sem preto-azulado), um único teal contido `#17B0A7` como sinal, sem brilhos. IBM Plex Sans/Mono mantidas. O usuário rejeitou: IA-escuro genérico, Blueprint (claro/âmbar), vermelho-sinal, sage, bone, dourado-latão e esmeralda antes de chegar ao teal. |
+| 2026-07-20 | Explorar dividido em Usar agentes / Criar agentes | Mantém a arquitetura de informação alinhada à forma como os usuários decidem, em vez de achatar tudo em uma galeria de seis cards. |

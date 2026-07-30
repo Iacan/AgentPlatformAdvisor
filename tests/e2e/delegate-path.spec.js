@@ -19,7 +19,7 @@ async function chooseDelegate(page) {
 async function expectM365Card(page, startHere) {
   await expect(page.locator('#rec-primary-card .rec-platform-name')).toHaveText('Microsoft 365 Copilot');
   if (startHere) {
-    await expect(page.locator('#rec-primary-card .rec-spotlight-eyebrow')).toHaveText('Start Here');
+    await expect(page.locator('#rec-primary-card .rec-spotlight-eyebrow')).toHaveText('Comece por aqui');
     await expect(page.locator('#rec-primary-card .rec-spotlight-name')).toContainText(startHere);
   } else {
     await expect(page.locator('#rec-primary-card .rec-spotlight')).toHaveCount(0);

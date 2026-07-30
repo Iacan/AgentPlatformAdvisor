@@ -1,296 +1,296 @@
-# Scoring System — Agent Platform Advisor
+# Sistema de pontuação — Agent Platform Advisor
 
-Reference document for how the APA scoring engine works. All data is driven from `apa.yaml`.
+Documento de referência sobre como funciona o motor de pontuação do APA. Todos os dados vêm do `apa.yaml`.
 
-## Platforms
+## Plataformas
 
-| ID | Label | Description |
+| ID | Rótulo | Descrição |
 |---|---|---|
-| `agent_builder` | Agent Builder | No-code declarative agents inside Microsoft 365 Copilot |
-| `m365_copilot` | Microsoft 365 Copilot | Built-in Copilot experiences — Copilot Chat, Search, app-native assistance, and Microsoft-built agents (entry-point wizard only) |
-| `copilot_studio` | Copilot Studio | Governed low-code enterprise agents with tools, workflows, triggers, computer use, evaluation, monitoring, and broad publishing |
-| `foundry` | Microsoft Foundry | Managed production agent runtime for prompt agents, hosted code agents, custom retrieval, tools, identity, observability, and Azure-scale controls |
-| `databricks` | Databricks Agent Bricks | Agents built, evaluated, governed, and served on the data platform — grounded in Unity Catalog tables and governed document collections |
+| `agent_builder` | Agent Builder | Agentes declarativos no-code dentro do Microsoft 365 Copilot |
+| `m365_copilot` | Microsoft 365 Copilot | Experiências nativas do Copilot — Copilot Chat, Search, assistência nos apps e agentes criados pela Microsoft (somente no wizard de ponto de entrada) |
+| `copilot_studio` | Copilot Studio | Agentes corporativos low-code governados, com ferramentas, fluxos, gatilhos, computer use, avaliação, monitoramento e publicação ampla |
+| `foundry` | Microsoft Foundry | Runtime gerenciado de agentes em produção, para prompt agents, agentes de código hospedados, recuperação personalizada, ferramentas, identidade, observabilidade e controles em escala Azure |
+| `databricks` | Databricks Agent Bricks | Agentes construídos, avaliados, governados e servidos na plataforma de dados — fundamentados em tabelas do Unity Catalog e coleções de documentos governadas |
 
-`databricks` is the one non-Microsoft platform in the matrix. It is scored only when the scenario is anchored in the data platform: the knowledge lives in a lakehouse, the data team owns the build, and the agent is served next to the data. Because Agent Bricks cannot ground on Microsoft 365 content and cannot publish into Microsoft 365 Copilot chat, those answers zero it out through hard rules, exactly as other platform limits are enforced.
+O `databricks` é a única plataforma não-Microsoft da matriz. Ele só é pontuado quando o cenário está ancorado na plataforma de dados: o conhecimento está em um lakehouse, o time de dados é dono da construção e o agente é servido ao lado dos dados. Como o Agent Bricks não consegue se fundamentar em conteúdo do Microsoft 365 nem publicar no chat do Microsoft 365 Copilot, essas respostas o zeram por regras rígidas, exatamente como os limites das outras plataformas são aplicados.
 
-M365 Copilot is excluded from the scored assessment. It is only recommended via the entry-point wizard (or the legacy `?ft=1` / `?dt=copilot_chat` share links). In the full wizard, `m365_copilot` is always zeroed.
+O M365 Copilot fica fora da avaliação pontuada. Ele só é recomendado pelo wizard de ponto de entrada (ou pelos links antigos `?ft=1` / `?dt=copilot_chat`). No wizard completo, `m365_copilot` é sempre zerado.
 
-## Non-scored destinations: entry-point wizard (Microsoft 365 Copilot, Cowork & Scout)
+## Destinos não pontuados: wizard de ponto de entrada (Microsoft 365 Copilot, Cowork e Scout)
 
-Microsoft 365 Copilot, Cowork, and Scout are **not** build platforms — they are ready-made places to *get work done*, not platforms you build on. They are **not** part of the scored wizard, are **not** in `meta.platforms`, and never enter the 0–15 sum. They are reached via the prescreen path **"Help me find the right place to get work done,"** which opens a short **entry-point wizard** ("Where should you get this work done?"). This wizard exists because Microsoft asks end users to choose between too many entry points (Microsoft 365 Copilot vs. Cowork vs. Scout); the wizard resolves that choice from work patterns instead of product names. There is no longer a separate "built-in Microsoft 365 Copilot experience" prescreen tile — that destination now lives inside this wizard.
+Microsoft 365 Copilot, Cowork e Scout **não** são plataformas de construção — são lugares prontos para *realizar trabalho*, e não plataformas sobre as quais você constrói. Eles **não** fazem parte do wizard pontuado, **não** estão em `meta.platforms` e nunca entram na soma de 0 a 15. São alcançados pelo caminho de prescreen **"Me ajude a encontrar o lugar certo para realizar meu trabalho"**, que abre um breve **wizard de ponto de entrada** ("Onde você deve realizar esse trabalho?"). Esse wizard existe porque a Microsoft pede ao usuário final que escolha entre pontos de entrada demais (Microsoft 365 Copilot vs. Cowork vs. Scout); o wizard resolve essa escolha a partir de padrões de trabalho, e não de nomes de produto. Não existe mais um bloco de prescreen separado para "experiência nativa do Microsoft 365 Copilot" — esse destino agora vive dentro deste wizard.
 
-**Copilot Chat is not a destination.** Copilot Chat and the built-in agents (Researcher, Analyst, Facilitator, Interpreter, …) are *surfaces of* Microsoft 365 Copilot, not products that compete with it. Staying hands-on therefore always resolves to the single `m365_copilot` card; the task-type answer only selects which surface the card tells you to **Start Here** with, via `recommendations.m365_copilot.start_here` in `apa.yaml` (`chat` or `agents`).
+**O Copilot Chat não é um destino.** O Copilot Chat e os agentes nativos (Researcher, Analyst, Facilitator, Interpreter, …) são *superfícies do* Microsoft 365 Copilot, e não produtos que competem com ele. Por isso, participar ativamente sempre resolve para o único card `m365_copilot`; a resposta de tipo de tarefa apenas seleciona por qual superfície o card manda **começar**, via `recommendations.m365_copilot.start_here` no `apa.yaml` (`chat` ou `agents`).
 
-The first question forks the flow:
+A primeira pergunta bifurca o fluxo:
 
-| Question | Options |
+| Pergunta | Opções |
 |---|---|
-| **Involvement** — how do you want to work? | Stay hands-on and iterate turn-by-turn · Hand it off and let an agent run |
+| **Participação** — como você quer trabalhar? | Conduzir eu mesmo e iterar turno a turno · Delegar e deixar um agente executar |
 
-- **Hands-on / interactive** → a follow-up asks **what kind of task** it is:
+- **Participação ativa / interativa** → um desdobramento pergunta **que tipo de tarefa** é:
 
-  | Question | Options |
+  | Pergunta | Opções |
   |---|---|
-  | **Task type** | General help (brainstorm, find info, catch up on email/meetings, draft & edit documents) · A specialized task (deep research, data analysis, meeting facilitation, translation) |
+  | **Tipo de tarefa** | Ajuda geral (brainstorm, buscar informação, colocar e-mails/reuniões em dia, redigir e editar documentos) · Uma tarefa especializada (pesquisa aprofundada, análise de dados, facilitação de reuniões, tradução) |
 
-  Both answers resolve to **Microsoft 365 Copilot** (`m365_copilot`). General selects the **Copilot Chat** start surface; specialized selects the **built-in agents** start surface (Researcher, Analyst, Facilitator, Interpreter, …).
+  As duas respostas resolvem para **Microsoft 365 Copilot** (`m365_copilot`). Ajuda geral seleciona a superfície inicial **Copilot Chat**; especializada seleciona a superfície dos **agentes nativos** (Researcher, Analyst, Facilitator, Interpreter, …).
 
-- **Hand it off / delegate** → two follow-up questions decide between Cowork and Scout. They are asked **progressively**: Cadence appears first, and Reach is revealed only once a cadence has been answered (so both questions never show at once).
+- **Delegar** → duas perguntas de desdobramento decidem entre Cowork e Scout. Elas são feitas **progressivamente**: a Cadência aparece primeiro e o Alcance só é revelado depois que a cadência é respondida (assim as duas nunca aparecem ao mesmo tempo).
 
-  | Question | Options |
+  | Pergunta | Opções |
   |---|---|
-  | **Cadence** (asked first) — how should the agent work? | On-demand (finish a multi-step job in one go — several artifacts or a process across systems) · Continuous (always-on, manage & coordinate my day) · Not sure |
-  | **Reach** (revealed after Cadence) — where does it need to reach? | Microsoft 365 only · Also desktop/browser/local/CLI · Not sure |
+  | **Cadência** (perguntada primeiro) — como o agente deve trabalhar? | Sob demanda (concluir um trabalho de várias etapas de uma vez — vários artefatos ou um processo entre sistemas) · Contínua (sempre ativo, gerenciar e coordenar meu dia) · Ainda não sei |
+  | **Alcance** (revelado após a Cadência) — até onde ele precisa alcançar? | Somente Microsoft 365 · Também desktop/navegador/local/CLI · Ainda não sei |
 
-**Routing rule** (`resolveDelegateResult(involvement, taskType, cadence, reach)` in `apa.js`):
+**Regra de roteamento** (`resolveDelegateResult(involvement, taskType, cadence, reach)` no `apa.js`):
 
-| Condition | Result |
+| Condição | Resultado |
 |---|---|
-| Involvement = interactive | **Microsoft 365 Copilot** (`m365_copilot`) — `resolveDelegateStart` then picks the start surface: specialized → `agents`, general → `chat` |
-| Cadence = continuous | **Scout** |
-| Reach = cross-environment | **Scout** |
-| Cadence = on-demand **and** Reach = Microsoft 365 | **Cowork** |
-| Otherwise (undecided signals) | **Both** (Cowork + Scout), shown as a complementary pair |
+| Participação = interativa | **Microsoft 365 Copilot** (`m365_copilot`) — o `resolveDelegateStart` então escolhe a superfície inicial: especializada → `agents`, geral → `chat` |
+| Cadência = contínua | **Scout** |
+| Alcance = multiambiente | **Scout** |
+| Cadência = sob demanda **e** Alcance = Microsoft 365 | **Cowork** |
+| Caso contrário (sinais indefinidos) | **Ambos** (Cowork + Scout), exibidos como par complementar |
 
-**Readiness** (`isDelegateReady` in `apa.js`): interactive requires a task type; delegate requires both cadence and reach before the wizard can finish.
+**Prontidão** (`isDelegateReady` no `apa.js`): o caminho interativo exige um tipo de tarefa; o de delegação exige cadência e alcance antes de o wizard poder concluir.
 
-> `m365_copilot` still exists in `meta.platforms` for content, but is always zeroed in the scored wizard (`if (!fastTrack) zeroed['m365_copilot'] = true`) — it only surfaces as this wizard destination. The legacy `?ft=1` share link still resolves to the same card for backward compatibility, as does the legacy `?dt=copilot_chat` link (it maps to `dt=m365_copilot` with the `chat` start surface). New share links carry the surface as `&st=chat|agents`.
+> O `m365_copilot` continua em `meta.platforms` por causa do conteúdo, mas é sempre zerado no wizard pontuado (`if (!fastTrack) zeroed['m365_copilot'] = true`) — ele só aparece como destino deste wizard. O link antigo `?ft=1` ainda resolve para o mesmo card por compatibilidade, assim como o link antigo `?dt=copilot_chat` (mapeado para `dt=m365_copilot` com a superfície inicial `chat`). Novos links de compartilhamento carregam a superfície como `&st=chat|agents`.
 
-## Questions and Scoring Matrix
+## Perguntas e matriz de pontuação
 
-Five questions, each scored 0–3 per platform. Max raw score: **15** (5 × 3).
+Cinco perguntas, cada uma pontuada de 0 a 3 por plataforma. Pontuação bruta máxima: **15** (5 × 3).
 
-### Q1 — Who is building this agent?
+### Q1 — Quem vai criar este agente?
 
-| Option | ID | Agent Builder | CS | Foundry | DBX |
+| Opção | ID | Agent Builder | CS | Foundry | DBX |
 |---|---|---|---|---|---|
-| Business user / SME — no coding | q1a | **3** | 1 | 0 | 1 |
-| Low-code maker / IT pro | q1b | 1 | **3** | 0 | 1 |
-| Professional developer | q1c | 0 | 2 | **3** | 2 |
-| Data scientist / ML engineer | q1d | 0 | 1 | **3** | **3** |
-| Data platform / data engineering team | q1e | 0 | 1 | 2 | **3** |
+| Usuário de negócio / especialista — sem programação | q1a | **3** | 1 | 0 | 1 |
+| Criador low-code / profissional de TI | q1b | 1 | **3** | 0 | 1 |
+| Desenvolvedor profissional | q1c | 0 | 2 | **3** | 2 |
+| Cientista de dados / engenheiro de ML | q1d | 0 | 1 | **3** | **3** |
+| Time de plataforma / engenharia de dados | q1e | 0 | 1 | 2 | **3** |
 
-CS gets 2 for q1c because it supports pro developers via YAML authoring and the VS Code extension.
+O CS recebe 2 em q1c porque suporta desenvolvedores profissionais via autoria em YAML e a extensão do VS Code.
 
-**q1e** was added with Agent Bricks. The persona that owns the lakehouse, the pipelines, and Unity Catalog governance is distinct from a data scientist: they build agents *as part of the data platform*, so Agent Bricks leads and Foundry stays credible as the Azure-side alternative. Agent Bricks still scores 1 for q1a/q1b because its managed builders are usable without code — but only inside a Databricks workspace that someone else provisions.
+**q1e** foi adicionada junto com o Agent Bricks. O perfil que é dono do lakehouse, dos pipelines e da governança do Unity Catalog é distinto de um cientista de dados: ele cria agentes *como parte da plataforma de dados*, então o Agent Bricks lidera e o Foundry segue como alternativa crível do lado Azure. O Agent Bricks ainda pontua 1 em q1a/q1b porque seus construtores gerenciados são usáveis sem código — mas apenas dentro de um workspace Databricks que outra pessoa provisiona.
 
-### Q8 — Who will use this agent?
+### Q8 — Quem vai usar este agente?
 
-Audience scope separates Agent Builder's quick small-team sweet spot from Copilot Studio's managed deployment model. External-facing remains a hard constraint that eliminates Agent Builder and M365 Copilot.
+O escopo de público separa o ponto forte do Agent Builder (times pequenos, entrega rápida) do modelo de implantação gerenciada do Copilot Studio. Público externo continua sendo uma restrição rígida que elimina Agent Builder e M365 Copilot.
 
-| Option | ID | Agent Builder | CS | Foundry | DBX | Hard Rule |
+| Opção | ID | Agent Builder | CS | Foundry | DBX | Regra rígida |
 |---|---|---|---|---|---|---|
-| Me or a small internal team | q8a | **3** | 2 | 1 | 1 | — |
-| Department or broad internal audience | q8c | 1 | **3** | 2 | 2 | — |
-| External users | q8b | 0 | **3** | **3** | 2 | Zeros AB, M365 |
-| Not decided yet | q8d | 2 | 2 | 1 | 1 | — |
+| Eu ou um pequeno time interno | q8a | **3** | 2 | 1 | 1 | — |
+| Área ou público interno amplo | q8c | 1 | **3** | 2 | 2 | — |
+| Usuários externos | q8b | 0 | **3** | **3** | 2 | Zera AB, M365 |
+| Ainda não decidido | q8d | 2 | 2 | 1 | 1 | — |
 
-Agent Bricks scores low on audience across the board: serving an agent to people is not where it differentiates. It gets 2 for external users because agents can be served as public endpoints or apps, but the delivery channel usually ends up being a Microsoft or custom front end.
+O Agent Bricks pontua baixo em público de forma geral: servir um agente a pessoas não é onde ele se diferencia. Ele recebe 2 em usuários externos porque agentes podem ser servidos como endpoints públicos ou apps, mas o canal de entrega geralmente acaba sendo um front-end Microsoft ou personalizado.
 
-### Q2 — Where will users interact with this agent?
+### Q2 — Onde as pessoas vão interagir com este agente?
 
-Deployment surface is still a hard constraint. Agent Builder runs inside Microsoft 365 Copilot chat surfaces, not custom apps or event-driven runtimes.
+A superfície de implantação continua sendo uma restrição rígida. O Agent Builder roda dentro das superfícies de chat do Microsoft 365 Copilot, não em apps personalizados nem em runtimes orientados a eventos.
 
-| Option | ID | Agent Builder | CS | Foundry | DBX | Hard Rule |
+| Opção | ID | Agent Builder | CS | Foundry | DBX | Regra rígida |
 |---|---|---|---|---|---|---|
-| Microsoft 365 Copilot chat | q2a | **3** | **3** | 2 | 0 | Zeros DBX |
-| Custom app (website/mobile) | q2b | 0 | **3** | **3** | **3** | Zeros AB |
-| Background (event-driven) | q2c | 0 | **3** | **3** | 2 | Zeros AB |
-| Multiple / not decided | q2d | 1 | **3** | **3** | 1 | — |
-| Data and analytics environment | q2e | 0 | 1 | 2 | **3** | Zeros AB |
+| Chat do Microsoft 365 Copilot | q2a | **3** | **3** | 2 | 0 | Zera DBX |
+| App personalizado (site/mobile) | q2b | 0 | **3** | **3** | **3** | Zera AB |
+| Segundo plano (orientado a eventos) | q2c | 0 | **3** | **3** | 2 | Zera AB |
+| Vários lugares / não decidido | q2d | 1 | **3** | **3** | 1 | — |
+| Ambiente de dados e analytics | q2e | 0 | 1 | 2 | **3** | Zera AB |
 
-**q2e** was added with Agent Bricks: notebooks, natural-language data exploration, BI, and governed agent endpoints served by the data platform. It is the mirror image of q2a — where q2a disqualifies Agent Bricks, q2e disqualifies Agent Builder. Copilot Studio keeps a 1 because it can call a data-platform endpoint, and Foundry a 2 because it can host the application layer around one.
+**q2e** foi adicionada junto com o Agent Bricks: notebooks, exploração de dados em linguagem natural, BI e endpoints de agente governados servidos pela plataforma de dados. É a imagem espelhada de q2a — onde q2a desqualifica o Agent Bricks, q2e desqualifica o Agent Builder. O Copilot Studio mantém 1 porque consegue chamar um endpoint da plataforma de dados, e o Foundry 2 porque consegue hospedar a camada de aplicação em volta de um.
 
-Foundry now scores higher for deployment flexibility because Foundry agents can publish stable endpoints, integrate with custom applications and services, and be published to Microsoft 365 Copilot or Teams. Copilot Studio remains tied or stronger when the target is low-code Microsoft 365 or Power Platform delivery.
+O Foundry pontua mais alto em flexibilidade de implantação porque agentes do Foundry podem publicar endpoints estáveis, integrar com aplicações e serviços personalizados e ser publicados no Microsoft 365 Copilot ou no Teams. O Copilot Studio permanece empatado ou mais forte quando o alvo é entrega low-code no Microsoft 365 ou na Power Platform.
 
-### Q4 — What should this agent do?
+### Q4 — O que este agente deve fazer?
 
-Task complexity is the strongest discriminator between Agent Builder, Copilot Studio, and Foundry. Agent Builder now scores well for lightweight content/data-analysis capabilities enabled in declarative agents, but is still zeroed for action workflows.
+A complexidade da tarefa é o fator de diferenciação mais forte entre Agent Builder, Copilot Studio e Foundry. O Agent Builder hoje pontua bem em recursos leves de conteúdo/análise de dados habilitados em agentes declarativos, mas continua zerado para fluxos de ação.
 
-| Option | ID | Agent Builder | CS | Foundry | DBX | Hard Rule |
+| Opção | ID | Agent Builder | CS | Foundry | DBX | Regra rígida |
 |---|---|---|---|---|---|---|
-| Simple Q&A / lookups | q4a | **3** | **3** | 1 | 2 | — |
-| Conversational (multi-turn) | q4b | 2 | **3** | 2 | 2 | — |
-| Create/analyze content in Copilot | q4e | **3** | 2 | 2 | 1 | — |
-| Multi-step tasks with actions | q4c | 0 | **3** | **3** | 2 | Zeros AB |
-| Complex orchestration | q4d | 0 | 2 | **3** | **3** | Zeros AB, M365 |
-| Reason over large volumes of enterprise data | q4f | 0 | 1 | 2 | **3** | Zeros AB |
+| Perguntas e respostas simples / consultas | q4a | **3** | **3** | 1 | 2 | — |
+| Conversacional (múltiplos turnos) | q4b | 2 | **3** | 2 | 2 | — |
+| Criar/analisar conteúdo no Copilot | q4e | **3** | 2 | 2 | 1 | — |
+| Tarefas de várias etapas com ações | q4c | 0 | **3** | **3** | 2 | Zera AB |
+| Orquestração complexa | q4d | 0 | 2 | **3** | **3** | Zera AB, M365 |
+| Raciocinar sobre grandes volumes de dados corporativos | q4f | 0 | 1 | 2 | **3** | Zera AB |
 
-**q4f** was added with Agent Bricks and is the task type the previous five options had no home for: structured extraction across document collections, natural-language questions over governed tables, and tuning answer quality on your own data. Agent Bricks also reaches 3 on q4d because Supervisor Agent orchestrates data agents, Unity Catalog functions, MCP servers, and custom agents behind one entry point.
+**q4f** foi adicionada junto com o Agent Bricks e é o tipo de tarefa que as cinco opções anteriores não acomodavam: extração estruturada em coleções de documentos, perguntas em linguagem natural sobre tabelas governadas e ajuste da qualidade das respostas com seus próprios dados. O Agent Bricks também chega a 3 em q4d porque o Supervisor Agent orquestra agentes de dados, funções do Unity Catalog, servidores MCP e agentes personalizados atrás de um único ponto de entrada.
 
-Foundry gets 1 for q4a because it can do simple Q&A, but is usually overkill for simple knowledge scenarios. It gets 2 for q4e because code interpreter, file search, and hosted agents can support richer content/data-analysis workloads when the team needs developer control.
+O Foundry recebe 1 em q4a porque consegue fazer perguntas e respostas simples, mas costuma ser exagero para cenários simples de conhecimento. Recebe 2 em q4e porque interpretador de código, busca em arquivos e agentes hospedados suportam cargas mais ricas de conteúdo/análise de dados quando o time precisa de controle de desenvolvimento.
 
-### Q3 — What information does this agent need to access?
+### Q3 — A que informações este agente precisa acessar?
 
-Agent Builder is no longer treated as "Microsoft 365 files only." It can use Microsoft 365 content, scoped web, embedded files, and admin-enabled Microsoft 365 Copilot connectors. Copilot Studio is the strongest low-code option for Dataverse, custom connectors, business APIs, and Power Platform integration. Foundry now gets weak credit for Microsoft 365, web, and file grounding because Foundry tools and Foundry IQ can reach those sources, but it remains strongest for custom RAG, Azure AI Search, private indexes, tuned Foundry IQ knowledge bases, and engineering-managed retrieval systems.
+O Agent Builder não é mais tratado como "somente arquivos do Microsoft 365". Ele consegue usar conteúdo do Microsoft 365, web delimitada, arquivos incorporados e conectores do Microsoft 365 Copilot habilitados pelo administrador. O Copilot Studio é a opção low-code mais forte para Dataverse, conectores personalizados, APIs de negócio e integração com a Power Platform. O Foundry hoje recebe crédito fraco em fundamentação no Microsoft 365, web e arquivos porque as ferramentas do Foundry e o Foundry IQ alcançam essas fontes, mas ele segue mais forte para RAG personalizado, Azure AI Search, índices privados, bases de conhecimento ajustadas no Foundry IQ e sistemas de recuperação mantidos pela engenharia.
 
-| Option | ID | Agent Builder | CS | Foundry | DBX | Hard Rule |
+| Opção | ID | Agent Builder | CS | Foundry | DBX | Regra rígida |
 |---|---|---|---|---|---|---|
-| Microsoft 365 content | q3a | **3** | 2 | 1 | 0 | Zeros DBX |
-| Connector-backed business systems | q3b | 2 | **3** | 2 | 0 | Zeros DBX |
-| Dataverse / custom connectors / business APIs | q3c | 0 | **3** | 2 | 1 | Zeros AB |
-| M365 + connector-backed systems | q3d | 2 | **3** | 2 | 0 | Zeros DBX |
-| Public websites or uploaded files | q3e | **3** | 2 | 1 | 1 | — |
-| Custom RAG / Azure AI Search / private indexes / Foundry IQ | q3f | 0 | 1 | **3** | 2 | Zeros AB |
-| Lakehouse / Unity Catalog / Delta tables | q3g | 0 | 1 | 2 | **3** | Zeros AB |
+| Conteúdo do Microsoft 365 | q3a | **3** | 2 | 1 | 0 | Zera DBX |
+| Sistemas de negócio via conectores | q3b | 2 | **3** | 2 | 0 | Zera DBX |
+| Dataverse / conectores personalizados / APIs de negócio | q3c | 0 | **3** | 2 | 1 | Zera AB |
+| M365 + sistemas via conectores | q3d | 2 | **3** | 2 | 0 | Zera DBX |
+| Sites públicos ou arquivos enviados | q3e | **3** | 2 | 1 | 1 | — |
+| RAG personalizado / Azure AI Search / índices privados / Foundry IQ | q3f | 0 | 1 | **3** | 2 | Zera AB |
+| Lakehouse / Unity Catalog / tabelas Delta | q3g | 0 | 1 | 2 | **3** | Zera AB |
 
-**q3g** was added with Agent Bricks and is the strongest single signal for it. Q3 is also where Agent Bricks is most often eliminated: the three Microsoft 365-flavoured sources (q3a, q3b, q3d) zero it, because Agent Bricks grounds on lakehouse data governed in Unity Catalog and has no path into SharePoint, OneDrive, Teams, Outlook, or the Microsoft 365 Copilot connector catalog. It keeps a 2 on q3f — engineering-managed retrieval is the shape it is built for, even when the index itself lives elsewhere.
+**q3g** foi adicionada junto com o Agent Bricks e é o sinal isolado mais forte a favor dele. A Q3 também é onde o Agent Bricks é mais frequentemente eliminado: as três fontes de perfil Microsoft 365 (q3a, q3b, q3d) o zeram, porque o Agent Bricks se fundamenta em dados de lakehouse governados no Unity Catalog e não tem caminho até SharePoint, OneDrive, Teams, Outlook ou o catálogo de conectores do Microsoft 365 Copilot. Ele mantém 2 em q3f — recuperação mantida pela engenharia é o formato para o qual foi construído, mesmo quando o índice em si está em outro lugar.
 
-## Scoring Pipeline
+## Pipeline de pontuação
 
-### Step 1 — Hard rules (pre-sum)
+### Passo 1 — Regras rígidas (antes da soma)
 
-Hard rules zero out platforms before scores are summed. They represent real platform limitations.
+As regras rígidas zeram plataformas antes de as pontuações serem somadas. Elas representam limitações reais das plataformas.
 
-| Trigger | Platforms zeroed | Reason |
+| Gatilho | Plataformas zeradas | Motivo |
 |---|---|---|
-| q8b (external users) | AB, M365 | Cannot publish externally |
-| q4d (complex orchestration) | AB, M365 | Requires Copilot Studio or Foundry orchestration |
-| q4c (multi-step action workflows) | AB | Cannot submit forms, update records, or take actions across systems |
-| q2b (custom app) | AB | Can only run inside Microsoft 365 Copilot surfaces |
-| q2c (background) | AB | No event-driven or autonomous background runtime |
-| q3c (direct business system integration) | AB | Cannot directly connect to Dataverse, custom connectors, or business APIs |
-| q3f (custom retrieval architecture) | AB | Cannot directly use custom RAG, Azure AI Search, private indexes, Foundry IQ, or engineering-managed retrieval systems |
-| q3g (lakehouse-governed data) | AB | Cannot query Unity Catalog, Delta tables, or warehouse-governed document collections |
-| q2e (data and analytics environment) | AB | Only runs inside Microsoft 365, not in notebooks, BI, or data platform endpoints |
-| q4f (large-scale data reasoning) | AB | Cannot extract at scale over document collections, query governed tables, or tune answer quality on your data |
-| q3a (Microsoft 365 content) | DBX | Grounds on lakehouse data, not SharePoint, OneDrive, Teams, or Outlook |
-| q3b (Microsoft 365 Copilot connectors) | DBX | Does not consume the Microsoft 365 connector catalog |
-| q3d (M365 content + connectors) | DBX | No grounding path into Microsoft 365 sources |
-| q2a (Microsoft 365 Copilot chat) | DBX | Agents are served from Databricks and have no native Microsoft 365 Copilot publishing path |
+| q8b (usuários externos) | AB, M365 | Não publicam externamente |
+| q4d (orquestração complexa) | AB, M365 | Exige orquestração do Copilot Studio ou do Foundry |
+| q4c (fluxos de ação de várias etapas) | AB | Não envia formulários, não atualiza registros nem executa ações entre sistemas |
+| q2b (app personalizado) | AB | Só roda dentro das superfícies do Microsoft 365 Copilot |
+| q2c (segundo plano) | AB | Sem runtime orientado a eventos ou autônomo em segundo plano |
+| q3c (integração direta com sistemas de negócio) | AB | Não conecta diretamente a Dataverse, conectores personalizados ou APIs de negócio |
+| q3f (arquitetura de recuperação personalizada) | AB | Não usa diretamente RAG personalizado, Azure AI Search, índices privados, Foundry IQ ou sistemas de recuperação mantidos pela engenharia |
+| q3g (dados governados pelo lakehouse) | AB | Não consulta Unity Catalog, tabelas Delta nem coleções de documentos governadas pelo warehouse |
+| q2e (ambiente de dados e analytics) | AB | Só roda dentro do Microsoft 365, não em notebooks, BI ou endpoints da plataforma de dados |
+| q4f (raciocínio sobre dados em larga escala) | AB | Não faz extração em escala sobre coleções de documentos, não consulta tabelas governadas nem ajusta a qualidade das respostas com seus dados |
+| q3a (conteúdo do Microsoft 365) | DBX | Fundamenta-se em dados de lakehouse, não em SharePoint, OneDrive, Teams ou Outlook |
+| q3b (conectores do Microsoft 365 Copilot) | DBX | Não consome o catálogo de conectores do Microsoft 365 |
+| q3d (conteúdo M365 + conectores) | DBX | Sem caminho de fundamentação em fontes do Microsoft 365 |
+| q2a (chat do Microsoft 365 Copilot) | DBX | Os agentes são servidos pelo Databricks e não têm caminho nativo de publicação no Microsoft 365 Copilot |
 
-Additionally, M365 Copilot is always zeroed in the full assessment (hard-coded in JS).
+Além disso, o M365 Copilot é sempre zerado na avaliação completa (fixado no JS).
 
-### Step 2 — Sum raw scores
+### Passo 2 — Soma das pontuações brutas
 
-For each platform not zeroed: sum the scores from all answered questions. Range: 0–15.
+Para cada plataforma não zerada: soma as pontuações de todas as perguntas respondidas. Faixa: 0–15.
 
-### Step 2.5 — Persona preferences (soft overrides)
+### Passo 2.5 — Preferências por perfil (ajustes suaves)
 
-Persona preferences force one platform above another in ranking regardless of scores. Unlike hard rules, all scores are preserved — the override only affects sort order. A rationale message is displayed as a key factor on the recommendation card.
+As preferências por perfil forçam uma plataforma acima de outra no ranking, independentemente das pontuações. Diferente das regras rígidas, todas as pontuações são preservadas — o ajuste só afeta a ordem. Uma justificativa é exibida como fator-chave no card de recomendação.
 
-| Trigger | Prefer | Over | Rationale |
+| Gatilho | Prefere | Sobre | Justificativa |
 |---|---|---|---|
-| q1d (data scientist / AI-ML) | Copilot Studio | Agent Builder | CS supports curated model selection, evaluations, Foundry IQ integration, code-first development, and flexible orchestration that AB lacks |
+| q1d (cientista de dados / IA-ML) | Copilot Studio | Agent Builder | O CS oferece seleção curada de modelos, avaliações, integração com Foundry IQ, desenvolvimento code-first e orquestração flexível, que faltam no AB |
 
-### Step 3 — Threshold labels
+### Passo 3 — Rótulos das faixas
 
-| Score | Label |
+| Pontuação | Rótulo |
 |---|---|
-| 12–15 | Strong fit |
-| 8–11 | Good fit |
-| 4–7 | Partial fit |
-| 0–3 | Not recommended |
+| 12–15 | Encaixe forte |
+| 8–11 | Bom encaixe |
+| 4–7 | Encaixe parcial |
+| 0–3 | Não recomendado |
 
-### Step 4 — Rank and recommend
+### Passo 4 — Ranquear e recomendar
 
-Platforms are sorted by score descending. The highest-scoring platform is the primary recommendation. The second-highest is shown as "Also consider" when it is viable.
+As plataformas são ordenadas por pontuação decrescente. A de maior pontuação é a recomendação principal. A segunda é exibida como "Considere também" quando é viável.
 
-### Step 5 — Tie handling
+### Passo 5 — Tratamento de empate
 
-When the top two platforms score within **2 points**, they're presented as a complementary pair when that pair is listed in `valid_pairs`.
+Quando as duas primeiras plataformas ficam a até **2 pontos** de diferença, elas são apresentadas como par complementar, desde que esse par esteja listado em `valid_pairs`.
 
-| Pair | Rationale |
+| Par | Justificativa |
 |---|---|
-| Copilot Studio + Foundry | Build in CS, extend with custom code in Foundry |
-| M365 Copilot + Copilot Studio | M365 Copilot for end users, CS for customization |
-| Agent Builder + M365 Copilot | AB for Microsoft 365-native agents, M365 for extensibility |
-| Agent Bricks + Foundry | Agent Bricks for lakehouse-grounded reasoning, Foundry for the Azure application, identity, networking, and Microsoft 365 publishing |
-| Copilot Studio + Agent Bricks | Agent Bricks to reason over lakehouse data, CS to bring the answer to employees in Teams and Microsoft 365 |
+| Copilot Studio + Foundry | Construa no CS e estenda com código personalizado no Foundry |
+| M365 Copilot + Copilot Studio | M365 Copilot para os usuários finais, CS para personalização |
+| Agent Builder + M365 Copilot | AB para agentes nativos do Microsoft 365, M365 para extensibilidade |
+| Agent Bricks + Foundry | Agent Bricks para raciocínio fundamentado no lakehouse, Foundry para a aplicação Azure, identidade, rede e publicação no Microsoft 365 |
+| Copilot Studio + Agent Bricks | Agent Bricks para raciocinar sobre os dados do lakehouse, CS para levar a resposta aos funcionários no Teams e no Microsoft 365 |
 
-**Persona-based tiebreakers** — when two platforms score equally and a specific persona answer is selected, one platform is preferred:
+**Critérios de desempate por perfil** — quando duas plataformas empatam e uma resposta de perfil específica foi selecionada, uma delas é preferida:
 
-| Trigger | Platforms | Prefer | Rationale |
+| Gatilho | Plataformas | Prefere | Justificativa |
 |---|---|---|---|
-| q1c (professional developer) | AB, CS | CS | CS supports code-first authoring via VS Code extension |
-| q1d (data scientist / AI-ML) | CS, Foundry | CS | CS provides a faster path to production agents |
-| q3g (lakehouse data) | CS, DBX | DBX | Builds the agent where the data, permissions, and lineage already are, instead of exporting or re-indexing |
-| q1e (data platform team) | Foundry, DBX | DBX | Keeps the agent in the same governance plane as the data instead of adding a second platform to operate |
+| q1c (desenvolvedor profissional) | AB, CS | CS | O CS suporta autoria code-first pela extensão do VS Code |
+| q1d (cientista de dados / IA-ML) | CS, Foundry | CS | O CS oferece um caminho mais rápido até agentes em produção |
+| q3g (dados no lakehouse) | CS, DBX | DBX | Constrói o agente onde os dados, permissões e linhagem já estão, em vez de exportar ou reindexar |
+| q1e (time de plataforma de dados) | Foundry, DBX | DBX | Mantém o agente no mesmo plano de governança dos dados, em vez de acrescentar uma segunda plataforma para operar |
 
-### Step 6 — Cross-question notes
+### Passo 6 — Notas entre perguntas
 
-Contextual warning banners when answer combinations are logically contradictory:
+Avisos contextuais quando as combinações de respostas são logicamente contraditórias:
 
-| Condition | Note |
+| Condição | Nota |
 |---|---|
-| q2c + q4a | Background agent doing simple Q&A — contradictory |
-| q8b + q2a | External users in Microsoft 365 Copilot chat — external users can't access your tenant |
-| q1a + q4d | Business user wants complex orchestration — requires dev skills |
-| q1a + q3c | Business user needs direct business system integration — requires technical expertise |
-| q1a + q3f | Business user needs custom retrieval architecture — requires engineering expertise |
-| q3g + q2a | Lakehouse knowledge but Microsoft 365 Copilot chat delivery — no native publishing path; front it with a CS or Foundry agent |
-| q1a + q3g | Business user needs lakehouse data — access and serving are owned by the data platform team |
-| q1e + q3a | Data platform team but Microsoft 365 content — that content is reached through Copilot connectors and Graph, not the lakehouse |
+| q2c + q4a | Agente em segundo plano fazendo perguntas e respostas simples — contraditório |
+| q8b + q2a | Usuários externos no chat do Microsoft 365 Copilot — externos não acessam o seu tenant |
+| q1a + q4d | Usuário de negócio quer orquestração complexa — exige habilidades de desenvolvimento |
+| q1a + q3c | Usuário de negócio precisa de integração direta com sistemas de negócio — exige conhecimento técnico |
+| q1a + q3f | Usuário de negócio precisa de arquitetura de recuperação personalizada — exige conhecimento de engenharia |
+| q3g + q2a | Conhecimento no lakehouse mas entrega no chat do Microsoft 365 Copilot — sem caminho nativo de publicação; coloque um agente do CS ou do Foundry na frente |
+| q1a + q3g | Usuário de negócio precisa de dados do lakehouse — acesso e serving pertencem ao time de plataforma de dados |
+| q1e + q3a | Time de plataforma de dados mas conteúdo do Microsoft 365 — esse conteúdo é acessado por conectores do Copilot e pelo Graph, não pelo lakehouse |
 
-### Step 7 — Winner-persona mismatch
+### Passo 7 — Descompasso entre vencedor e perfil
 
-| Winner | Persona | Note |
+| Vencedor | Perfil | Nota |
 |---|---|---|
-| Foundry | q1a (business user) | Requires professional development skills and Azure expertise — partner with a development team |
-| Agent Bricks | q1a (business user) | Assumes the organization already runs on Databricks and someone can grant governed data access |
-| Agent Bricks | q1b (low-code maker / IT pro) | Lives outside the Microsoft stack — a workspace, Unity Catalog permissions, and serving capacity are prerequisites |
+| Foundry | q1a (usuário de negócio) | Exige habilidades de desenvolvimento profissional e conhecimento de Azure — apoie-se em um time de desenvolvimento |
+| Agent Bricks | q1a (usuário de negócio) | Pressupõe que a organização já roda no Databricks e que alguém possa conceder acesso governado aos dados |
+| Agent Bricks | q1b (criador low-code / profissional de TI) | Fica fora do stack Microsoft — workspace, permissões do Unity Catalog e capacidade de serving são pré-requisitos |
 
-## Distribution Analysis
+## Análise de distribuição
 
-Across all 1,920 possible answer combinations:
+Considerando todas as 4.200 combinações possíveis de respostas:
 
-| Platform | Wins | % |
+| Plataforma | Vitórias | % |
 |---|---:|---:|
-| Copilot Studio | 2,885 | 68.7% |
-| Foundry | 851 | 20.3% |
-| Databricks Agent Bricks | 390 | 9.3% |
-| Agent Builder | 74 | 1.8% |
+| Copilot Studio | 2.885 | 68,7% |
+| Foundry | 851 | 20,3% |
+| Databricks Agent Bricks | 390 | 9,3% |
+| Agent Builder | 74 | 1,8% |
 
-**Exact top-score ties:** 836 combos (19.9%) — 562 CS/Foundry, 142 Agent Bricks/Foundry, 94 CS/Agent Bricks, 38 AB/CS. **Close-score cases within 2 points:** 3,028 combos (72.1%) — still dominated by CS/Foundry (2,075), reflecting the intentional overlap between Copilot Studio's governed low-code runtime and Foundry's developer-controlled runtime, with Agent Bricks/Foundry (450) as the new second axis of overlap.
+**Empates exatos no topo:** 836 combinações (19,9%) — 562 CS/Foundry, 142 Agent Bricks/Foundry, 94 CS/Agent Bricks, 38 AB/CS. **Casos de pontuação próxima, dentro de 2 pontos:** 3.028 combinações (72,1%) — ainda dominados por CS/Foundry (2.075), refletindo a sobreposição intencional entre o runtime low-code governado do Copilot Studio e o runtime controlado pelo desenvolvedor do Foundry, com Agent Bricks/Foundry (450) como o novo segundo eixo de sobreposição.
 
-> The combination space grew from 1,920 to 4,200 when Agent Bricks added q1e, q2e, q4f, and q3g (5 × 4 × 5 × 6 × 7). Agent Builder's share fell from 3.1% to 1.8% not because its scoring changed, but because the four new options all disqualify it — the denominator grew with combinations it was never eligible for. Regenerate these numbers with a brute-force pass over `rankPlatforms()` whenever the matrix changes.
+> O espaço de combinações cresceu de 1.920 para 4.200 quando o Agent Bricks acrescentou q1e, q2e, q4f e q3g (5 × 4 × 5 × 6 × 7). A fatia do Agent Builder caiu de 3,1% para 1,8% não porque sua pontuação mudou, mas porque as quatro novas opções o desqualificam — o denominador cresceu com combinações para as quais ele nunca foi elegível. Regere esses números com uma varredura por força bruta sobre `rankPlatforms()` sempre que a matriz mudar.
 
-### When Agent Builder wins
+### Quando o Agent Builder vence
 
-AB now wins beyond the old SharePoint/OneDrive-only path. Its sweet spot is: **business user or low-code maker, small team or undecided internal audience, Microsoft 365 Copilot surface, Q&A/conversation/content-analysis, and Microsoft 365, web/uploaded, or connector-backed knowledge**.
+O AB agora vence além do antigo caminho restrito a SharePoint/OneDrive. Seu ponto ideal é: **usuário de negócio ou criador low-code, time pequeno ou público interno indefinido, superfície do Microsoft 365 Copilot, perguntas e respostas/conversa/análise de conteúdo, e conhecimento vindo do Microsoft 365, da web/arquivos enviados ou de conectores**.
 
-Agent Builder still loses whenever the user needs external publishing, custom app deployment, background execution, direct business system integration, custom retrieval architecture, or action workflows that update external systems.
+O Agent Builder ainda perde sempre que o usuário precisa de publicação externa, implantação em app personalizado, execução em segundo plano, integração direta com sistemas de negócio, arquitetura de recuperação personalizada ou fluxos de ação que atualizam sistemas externos.
 
-### When Foundry wins
+### Quando o Foundry vence
 
-Foundry wins when answers include strong technical or production-runtime signals: pro dev or ML persona (q1c/q1d), custom app or multi-surface deployment (q2b/q2d), complex or long-running orchestration (q4d), custom retrieval architecture (q3f), external-facing scenarios, or a need for managed endpoints, hosted code agents, private networking, tracing, evaluation, and full Azure control. Copilot Studio still ties or beats Foundry for event-triggered workflows and business APIs unless the scenario clearly needs full-code control.
+O Foundry vence quando as respostas incluem sinais fortes de natureza técnica ou de runtime de produção: perfil de desenvolvedor profissional ou de ML (q1c/q1d), implantação em app personalizado ou em múltiplas superfícies (q2b/q2d), orquestração complexa ou de longa duração (q4d), arquitetura de recuperação personalizada (q3f), cenários voltados ao público externo, ou necessidade de endpoints gerenciados, agentes de código hospedados, rede privada, tracing, avaliação e controle total do Azure. O Copilot Studio ainda empata ou supera o Foundry em fluxos disparados por evento e APIs de negócio, a menos que o cenário claramente exija controle total por código.
 
-### When Agent Bricks wins
+### Quando o Agent Bricks vence
 
-Agent Bricks wins on the data-platform axis, not the Microsoft-surface axis: **data platform team or data scientist (q1e/q1d), lakehouse-governed knowledge (q3g), delivery in the data and analytics environment or a custom app (q2e/q2b), and large-scale data reasoning or multi-agent orchestration (q4f/q4d)**.
+O Agent Bricks vence no eixo da plataforma de dados, não no eixo das superfícies Microsoft: **time de plataforma de dados ou cientista de dados (q1e/q1d), conhecimento governado pelo lakehouse (q3g), entrega no ambiente de dados e analytics ou em app personalizado (q2e/q2b), e raciocínio sobre dados em larga escala ou orquestração multiagente (q4f/q4d)**.
 
-It is eliminated outright whenever the knowledge is Microsoft 365 content or connector-backed (q3a/q3b/q3d) or the agent must live inside Microsoft 365 Copilot chat (q2a). In practice this means Agent Bricks never competes for the classic Copilot scenario — it only appears when the user tells the advisor the scenario is anchored in their data estate.
+Ele é eliminado de imediato sempre que o conhecimento for conteúdo do Microsoft 365 ou vier de conectores (q3a/q3b/q3d), ou quando o agente precisar viver dentro do chat do Microsoft 365 Copilot (q2a). Na prática, isso significa que o Agent Bricks nunca disputa o cenário clássico do Copilot — ele só aparece quando o usuário informa ao advisor que o cenário está ancorado no seu patrimônio de dados.
 
-### Copilot Studio dominance
+### Predominância do Copilot Studio
 
-CS remains the default recommendation for most combinations because it bridges Agent Builder's no-code Microsoft 365-native scenarios and Foundry's full-code scenarios. It wins when the user needs broader internal or external deployment, actions, branching workflows, event triggers, enterprise governance, Dataverse/custom connectors, MCP tools, computer use, evaluation, monitoring, or a safer path when scope is undecided.
+O CS continua sendo a recomendação padrão na maioria das combinações porque faz a ponte entre os cenários no-code nativos do Microsoft 365 do Agent Builder e os cenários full-code do Foundry. Ele vence quando o usuário precisa de implantação interna ou externa mais ampla, ações, fluxos com ramificações, gatilhos por evento, governança corporativa, Dataverse/conectores personalizados, ferramentas MCP, computer use, avaliação, monitoramento, ou um caminho mais seguro quando o escopo ainda está indefinido.
 
-### Score ranges when winning
+### Faixas de pontuação nas vitórias
 
-| Platform | Min | Max | Avg |
+| Plataforma | Mín. | Máx. | Média |
 |---|---:|---:|---:|
-| Agent Builder | 10 | 15 | 12.5 |
-| Copilot Studio | 7 | 15 | 11.8 |
-| Foundry | 8 | 15 | 12.0 |
-| Databricks Agent Bricks | 9 | 14 | 11.4 |
+| Agent Builder | 10 | 15 | 12,5 |
+| Copilot Studio | 7 | 15 | 11,8 |
+| Foundry | 8 | 15 | 12,0 |
+| Databricks Agent Bricks | 9 | 14 | 11,4 |
 
-The lowest-scoring win is now 7 (Copilot Studio), a "Partial fit" — it occurs on data-platform-heavy combinations where every Microsoft platform is a compromise and Agent Bricks has been disqualified by a Microsoft 365 grounding answer. Agent Bricks never reaches 15 because it scores at most 2 on audience (Q8).
+A vitória de menor pontuação hoje é 7 (Copilot Studio), um "Encaixe parcial" — ocorre em combinações fortemente voltadas à plataforma de dados, em que toda plataforma Microsoft é um meio-termo e o Agent Bricks foi desqualificado por uma resposta de fundamentação no Microsoft 365. O Agent Bricks nunca chega a 15 porque pontua no máximo 2 em público (Q8).
 
-## Cross-question note frequency
+## Frequência das notas entre perguntas
 
-| Note | Combos | % |
+| Nota | Combinações | % |
 |---|---:|---:|
-| Background + SimpleQA | 140 | 3.3% |
-| External + M365 Copilot chat | 210 | 5.0% |
-| BizUser + Orchestrate | 140 | 3.3% |
-| BizUser + Business APIs | 120 | 2.9% |
-| BizUser + Custom retrieval | 120 | 2.9% |
-| Lakehouse + M365 Copilot chat | 120 | 2.9% |
-| BizUser + Lakehouse | 120 | 2.9% |
-| DataPlatformTeam + M365 content | 120 | 2.9% |
-| Foundry + BizUser (persona mismatch) | 42 | 1.0% |
-| Agent Bricks + BizUser (persona mismatch) | 85 | 2.0% |
-| Agent Bricks + LowCodeMaker (persona mismatch) | 43 | 1.0% |
+| Segundo plano + perguntas simples | 140 | 3,3% |
+| Externo + chat do M365 Copilot | 210 | 5,0% |
+| Usuário de negócio + orquestração | 140 | 3,3% |
+| Usuário de negócio + APIs de negócio | 120 | 2,9% |
+| Usuário de negócio + recuperação personalizada | 120 | 2,9% |
+| Lakehouse + chat do M365 Copilot | 120 | 2,9% |
+| Usuário de negócio + lakehouse | 120 | 2,9% |
+| Time de plataforma de dados + conteúdo M365 | 120 | 2,9% |
+| Foundry + usuário de negócio (descompasso de perfil) | 42 | 1,0% |
+| Agent Bricks + usuário de negócio (descompasso de perfil) | 85 | 2,0% |
+| Agent Bricks + criador low-code (descompasso de perfil) | 43 | 1,0% |
 
-Notes are not mutually exclusive — a single combo can trigger multiple notes.
+As notas não são mutuamente exclusivas — uma mesma combinação pode disparar várias notas.

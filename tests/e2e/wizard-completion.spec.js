@@ -45,7 +45,7 @@ test.describe('Wizard Completion', () => {
 
       // Verify question counter
       await expect(page.locator('#question-counter')).toContainText(
-        `Question ${i + 1} of ${QUESTION_ORDER.length}`
+        `Pergunta ${i + 1} de ${QUESTION_ORDER.length}`
       );
 
       // Click the option (scoped to assessment options, not prescreen cards)
@@ -69,7 +69,7 @@ test.describe('Wizard Completion', () => {
     await expect(page.locator('#rec-score-comparison')).toBeVisible();
 
     // Verify the tab title updated
-    await expect(page).toHaveTitle(/APA:.*recommended/);
+    await expect(page).toHaveTitle(/APA:.*recomendado/);
   });
 
   test('back button navigates to previous question', async ({ page }) => {
@@ -82,13 +82,13 @@ test.describe('Wizard Completion', () => {
     await page.locator('#next-btn').click();
 
     // We should be on question 2
-    await expect(page.locator('#question-counter')).toContainText('Question 2');
+    await expect(page.locator('#question-counter')).toContainText('Pergunta 2');
 
     // Click back
     await page.locator('#prev-btn').click();
 
     // Should be back on question 1
-    await expect(page.locator('#question-counter')).toContainText('Question 1');
+    await expect(page.locator('#question-counter')).toContainText('Pergunta 1');
   });
 
   test('back from first question returns to prescreen', async ({ page }) => {

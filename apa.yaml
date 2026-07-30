@@ -1,17 +1,18 @@
 ################################################################################
-# Microsoft Agent Platform Advisor — Scoring Matrix
-# Platforms: Agent Builder (agent_builder), Microsoft 365 Copilot (m365_copilot),
-#            Copilot Studio (copilot_studio), Microsoft Foundry (foundry),
-#            Databricks Agent Bricks (databricks)
+# Microsoft Agent Platform Advisor — Matriz de pontuação
+# Plataformas: Agent Builder (agent_builder), Microsoft 365 Copilot (m365_copilot),
+#              Copilot Studio (copilot_studio), Microsoft Foundry (foundry),
+#              Databricks Agent Bricks (databricks)
 #
-# Databricks Agent Bricks is the non-Microsoft option in the matrix. It is scored
-# only when the scenario is anchored in the data platform — a lakehouse-governed
-# knowledge or reasoning agent built and served by the team that owns the data.
-# It cannot ground on Microsoft 365 content or publish into Microsoft 365 Copilot,
-# so those answers zero it out the same way other platform limits are enforced.
+# Databricks Agent Bricks é a opção não-Microsoft da matriz. Ele só é pontuado
+# quando o cenário está ancorado na plataforma de dados — um agente de conhecimento
+# ou raciocínio governado pelo lakehouse, criado e servido pelo time que é dono dos
+# dados. Ele não consegue se fundamentar em conteúdo do Microsoft 365 nem publicar
+# no Microsoft 365 Copilot, então essas respostas o zeram da mesma forma que os
+# limites das outras plataformas são aplicados.
 #
-# Score scale: 0 = not a fit · 1 = weak signal · 2 = moderate · 3 = strong
-# Max raw score per platform: 15 (5 questions × max 3)
+# Escala de pontos: 0 = não serve · 1 = sinal fraco · 2 = moderado · 3 = forte
+# Pontuação bruta máxima por plataforma: 15 (5 perguntas × máx. 3)
 ################################################################################
 
 meta:
@@ -29,18 +30,18 @@ meta:
       label: Databricks Agent Bricks
 
 ################################################################################
-# QUESTIONS
+# PERGUNTAS
 ################################################################################
 
 questions:
 
   - id: q1
-    label: Who is building this agent?
-    purpose: Sets persona weight for interpreting later answers
-    prompt: Some platforms are designed for makers using low-code tools, while others require professional development skills.
+    label: Quem vai criar este agente?
+    purpose: Define o peso do perfil para interpretar as respostas seguintes
+    prompt: Algumas plataformas são feitas para criadores que usam ferramentas low-code, enquanto outras exigem habilidades de desenvolvimento profissional.
     options:
       - id: q1a
-        label: Business user or subject matter expert — no coding experience
+        label: Usuário de negócio ou especialista no assunto — sem experiência em programação
         scores:
           agent_builder: 3
           copilot_studio: 1
@@ -48,7 +49,7 @@ questions:
           databricks: 1
 
       - id: q1b
-        label: Low-code maker or IT professional — comfortable with drag-and-drop tools and configuration
+        label: Criador low-code ou profissional de TI — à vontade com ferramentas de arrastar e soltar e configuração
         scores:
           agent_builder: 1
           copilot_studio: 3
@@ -56,7 +57,7 @@ questions:
           databricks: 1
 
       - id: q1c
-        label: Professional developer — writes code and builds software
+        label: Desenvolvedor profissional — escreve código e constrói software
         scores:
           agent_builder: 0
           copilot_studio: 2
@@ -64,7 +65,7 @@ questions:
           databricks: 2
 
       - id: q1d
-        label: Data scientist or AI/ML engineer — works with AI models and data infrastructure
+        label: Cientista de dados ou engenheiro de IA/ML — trabalha com modelos de IA e infraestrutura de dados
         scores:
           agent_builder: 0
           copilot_studio: 1
@@ -72,7 +73,7 @@ questions:
           databricks: 3
 
       - id: q1e
-        label: Data platform or data engineering team — owns the lakehouse, pipelines, and data governance
+        label: Time de plataforma de dados ou engenharia de dados — é dono do lakehouse, dos pipelines e da governança de dados
         scores:
           agent_builder: 0
           copilot_studio: 1
@@ -80,18 +81,18 @@ questions:
           databricks: 3
 
   - id: q8
-    label: Who will use this agent?
-    purpose: External-facing is a hard constraint that affects platform eligibility
-    prompt: Will this agent be used by a small internal group, a broad internal audience, or external users such as customers or partners?
+    label: Quem vai usar este agente?
+    purpose: Público externo é uma restrição rígida que afeta a elegibilidade da plataforma
+    prompt: Este agente será usado por um pequeno grupo interno, por um público interno amplo ou por usuários externos como clientes e parceiros?
     hard_rules:
       - condition: option in [q8b]
         effect: >
-          Set agent_builder = 0 and m365_copilot = 0.
-          Agent Builder has no external publishing path.
-          Microsoft 365 Copilot is tenant-scoped only.
+          Zera agent_builder e m365_copilot.
+          O Agent Builder não tem caminho de publicação externa.
+          O Microsoft 365 Copilot é restrito ao tenant.
     options:
       - id: q8a
-        label: Me or a small internal team — quick agent for a bounded group
+        label: Eu ou um pequeno time interno — um agente rápido para um grupo delimitado
         scores:
           agent_builder: 3
           copilot_studio: 2
@@ -99,7 +100,7 @@ questions:
           databricks: 1
 
       - id: q8c
-        label: A department or broad internal audience — many employees need a managed agent
+        label: Uma área ou um público interno amplo — muitos funcionários precisam de um agente gerenciado
         scores:
           agent_builder: 1
           copilot_studio: 3
@@ -107,7 +108,7 @@ questions:
           databricks: 2
 
       - id: q8b
-        label: External users — customers, partners, or the public
+        label: Usuários externos — clientes, parceiros ou o público em geral
         scores:
           agent_builder: 0
           copilot_studio: 3
@@ -116,7 +117,7 @@ questions:
         hard_rule_trigger: true
 
       - id: q8d
-        label: Not decided yet
+        label: Ainda não decidido
         scores:
           agent_builder: 2
           copilot_studio: 2
@@ -124,18 +125,18 @@ questions:
           databricks: 1
 
   - id: q2
-    label: Where will users interact with this agent?
-    purpose: Deployment surface is often a hard constraint
-    prompt: Think about where people will access or use the agent in their day-to-day work.
+    label: Onde as pessoas vão interagir com este agente?
+    purpose: A superfície de implantação costuma ser uma restrição rígida
+    prompt: Pense em onde as pessoas vão acessar ou usar o agente no dia a dia de trabalho.
     hard_rules:
       - condition: option in [q2a]
         effect: >
-          Set databricks = 0.
-          Agent Bricks agents are served from Databricks — they have no native
-          publishing path into Microsoft 365 Copilot chat.
+          Zera databricks.
+          Agentes do Agent Bricks são servidos pelo Databricks — não há caminho
+          nativo de publicação no chat do Microsoft 365 Copilot.
     options:
       - id: q2a
-        label: Inside Microsoft 365 Copilot chat — Microsoft365.com, Office.com, or Teams desktop/web
+        label: Dentro do chat do Microsoft 365 Copilot — Microsoft365.com, Office.com ou Teams desktop/web
         scores:
           agent_builder: 3
           copilot_studio: 3
@@ -144,7 +145,7 @@ questions:
         hard_rule_trigger: true
 
       - id: q2b
-        label: In a custom app — a website or mobile app your team builds
+        label: Em um app personalizado — um site ou aplicativo móvel construído pelo seu time
         scores:
           agent_builder: 0
           copilot_studio: 3
@@ -152,7 +153,7 @@ questions:
           databricks: 3
 
       - id: q2c
-        label: Running automatically in the background — triggered by events, not by a person chatting with it
+        label: Rodando automaticamente em segundo plano — disparado por eventos, não por alguém conversando com ele
         scores:
           agent_builder: 0
           copilot_studio: 3
@@ -160,7 +161,7 @@ questions:
           databricks: 2
 
       - id: q2d
-        label: Multiple places, or not decided yet
+        label: Em vários lugares, ou ainda não decidido
         scores:
           agent_builder: 1
           copilot_studio: 3
@@ -168,7 +169,7 @@ questions:
           databricks: 1
 
       - id: q2e
-        label: In your data and analytics environment — notebooks, BI and natural-language data exploration, or a governed agent endpoint your data platform serves
+        label: No seu ambiente de dados e analytics — notebooks, BI e exploração de dados em linguagem natural, ou um endpoint de agente governado servido pela sua plataforma de dados
         scores:
           agent_builder: 0
           copilot_studio: 1
@@ -177,22 +178,22 @@ questions:
         hard_rule_trigger: true
 
   - id: q4
-    label: What should this agent do?
-    purpose: Single strongest discriminator between Copilot Studio and Foundry
-    prompt: What type of work do you want this agent to handle? Choose the option that best represents the most advanced task you expect it to perform.
+    label: O que este agente deve fazer?
+    purpose: Maior fator de diferenciação entre Copilot Studio e Foundry
+    prompt: Que tipo de trabalho você quer que este agente execute? Escolha a opção que representa a tarefa mais avançada que você espera dele.
     hard_rules:
       - condition: option == q4d
         effect: >
-          Set foundry = 3. Cap agent_builder and m365_copilot at 0
-          regardless of other answers.
+          Define foundry = 3. Limita agent_builder e m365_copilot a 0
+          independentemente das outras respostas.
       - condition: option == q4f
         effect: >
-          Cap agent_builder at 0. Large-scale extraction over document collections,
-          natural-language querying of governed tables, and quality tuning on your own
-          data are outside what a declarative Microsoft 365 agent can do.
+          Limita agent_builder a 0. Extração em larga escala sobre coleções de documentos,
+          consultas em linguagem natural a tabelas governadas e ajuste de qualidade sobre
+          seus próprios dados estão fora do que um agente declarativo do Microsoft 365 faz.
     options:
       - id: q4a
-        label: Answer questions in a single exchange — Q&A, lookups, or summaries
+        label: Responder perguntas em uma única interação — perguntas e respostas, consultas ou resumos
         scores:
           agent_builder: 3
           copilot_studio: 3
@@ -200,7 +201,7 @@ questions:
           databricks: 2
 
       - id: q4b
-        label: Have a back-and-forth conversation and remember context
+        label: Manter uma conversa de ida e volta e lembrar do contexto
         scores:
           agent_builder: 2
           copilot_studio: 3
@@ -208,7 +209,7 @@ questions:
           databricks: 2
 
       - id: q4e
-        label: Create or analyze content inside Copilot — documents, charts, images, or lightweight data analysis
+        label: Criar ou analisar conteúdo dentro do Copilot — documentos, gráficos, imagens ou análise leve de dados
         scores:
           agent_builder: 3
           copilot_studio: 2
@@ -216,7 +217,7 @@ questions:
           databricks: 1
 
       - id: q4c
-        label: Complete multi-step tasks — follow a process, check multiple systems, or take actions like submitting forms or updating records
+        label: Concluir tarefas de várias etapas — seguir um processo, consultar vários sistemas ou executar ações como enviar formulários e atualizar registros
         scores:
           agent_builder: 0
           copilot_studio: 3
@@ -224,7 +225,7 @@ questions:
           databricks: 2
 
       - id: q4d
-        label: Manage complex workflows — coordinate multiple agents or handle long-running processes
+        label: Gerenciar fluxos complexos — coordenar múltiplos agentes ou lidar com processos de longa duração
         scores:
           agent_builder: 0
           copilot_studio: 2
@@ -233,7 +234,7 @@ questions:
         hard_rule_trigger: true
 
       - id: q4f
-        label: Reason over large volumes of enterprise data — extract structured fields from document collections, answer questions over governed tables, or tune answer quality on your own data
+        label: Raciocinar sobre grandes volumes de dados corporativos — extrair campos estruturados de coleções de documentos, responder perguntas sobre tabelas governadas ou ajustar a qualidade das respostas com seus próprios dados
         scores:
           agent_builder: 0
           copilot_studio: 1
@@ -242,19 +243,19 @@ questions:
         hard_rule_trigger: true
 
   - id: q3
-    label: What information does this agent need to access?
-    purpose: Grounding requirements narrow the field fast
-    prompt: Where does the information this agent needs currently live? Pick the option closest to where the information lives today.
+    label: A que informações este agente precisa acessar?
+    purpose: Os requisitos de fundamentação reduzem as opções rapidamente
+    prompt: Onde estão hoje as informações de que este agente precisa? Escolha a opção mais próxima de onde elas estão atualmente.
     hard_rules:
       - condition: option in [q3a, q3b, q3d]
         effect: >
-          Set databricks = 0.
-          Agent Bricks grounds on lakehouse data and documents governed in Unity Catalog.
-          It has no native grounding path into Microsoft 365 content or Microsoft 365
-          Copilot connectors.
+          Zera databricks.
+          O Agent Bricks se fundamenta em dados do lakehouse e documentos governados
+          no Unity Catalog. Não há caminho nativo de fundamentação em conteúdo do
+          Microsoft 365 nem nos conectores do Microsoft 365 Copilot.
     options:
       - id: q3a
-        label: Microsoft 365 content — SharePoint, OneDrive, Teams, Outlook, or people data
+        label: Conteúdo do Microsoft 365 — SharePoint, OneDrive, Teams, Outlook ou dados de pessoas
         scores:
           agent_builder: 3
           copilot_studio: 2
@@ -263,7 +264,7 @@ questions:
         hard_rule_trigger: true
 
       - id: q3b
-        label: Business systems already available through Microsoft 365 Copilot connectors — like Jira, ServiceNow, GitHub, or Azure DevOps
+        label: Sistemas de negócio já disponíveis pelos conectores do Microsoft 365 Copilot — como Jira, ServiceNow, GitHub ou Azure DevOps
         scores:
           agent_builder: 2
           copilot_studio: 3
@@ -272,7 +273,7 @@ questions:
         hard_rule_trigger: true
 
       - id: q3c
-        label: Dataverse, custom connectors, or direct business APIs your team can expose to the agent
+        label: Dataverse, conectores personalizados ou APIs de negócio que seu time pode expor ao agente
         scores:
           agent_builder: 0
           copilot_studio: 3
@@ -280,7 +281,7 @@ questions:
           databricks: 1
 
       - id: q3d
-        label: A mix — Microsoft 365 content plus connector-backed business systems
+        label: Uma mistura — conteúdo do Microsoft 365 mais sistemas de negócio via conectores
         scores:
           agent_builder: 2
           copilot_studio: 3
@@ -289,7 +290,7 @@ questions:
         hard_rule_trigger: true
 
       - id: q3e
-        label: Public websites or uploaded files — scoped web sources, PDFs, Office files, or other embedded content
+        label: Sites públicos ou arquivos enviados — fontes web delimitadas, PDFs, arquivos do Office ou outro conteúdo incorporado
         scores:
           agent_builder: 3
           copilot_studio: 2
@@ -297,7 +298,7 @@ questions:
           databricks: 1
 
       - id: q3f
-        label: Custom RAG, Azure AI Search, private indexes, Foundry IQ knowledge bases, or large-scale retrieval managed by engineering
+        label: RAG personalizado, Azure AI Search, índices privados, bases de conhecimento do Foundry IQ ou recuperação em larga escala gerenciada pela engenharia
         scores:
           agent_builder: 0
           copilot_studio: 1
@@ -305,7 +306,7 @@ questions:
           databricks: 2
 
       - id: q3g
-        label: Your lakehouse or data warehouse — Databricks Unity Catalog tables, Delta tables, or large document collections governed alongside them
+        label: Seu lakehouse ou data warehouse — tabelas do Databricks Unity Catalog, tabelas Delta ou grandes coleções de documentos governadas junto com elas
         scores:
           agent_builder: 0
           copilot_studio: 1
@@ -314,597 +315,608 @@ questions:
         hard_rule_trigger: true
 
 ################################################################################
-# SCORING ENGINE
+# MOTOR DE PONTUAÇÃO
 ################################################################################
 
 scoring:
 
-  # Step 1 — Hard rules are evaluated before summing.
-  # They cap or zero out platforms regardless of cumulative scores.
-  # Hard rules represent real platform limitations, not preferences.
+  # Passo 1 — As regras rígidas são avaliadas antes da soma.
+  # Elas limitam ou zeram plataformas independentemente da pontuação acumulada.
+  # Regras rígidas representam limitações reais das plataformas, não preferências.
   hard_rule_evaluation: pre_sum
   hard_rules:
     q4d:
       zero: [agent_builder, m365_copilot]
-      label: "Complex agent orchestration — Agent Builder and M365 Copilot are not suitable for multi-agent or long-running orchestration"
+      label: "Orquestração complexa de agentes — Agent Builder e M365 Copilot não são adequados para orquestração multiagente ou de longa duração"
     q4c:
       zero: [agent_builder]
-      label: "Multi-step action workflows — Agent Builder cannot submit forms, update records, or take actions across systems"
+      label: "Fluxos de ação de várias etapas — o Agent Builder não consegue enviar formulários, atualizar registros nem executar ações entre sistemas"
     q8b:
       zero: [agent_builder, m365_copilot]
-      label: "External user audience — Agent Builder and M365 Copilot cannot publish externally"
+      label: "Público de usuários externos — Agent Builder e M365 Copilot não publicam externamente"
     q2b:
       zero: [agent_builder]
-      label: "Custom app deployment — Agent Builder can only run inside Microsoft 365"
+      label: "Implantação em app personalizado — o Agent Builder só roda dentro do Microsoft 365"
     q2c:
       zero: [agent_builder]
-      label: "Background execution — Agent Builder has no event-driven or autonomous capabilities"
+      label: "Execução em segundo plano — o Agent Builder não tem recursos orientados a eventos nem autônomos"
     q3c:
       zero: [agent_builder]
-      label: "Direct business system integration — Agent Builder cannot directly connect to Dataverse, custom connectors, or business APIs"
+      label: "Integração direta com sistemas de negócio — o Agent Builder não conecta diretamente a Dataverse, conectores personalizados ou APIs de negócio"
     q3f:
       zero: [agent_builder]
-      label: "Custom retrieval architecture — Agent Builder cannot directly use custom RAG, Azure AI Search, private indexes, Foundry IQ, or engineering-managed retrieval systems"
+      label: "Arquitetura de recuperação personalizada — o Agent Builder não usa diretamente RAG personalizado, Azure AI Search, índices privados, Foundry IQ ou sistemas de recuperação mantidos pela engenharia"
     q3g:
       zero: [agent_builder]
-      label: "Lakehouse-governed data — Agent Builder cannot query Unity Catalog, Delta tables, or warehouse-governed document collections"
+      label: "Dados governados pelo lakehouse — o Agent Builder não consulta Unity Catalog, tabelas Delta nem coleções de documentos governadas pelo warehouse"
     q3a:
       zero: [databricks]
-      label: "Microsoft 365 content — Agent Bricks grounds on lakehouse data, not SharePoint, OneDrive, Teams, or Outlook"
+      label: "Conteúdo do Microsoft 365 — o Agent Bricks se fundamenta em dados do lakehouse, não em SharePoint, OneDrive, Teams ou Outlook"
     q3b:
       zero: [databricks]
-      label: "Microsoft 365 Copilot connectors — Agent Bricks does not consume the Microsoft 365 connector catalog"
+      label: "Conectores do Microsoft 365 Copilot — o Agent Bricks não consome o catálogo de conectores do Microsoft 365"
     q3d:
       zero: [databricks]
-      label: "Microsoft 365 content plus connectors — Agent Bricks has no grounding path into Microsoft 365 sources"
+      label: "Conteúdo do Microsoft 365 mais conectores — o Agent Bricks não tem caminho de fundamentação em fontes do Microsoft 365"
     q2a:
       zero: [databricks]
-      label: "Microsoft 365 Copilot chat deployment — Agent Bricks agents are served from Databricks and have no native Microsoft 365 Copilot publishing path"
+      label: "Implantação no chat do Microsoft 365 Copilot — agentes do Agent Bricks são servidos pelo Databricks e não têm caminho nativo de publicação no Microsoft 365 Copilot"
     q2e:
       zero: [agent_builder]
-      label: "Data and analytics environment — Agent Builder only runs inside Microsoft 365, not in notebooks, BI, or data platform endpoints"
+      label: "Ambiente de dados e analytics — o Agent Builder só roda dentro do Microsoft 365, não em notebooks, BI ou endpoints da plataforma de dados"
     q4f:
       zero: [agent_builder]
-      label: "Large-scale data reasoning — Agent Builder cannot extract at scale over document collections, query governed tables, or tune answer quality on your data"
-  # Step 2 — Sum raw scores across all answered questions.
-  raw_score_max: 15  # 5 questions × max score of 3
+      label: "Raciocínio sobre dados em larga escala — o Agent Builder não faz extração em escala sobre coleções de documentos, não consulta tabelas governadas nem ajusta a qualidade das respostas com seus dados"
+  # Passo 2 — Soma as pontuações brutas de todas as perguntas respondidas.
+  raw_score_max: 15  # 5 perguntas × pontuação máxima de 3
 
-  # Step 2.5 — Persona preferences: soft overrides that force one platform
-  # above another when a specific persona is selected. Unlike hard rules,
-  # scores are preserved. A rationale message is shown to explain the override.
+  # Passo 2.5 — Preferências por perfil: ajustes suaves que forçam uma plataforma
+  # acima de outra quando um perfil específico é selecionado. Diferente das regras
+  # rígidas, as pontuações são preservadas. Uma justificativa explica o ajuste.
   persona_preferences:
     - when:
         q1: q1d
       prefer: copilot_studio
       over: agent_builder
       rationale: >
-        Copilot Studio is recommended over Agent Builder for data scientists and AI/ML engineers
-        because it supports curated model selection, agent evaluations, Foundry IQ integration,
-        code-first development via the VS Code extension, and more flexible orchestration —
-        capabilities that Agent Builder does not offer.
+        O Copilot Studio é recomendado no lugar do Agent Builder para cientistas de dados e
+        engenheiros de IA/ML porque oferece seleção curada de modelos, avaliação de agentes,
+        integração com Foundry IQ, desenvolvimento code-first pela extensão do VS Code e
+        orquestração mais flexível — recursos que o Agent Builder não tem.
 
-  # Step 3 — Map raw scores to recommendation strength.
+  # Passo 3 — Mapeia as pontuações brutas para a força da recomendação.
   recommendation_thresholds:
     - min: 12
       max: 15
-      label: Strong fit
-      description: This platform is well-aligned with your requirements across all dimensions.
+      label: Encaixe forte
+      description: Esta plataforma está bem alinhada aos seus requisitos em todas as dimensões.
     - min: 8
       max: 11
-      label: Good fit
-      description: This platform meets most of your requirements with minor tradeoffs.
+      label: Bom encaixe
+      description: Esta plataforma atende à maior parte dos seus requisitos, com pequenas concessões.
     - min: 4
       max: 7
-      label: Partial fit
-      description: This platform can address your scenario but may require workarounds.
+      label: Encaixe parcial
+      description: Esta plataforma consegue atender ao seu cenário, mas pode exigir contornos.
     - min: 0
       max: 3
-      label: Not recommended
-      description: This platform is unlikely to meet your requirements in this scenario.
+      label: Não recomendado
+      description: É improvável que esta plataforma atenda aos seus requisitos neste cenário.
 
-  # Step 5 — Tie handling: surface both as a complementary pair.
+  # Passo 5 — Tratamento de empate: apresenta as duas como par complementar.
   tie_handling:
     threshold_points: 2
     present_as: complementary_pair
-    # Persona-based tiebreakers — applied before valid_pairs when a specific
-    # answer makes one platform a better fit despite equal scores.
+    # Critérios de desempate por perfil — aplicados antes de valid_pairs quando uma
+    # resposta específica torna uma plataforma mais adequada apesar do empate.
     tiebreakers:
       - when:
           q1: q1c
         platforms: [agent_builder, copilot_studio]
         prefer: copilot_studio
         rationale: >
-          When the builder is a professional developer and scores are equal,
-          Copilot Studio is the better fit — it supports code-first authoring
-          via the VS Code extension while Agent Builder is no-code only.
+          Quando quem cria é um desenvolvedor profissional e as pontuações empatam,
+          o Copilot Studio se encaixa melhor — ele suporta criação code-first pela
+          extensão do VS Code, enquanto o Agent Builder é apenas no-code.
       - when:
           q1: q1d
         platforms: [copilot_studio, foundry]
         prefer: copilot_studio
         rationale: >
-          When the builder is a data scientist or AI/ML engineer and scores are equal,
-          Copilot Studio is preferred — it provides a faster path to production
-          agents while Foundry is reserved for deeper custom orchestration.
+          Quando quem cria é cientista de dados ou engenheiro de IA/ML e as pontuações
+          empatam, o Copilot Studio é preferido — ele oferece um caminho mais rápido até
+          agentes em produção, enquanto o Foundry fica reservado para orquestração
+          personalizada mais profunda.
       - when:
           q3: q3g
         platforms: [copilot_studio, databricks]
         prefer: databricks
         rationale: >
-          When the knowledge already lives in the lakehouse and scores are equal,
-          Agent Bricks is the better fit — it builds and governs the agent where the
-          data, permissions, and lineage already are, instead of exporting or
-          re-indexing it for another platform.
+          Quando o conhecimento já está no lakehouse e as pontuações empatam,
+          o Agent Bricks se encaixa melhor — ele cria e governa o agente onde os dados,
+          as permissões e a linhagem já estão, em vez de exportar ou reindexar
+          tudo para outra plataforma.
       - when:
           q1: q1e
         platforms: [foundry, databricks]
         prefer: databricks
         rationale: >
-          When the data platform team owns the scenario and scores are equal,
-          Agent Bricks keeps the agent inside the same governance plane as the data,
-          while Foundry would add a second platform to operate.
+          Quando o time de plataforma de dados é dono do cenário e as pontuações empatam,
+          o Agent Bricks mantém o agente no mesmo plano de governança dos dados,
+          enquanto o Foundry acrescentaria uma segunda plataforma para operar.
     valid_pairs:
       - platforms: [copilot_studio, foundry]
-        rationale: Build in Copilot Studio, extend with custom code in Foundry.
+        rationale: Construa no Copilot Studio e estenda com código personalizado no Foundry.
       - platforms: [m365_copilot, copilot_studio]
-        rationale: Microsoft 365 Copilot for end users, Copilot Studio for customization and extension.
+        rationale: Microsoft 365 Copilot para os usuários finais, Copilot Studio para personalização e extensão.
       - platforms: [agent_builder, m365_copilot]
-        rationale: Agent Builder for Microsoft 365-native agents, Microsoft 365 Copilot for broader extensibility.
+        rationale: Agent Builder para agentes nativos do Microsoft 365, Microsoft 365 Copilot para extensibilidade mais ampla.
       - platforms: [databricks, foundry]
-        rationale: Agent Bricks for lakehouse-grounded reasoning over your governed data, Foundry for the Azure-side application, identity, networking, and Microsoft 365 publishing.
+        rationale: Agent Bricks para raciocínio fundamentado no lakehouse sobre seus dados governados, Foundry para a aplicação, identidade, rede e publicação no Microsoft 365 do lado Azure.
       - platforms: [copilot_studio, databricks]
-        rationale: Agent Bricks to reason over lakehouse data, Copilot Studio to bring that answer to employees in Teams and Microsoft 365.
+        rationale: Agent Bricks para raciocinar sobre os dados do lakehouse, Copilot Studio para levar essa resposta aos funcionários no Teams e no Microsoft 365.
 
-  # Cross-question contradiction notes — shown as contextual banners
-  # when the user's answer combination is logically contradictory.
+  # Notas de contradição entre perguntas — exibidas como avisos contextuais
+  # quando a combinação de respostas do usuário é logicamente contraditória.
   cross_question_notes:
     - when:
         q2: q2c
         q4: q4a
       note: >
-        You selected a background, event-driven agent but also chose simple Q&A.
-        Background agents typically process events automatically rather than answering
-        user questions. Consider whether your agent is event-driven or conversational.
+        Você escolheu um agente em segundo plano, orientado a eventos, mas também
+        perguntas e respostas simples. Agentes em segundo plano normalmente processam
+        eventos automaticamente em vez de responder a perguntas de usuários. Avalie se
+        o seu agente é orientado a eventos ou conversacional.
     - when:
         q8: q8b
         q2: q2a
       note: >
-        You selected external users but want the agent inside Microsoft 365 apps.
-        External users typically can't access your organization's Teams, SharePoint,
-        or Outlook. Your agent may need a custom web deployment to reach them.
+        Você escolheu usuários externos, mas quer o agente dentro dos aplicativos do
+        Microsoft 365. Usuários externos normalmente não acessam o Teams, o SharePoint
+        ou o Outlook da sua organização. Seu agente pode precisar de uma implantação
+        web personalizada para alcançá-los.
     - when:
         q1: q1a
         q4: q4d
       note: >
-        Complex multi-agent orchestration typically requires professional development
-        skills. Consider partnering with your development team, or selecting a simpler
-        task type that matches your experience level.
+        Orquestração complexa de múltiplos agentes normalmente exige habilidades de
+        desenvolvimento profissional. Considere se apoiar no time de desenvolvimento ou
+        escolher um tipo de tarefa mais simples, compatível com o seu nível de experiência.
     - when:
         q1: q1a
         q3: q3c
       note: >
-        Direct business system integrations like Dataverse, custom connectors, or APIs
-        usually require technical expertise to configure. Consider whether your IT or
-        development team will help set up data access for the agent.
+        Integrações diretas com sistemas de negócio como Dataverse, conectores
+        personalizados ou APIs geralmente exigem conhecimento técnico para configurar.
+        Avalie se o time de TI ou de desenvolvimento vai ajudar a configurar o acesso
+        aos dados do agente.
     - when:
         q1: q1a
         q3: q3f
       note: >
-        Custom retrieval architectures like Azure AI Search, private indexes, Foundry IQ,
-        or large-scale RAG usually require engineering expertise. Consider partnering with
-        your development or data platform team before building the agent.
+        Arquiteturas de recuperação personalizadas como Azure AI Search, índices privados,
+        Foundry IQ ou RAG em larga escala geralmente exigem conhecimento de engenharia.
+        Considere se apoiar no time de desenvolvimento ou de plataforma de dados antes
+        de construir o agente.
     - when:
         q3: q3g
         q2: q2a
       note: >
-        You said the knowledge lives in the lakehouse but you want the agent inside
-        Microsoft 365 Copilot chat. Agents built on the lakehouse are served from the data
-        platform and have no native Microsoft 365 Copilot publishing path — you would front
-        them with a Copilot Studio or Foundry agent that calls the data-platform endpoint.
+        Você disse que o conhecimento está no lakehouse, mas quer o agente dentro do chat
+        do Microsoft 365 Copilot. Agentes criados sobre o lakehouse são servidos pela
+        plataforma de dados e não têm caminho nativo de publicação no Microsoft 365 Copilot
+        — você precisaria colocar na frente um agente do Copilot Studio ou do Foundry que
+        chame o endpoint da plataforma de dados.
     - when:
         q1: q1a
         q3: q3g
       note: >
-        Lakehouse data — Unity Catalog, Delta tables, and the permissions and lineage
-        around them — is normally owned by a data platform team. Confirm who can grant
-        access to that data and serve the agent before committing to this path.
+        Dados do lakehouse — Unity Catalog, tabelas Delta e as permissões e linhagem em
+        torno deles — normalmente pertencem a um time de plataforma de dados. Confirme
+        quem pode conceder acesso a esses dados e servir o agente antes de seguir por
+        este caminho.
     - when:
         q1: q1e
         q3: q3a
       note: >
-        You selected a data platform team as the builder but Microsoft 365 content as the
-        source. Microsoft 365 content is reached through Copilot connectors and Graph
-        permissions rather than the lakehouse, so this scenario lands on the Microsoft
-        platforms even though your team owns the data estate.
+        Você escolheu um time de plataforma de dados como criador, mas conteúdo do
+        Microsoft 365 como fonte. Conteúdo do Microsoft 365 é acessado por conectores do
+        Copilot e permissões do Graph, e não pelo lakehouse, então este cenário recai
+        sobre as plataformas Microsoft mesmo que seu time seja dono do patrimônio de dados.
 
-  # Winner-persona mismatch notes — shown when the recommended platform
-  # doesn't match the builder persona.
+  # Notas de descompasso com o perfil — exibidas quando a plataforma recomendada
+  # não combina com o perfil de quem vai criar o agente.
   winner_persona_notes:
     - winner: foundry
       persona: q1a
       note: >
-        Microsoft Foundry is the right platform for this scenario, but it requires
-        professional development skills and Azure expertise. Consider partnering with
-        your development team to build and maintain this agent.
+        O Microsoft Foundry é a plataforma certa para este cenário, mas exige habilidades
+        de desenvolvimento profissional e conhecimento de Azure. Considere se apoiar no
+        time de desenvolvimento para construir e manter este agente.
     - winner: databricks
       persona: q1a
       note: >
-        Databricks Agent Bricks fits this scenario, but it assumes your organization
-        already runs on Databricks and that someone can grant the agent governed access
-        to the underlying data. Partner with your data platform team before starting.
+        O Databricks Agent Bricks se encaixa neste cenário, mas pressupõe que sua
+        organização já roda no Databricks e que alguém possa conceder ao agente acesso
+        governado aos dados subjacentes. Envolva o time de plataforma de dados antes de começar.
     - winner: databricks
       persona: q1b
       note: >
-        Databricks Agent Bricks fits this scenario, but it lives outside the Microsoft
-        stack you normally work in — a Databricks workspace, Unity Catalog permissions,
-        and serving capacity are prerequisites. Involve your data platform team early.
+        O Databricks Agent Bricks se encaixa neste cenário, mas fica fora do stack
+        Microsoft em que você costuma trabalhar — um workspace Databricks, permissões do
+        Unity Catalog e capacidade de serving são pré-requisitos. Envolva o time de
+        plataforma de dados desde o início.
 
 ################################################################################
-# RECOMMENDATION COPY
+# TEXTOS DAS RECOMENDAÇÕES
 ################################################################################
 
 recommendations:
 
   agent_builder:
     headline: Agent Builder
-    description: Create lightweight agents in minutes without writing code, grounded in Microsoft 365 content, scoped web, uploaded files, and admin-enabled Copilot connectors
+    description: Crie agentes leves em minutos sem escrever código, fundamentados em conteúdo do Microsoft 365, web delimitada, arquivos enviados e conectores do Copilot habilitados pelo administrador
     resources_url: https://microsoft.github.io/agent-resources/m365-copilot/#agent-builder
-    scoring_summary: Best suited for no-code, small-team declarative agents inside Microsoft 365 Copilot.
-    exploration_best_for: Create no-code agents in Microsoft 365 Copilot
+    scoring_summary: Mais adequado para agentes declarativos no-code, de pequenos times, dentro do Microsoft 365 Copilot.
+    exploration_best_for: Crie agentes no-code no Microsoft 365 Copilot
     exploration_summary: >
-      Choose Agent Builder when you want to create agents without writing any code,
-      using Microsoft 365 content, scoped web sources, uploaded files, or business data
-      already exposed through Microsoft 365 Copilot connectors. Ideal for business users
-      who need Q&A, summarization, lookup, or lightweight content and data-analysis
-      helpers for themselves or a small team.
+      Escolha o Agent Builder quando quiser criar agentes sem escrever código, usando
+      conteúdo do Microsoft 365, fontes web delimitadas, arquivos enviados ou dados de
+      negócio já expostos pelos conectores do Microsoft 365 Copilot. Ideal para usuários
+      de negócio que precisam de perguntas e respostas, resumos, consultas ou auxiliares
+      leves de conteúdo e análise de dados para si mesmos ou para um pequeno time.
     summary: >
-      The right starting point for business users who want to build
-      lightweight declarative agents directly inside Microsoft 365 Copilot without writing code.
+      O ponto de partida certo para usuários de negócio que querem criar agentes
+      declarativos leves diretamente dentro do Microsoft 365 Copilot, sem escrever código.
     best_for:
-      - No-code creators building for themselves or a small internal team
-      - Agents grounded in Microsoft 365 content, scoped web, uploaded files, or admin-enabled Copilot connectors
-      - Q&A, summarization, lookup, coaching, and lightweight document, chart, image, or data-analysis scenarios
+      - Criadores no-code construindo para si mesmos ou para um pequeno time interno
+      - Agentes fundamentados em conteúdo do Microsoft 365, web delimitada, arquivos enviados ou conectores do Copilot habilitados pelo administrador
+      - Perguntas e respostas, resumos, consultas, orientação e cenários leves de documento, gráfico, imagem ou análise de dados
     watch_out_for:
-      - Can't be shared with people outside your organization
-      - Broad department or organization-wide agents usually need Copilot Studio's deployment and governance controls
-      - External business data must be available through Microsoft 365 Copilot connectors; direct APIs, Dataverse, custom databases, private search indexes, and custom retrieval require Copilot Studio or Foundry
-      - Not suitable for custom action logic, approvals, branching workflows, or external system updates
-      - Copy the agent to Copilot Studio when you outgrow Agent Builder's sharing, integration, lifecycle, or governance limits
-      - No evaluation or testing tools — quality assurance is manual
-      - No lifecycle management — no versioning, environments, or CI/CD
-      - Minimal observability — limited visibility into agent behavior and usage
+      - Não pode ser compartilhado com pessoas de fora da sua organização
+      - Agentes para áreas inteiras ou toda a organização geralmente precisam dos controles de implantação e governança do Copilot Studio
+      - Dados de negócio externos precisam estar disponíveis pelos conectores do Microsoft 365 Copilot; APIs diretas, Dataverse, bancos de dados personalizados, índices de busca privados e recuperação personalizada exigem Copilot Studio ou Foundry
+      - Não serve para lógica de ação personalizada, aprovações, fluxos com ramificações ou atualização de sistemas externos
+      - Copie o agente para o Copilot Studio quando ele superar os limites de compartilhamento, integração, ciclo de vida ou governança do Agent Builder
+      - Sem ferramentas de avaliação ou teste — a garantia de qualidade é manual
+      - Sem gestão de ciclo de vida — não há versionamento, ambientes ou CI/CD
+      - Observabilidade mínima — visibilidade limitada sobre o comportamento e o uso do agente
     templates:
       - label: Career Coach
-        description: Personalized career development plans, skill gap analysis, and actionable advice
+        description: Planos personalizados de desenvolvimento de carreira, análise de lacunas de competências e conselhos práticos
         url: https://learn.microsoft.com/microsoft-365/copilot/extensibility/agent-template-career-coach
       - label: Corporate Communications Crafter
-        description: On-brand internal and external communications — announcements, newsletters, exec updates
+        description: Comunicações internas e externas alinhadas à marca — comunicados, newsletters, atualizações executivas
         url: https://learn.microsoft.com/microsoft-365/copilot/extensibility/agent-template-corporate-communications
       - label: Customer Insight Assistant
-        description: Detailed customer profiles including industry, priorities, leadership, and competitors
+        description: Perfis detalhados de clientes incluindo setor, prioridades, liderança e concorrentes
         url: https://learn.microsoft.com/microsoft-365/copilot/extensibility/agent-template-customer-insight
       - label: Idea Coach
-        description: Guided brainstorming sessions with creative exercises to develop and refine ideas
+        description: Sessões guiadas de brainstorming com exercícios criativos para desenvolver e refinar ideias
         url: https://learn.microsoft.com/microsoft-365/copilot/extensibility/agent-template-idea-coach
       - label: Interview Question Assistant
-        description: Tailored, high-quality interview questions based on role and job description
+        description: Perguntas de entrevista sob medida e de alta qualidade com base no cargo e na descrição da vaga
         url: https://learn.microsoft.com/microsoft-365/copilot/extensibility/agent-template-interview-questions
       - label: Learning Coach
-        description: Structured learning plans and topic summaries tailored to individual knowledge gaps
+        description: Planos de estudo estruturados e resumos de tópicos adaptados às lacunas de conhecimento de cada pessoa
         url: https://learn.microsoft.com/microsoft-365/copilot/extensibility/agent-template-learning-coach
       - label: Meeting Coach
-        description: Structured agendas, role assignments, and real-time guidance to run effective meetings
+        description: Pautas estruturadas, atribuição de papéis e orientação em tempo real para conduzir reuniões eficazes
         url: https://learn.microsoft.com/microsoft-365/copilot/extensibility/agent-template-meeting-coach
       - label: Prompt Coach
-        description: Guides users in crafting well-structured Copilot prompts through interactive feedback
+        description: Orienta os usuários a escrever prompts bem estruturados para o Copilot por meio de feedback interativo
         url: https://learn.microsoft.com/microsoft-365/copilot/extensibility/agent-template-prompt-coach
       - label: Request for Proposal Assistant
-        description: Generates tailored RFP response drafts from existing proposal content and templates
+        description: Gera rascunhos de resposta a RFPs sob medida a partir de propostas e modelos existentes
         url: https://learn.microsoft.com/microsoft-365/copilot/extensibility/agent-template-rfp-assistant
       - label: Quiz Tutor
-        description: Interactive quizzes based on training content to reinforce learning and knowledge retention
+        description: Questionários interativos baseados no conteúdo de treinamento para reforçar o aprendizado e a retenção
         url: https://learn.microsoft.com/microsoft-365/copilot/extensibility/agent-template-quiz-tutor
       - label: Scrum Assistant
-        description: Real-time guidance on scrum ceremonies, backlog management, and Agile best practices
+        description: Orientação em tempo real sobre cerimônias de scrum, gestão de backlog e boas práticas ágeis
         url: https://learn.microsoft.com/microsoft-365/copilot/extensibility/agent-template-scrum-assistant
       - label: Text Translator Assistant
-        description: Translates text, adjusts tone for professional communication, and improves writing quality
+        description: Traduz textos, ajusta o tom para comunicação profissional e melhora a qualidade da escrita
         url: https://learn.microsoft.com/microsoft-365/copilot/extensibility/agent-template-text-translator
       - label: Writing Coach
-        description: Detailed feedback on clarity, coherence, grammar, and tone to elevate writing quality
+        description: Feedback detalhado sobre clareza, coerência, gramática e tom para elevar a qualidade da escrita
         url: https://learn.microsoft.com/microsoft-365/copilot/extensibility/agent-template-writing-coach
 
   m365_copilot:
     headline: Microsoft 365 Copilot
-    description: Built-in, permission-aware AI across Microsoft 365 Copilot Chat, Search, Word, Excel, PowerPoint, Outlook, Teams, Loop, Pages, Notebooks, and Microsoft-built agents
+    description: IA nativa e sensível a permissões no Microsoft 365 Copilot Chat, Search, Word, Excel, PowerPoint, Outlook, Teams, Loop, Pages, Notebooks e nos agentes criados pela Microsoft
     resources_url: https://microsoft.github.io/agent-resources/m365-copilot/
-    scoring_summary: Fits scenarios where Microsoft 365 Copilot's built-in chat, search, app, notebook, and first-party agent capabilities already cover the need.
-    exploration_best_for: Use built-in AI across Microsoft 365
+    scoring_summary: Serve para cenários em que o chat, a busca, os apps, os notebooks e os agentes nativos do Microsoft 365 Copilot já cobrem a necessidade.
+    exploration_best_for: Use IA nativa em todo o Microsoft 365
     exploration_summary: >
-      Use Microsoft 365 Copilot when employees need built-in, permission-aware help
-      across Microsoft 365 Copilot Chat, Copilot Search, Word, Excel, PowerPoint,
-      Outlook, Teams, Loop, Pages, Notebooks, and Microsoft-built agents like
-      Researcher, Analyst, Facilitator, and Interpreter. Ideal when the work can
-      be handled by existing Microsoft 365 experiences rather than a custom agent.
+      Use o Microsoft 365 Copilot quando os funcionários precisarem de ajuda nativa e
+      sensível a permissões no Microsoft 365 Copilot Chat, Copilot Search, Word, Excel,
+      PowerPoint, Outlook, Teams, Loop, Pages, Notebooks e nos agentes criados pela
+      Microsoft, como Researcher, Analyst, Facilitator e Interpreter. Ideal quando o
+      trabalho pode ser resolvido pelas experiências existentes do Microsoft 365, sem
+      precisar de um agente personalizado.
     summary: >
-      Best when built-in Microsoft 365 Copilot capabilities already meet most of
-      what users need — chat, search, app-native assistance, collaborative pages
-      and notebooks, and Microsoft-built agents grounded in each user's permitted
-      work content, connected sources, and the web.
-    # The entry-point wizard's task-type answer picks which surface inside
-    # Microsoft 365 Copilot to start with. Copilot Chat and the built-in agents
-    # are surfaces of this one product, not separate destinations.
+      Melhor quando os recursos nativos do Microsoft 365 Copilot já atendem à maior parte
+      do que os usuários precisam — chat, busca, assistência dentro dos aplicativos,
+      páginas e notebooks colaborativos e agentes criados pela Microsoft, fundamentados
+      no conteúdo de trabalho permitido a cada usuário, nas fontes conectadas e na web.
+    # A resposta de tipo de tarefa no wizard de ponto de entrada escolhe por qual
+    # superfície do Microsoft 365 Copilot começar. O Copilot Chat e os agentes nativos
+    # são superfícies deste mesmo produto, não destinos separados.
     start_here:
       chat:
         label: Copilot Chat
         url: https://learn.microsoft.com/microsoft-365/copilot/microsoft-365-copilot-overview
-        tagline: Ask, summarize, and draft in the flow of work
+        tagline: Pergunte, resuma e redija no fluxo do trabalho
         description: >-
-          The conversational front door to Microsoft 365 Copilot — you ask, iterate, and get
-          answers, summaries, and drafts yourself, grounded in your email, meetings, files, and
-          messages. Call a specialized agent from here whenever a task needs one.
+          A porta de entrada conversacional do Microsoft 365 Copilot — você pergunta, itera e
+          obtém respostas, resumos e rascunhos por conta própria, com base nos seus e-mails,
+          reuniões, arquivos e mensagens. Chame um agente especializado a partir daqui sempre
+          que uma tarefa exigir.
       agents:
-        label: Built-in agents — Researcher, Analyst, Facilitator, Interpreter
+        label: Agentes nativos — Researcher, Analyst, Facilitator, Interpreter
         url: https://learn.microsoft.com/microsoft-365/copilot/researcher-agent
-        tagline: Purpose-built agents for specialized jobs
+        tagline: Agentes feitos sob medida para trabalhos especializados
         description: >-
-          Start with the agent built for the job — Researcher for source-cited deep research,
-          Analyst for data analysis in Python, Facilitator for meeting notes and follow-ups,
-          Interpreter for live translation. They run inside Microsoft 365 Copilot alongside chat,
-          so you can move between them without switching products.
+          Comece pelo agente criado para o trabalho — Researcher para pesquisa aprofundada com
+          citação de fontes, Analyst para análise de dados em Python, Facilitator para notas e
+          encaminhamentos de reunião, Interpreter para tradução ao vivo. Todos rodam dentro do
+          Microsoft 365 Copilot junto com o chat, então você transita entre eles sem trocar de produto.
 
     best_for:
-      - Ad hoc, user-initiated questions, summaries, and drafting
-      - Working through a task yourself rather than handing it off
-      - Specialized jobs a Microsoft-built agent already handles
-      - Grounded in your Microsoft 365 context (email, meetings, files, messages)
+      - Perguntas, resumos e redação pontuais, iniciados pelo usuário
+      - Conduzir uma tarefa você mesmo em vez de delegá-la
+      - Trabalhos especializados que um agente criado pela Microsoft já resolve
+      - Fundamentado no seu contexto do Microsoft 365 (e-mail, reuniões, arquivos, mensagens)
     watch_out_for:
-      - You stay in the loop — it does not run a multi-step task end to end on its own
-      - Not always-on or proactively monitoring
-      - Use Cowork instead when you want to delegate a bounded, multi-step deliverable
-      - Use Scout instead when work should continue or act over time
+      - Você permanece no comando — ele não executa uma tarefa de várias etapas de ponta a ponta sozinho
+      - Não é sempre ativo nem monitora proativamente
+      - Use o Cowork quando quiser delegar uma entrega delimitada de várias etapas
+      - Use o Scout quando o trabalho precisar continuar ou agir ao longo do tempo
 
-    first_party_label: Built-in Copilot capabilities and agents
+    first_party_label: Recursos e agentes nativos do Copilot
     first_party_agents:
       - label: Copilot Chat
-        description: Permission-aware chat for drafting, summarizing, answering questions, and working across Microsoft 365 content and the web
+        description: Chat sensível a permissões para redigir, resumir, responder perguntas e trabalhar com conteúdo do Microsoft 365 e da web
         url: https://learn.microsoft.com/microsoft-365/copilot/microsoft-365-copilot-overview
       - label: Copilot Search
-        description: AI-powered universal search across Microsoft 365 and connected third-party sources, with natural-language queries and handoff to chat
+        description: Busca universal com IA no Microsoft 365 e em fontes de terceiros conectadas, com consultas em linguagem natural e transição para o chat
         url: https://learn.microsoft.com/microsoft-365/copilot/microsoft-365-copilot-search
-      - label: Copilot Pages and Notebooks
-        description: Persistent, shareable workspaces for synthesizing content and grounding Copilot on curated material; stored in SharePoint Embedded/Loop containers
+      - label: Copilot Pages e Notebooks
+        description: Espaços de trabalho persistentes e compartilháveis para sintetizar conteúdo e fundamentar o Copilot em material curado; armazenados em containers do SharePoint Embedded/Loop
         url: https://learn.microsoft.com/microsoft-365/loop/cpcn-requirements
       - label: Sales agent
-        description: Seller productivity in Teams, Outlook, and CRM apps
+        description: Produtividade de vendas no Teams, Outlook e aplicativos de CRM
         url: https://learn.microsoft.com/microsoft-sales-copilot/
       - label: Service agent
-        description: Customer service agent assistance across support channels
+        description: Apoio ao atendimento ao cliente em todos os canais de suporte
         url: https://learn.microsoft.com/microsoft-copilot-service/
       - label: Finance agent
-        description: Financial workflows, analysis, and reconciliation in Excel and Outlook
+        description: Fluxos financeiros, análise e conciliação no Excel e no Outlook
         url: https://learn.microsoft.com/copilot/finance/
       - label: Employee Self-Service Agent
-        description: HR and IT self-service within Teams for policies, FAQs, and requests
+        description: Autoatendimento de RH e TI dentro do Teams para políticas, dúvidas frequentes e solicitações
         url: https://learn.microsoft.com/copilot/microsoft-365/employee-self-service/overview
       - label: SharePoint Agent
-        description: Q&A grounded in a specific SharePoint site or document library
+        description: Perguntas e respostas fundamentadas em um site ou biblioteca de documentos específica do SharePoint
         url: https://support.microsoft.com/office/get-started-with-sharepoint-agents-69e2faf9-2c1e-4baa-8305-23e625021bcf
       - label: Facilitator Agent
-        description: Meeting facilitation, collaborative real-time notes, Q&A, timeline markers, action items, and preview Planner/Word integrations in Teams
+        description: Facilitação de reuniões, notas colaborativas em tempo real, perguntas e respostas, marcadores de linha do tempo, itens de ação e integrações em preview com Planner/Word no Teams
         url: https://learn.microsoft.com/microsoftteams/facilitator-teams
       - label: Researcher Agent
-        description: Performs deeper, source-cited, multi-step research across web and work content to produce structured reports, visuals, and recommendations
+        description: Faz pesquisas mais profundas, de várias etapas e com citação de fontes, na web e no conteúdo de trabalho, gerando relatórios estruturados, visuais e recomendações
         url: https://learn.microsoft.com/microsoft-365/copilot/researcher-agent
       - label: Analyst Agent
-        description: Transforms complex data into clear insights, charts, and visualizations using Python
+        description: Transforma dados complexos em insights, gráficos e visualizações claras usando Python
         url: https://techcommunity.microsoft.com/blog/microsoft365copilotblog/analyst-agent-in-microsoft-365-copilot/4397191
       - label: Interpreter Agent
-        description: Real-time speech-to-speech interpretation in Teams meetings across nine languages, with optional voice simulation and included monthly capacity
+        description: Interpretação simultânea de fala em reuniões do Teams em nove idiomas, com simulação de voz opcional e capacidade mensal inclusa
         url: https://learn.microsoft.com/microsoftteams/interpreter-agent-teams
       - label: Project Manager Agent
-        description: Automates project plan creation, task tracking, and status reporting in Planner (preview)
+        description: Automatiza a criação de planos de projeto, o acompanhamento de tarefas e os relatórios de status no Planner (preview)
         url: https://aka.ms/agents/ProjectManagerDocs
       - label: Channel Agent
-        description: Teams channel expert for summarizing conversations, managing tasks, and boosting productivity (preview)
+        description: Especialista em canais do Teams para resumir conversas, gerenciar tarefas e aumentar a produtividade (preview)
         url: https://support.microsoft.com/office/get-started-with-channel-agent-for-teams-channels-b85945cf-deef-4f1e-9db1-66e1a23b6a65
       - label: Community Agent
-        description: Accelerates knowledge sharing and surfaces expertise across org communities in Viva Engage (preview)
+        description: Acelera o compartilhamento de conhecimento e revela expertise nas comunidades da organização no Viva Engage (preview)
         url: https://learn.microsoft.com/viva/engage/ai-technology-with-viva-engage/agents-community-network-deployment-config
 
   copilot_studio:
     headline: Copilot Studio
-    description: Build governed enterprise agents that combine knowledge, tools, workflows, event triggers, human review, connected agents, evaluation, monitoring, and multi-channel deployment
+    description: Crie agentes corporativos governados que combinam conhecimento, ferramentas, fluxos de trabalho, gatilhos por evento, revisão humana, agentes conectados, avaliação, monitoramento e implantação multicanal
     resources_url: https://microsoft.github.io/agent-resources/copilot-studio/
-    scoring_summary: The governed low-code platform for enterprise agents that need actions, workflows, connectors, evaluation, monitoring, and broad deployment.
-    exploration_best_for: Build governed enterprise agents and workflows
+    scoring_summary: A plataforma low-code governada para agentes corporativos que precisam de ações, fluxos, conectores, avaliação, monitoramento e implantação ampla.
+    exploration_best_for: Crie agentes e fluxos corporativos governados
     exploration_summary: >
-      Choose Copilot Studio when you need agents that go beyond quick knowledge lookup —
-      connecting to CRMs, databases, APIs, MCP servers, workflows, Microsoft 365 context,
-      and other agents. Great for makers and IT teams building governed agents that can
-      reason, take actions, evaluate quality, and deploy across channels.
+      Escolha o Copilot Studio quando precisar de agentes que vão além da consulta rápida de
+      conhecimento — conectando-se a CRMs, bancos de dados, APIs, servidores MCP, fluxos de
+      trabalho, contexto do Microsoft 365 e outros agentes. Ótimo para criadores e times de TI
+      que constroem agentes governados capazes de raciocinar, executar ações, avaliar qualidade
+      e implantar em vários canais.
     summary: >
-      The best low-code platform for governed enterprise agents — connect to outside
-      systems, automate business processes, use generative orchestration, evaluate
-      quality, monitor behavior, and deploy to websites, Teams, Microsoft 365, and more.
+      A melhor plataforma low-code para agentes corporativos governados — conecte-se a sistemas
+      externos, automatize processos de negócio, use orquestração generativa, avalie qualidade,
+      monitore comportamento e implante em sites, Teams, Microsoft 365 e mais.
     best_for:
-      - Low-code makers and IT pros
-      - Agents connecting to external APIs, CRM, ERP, Dataverse, databases, MCP servers, or custom connectors
-      - Event-triggered, scheduled, or user-triggered workflows with actions, branching, human review, and approvals
-      - Agent-to-agent orchestration — child agents, connected Copilot Studio agents, and A2A integrations
-      - Automating legacy web or desktop apps with computer use when no API exists
-      - Multi-turn conversational experiences with generative orchestration, Microsoft IQ context, and optional per-user memory in the new experience
-      - Internal and external-facing deployment
-      - Built-in evaluation test sets, activity maps, analytics, monitoring, and tenant-wide agent inventory
+      - Criadores low-code e profissionais de TI
+      - Agentes que se conectam a APIs externas, CRM, ERP, Dataverse, bancos de dados, servidores MCP ou conectores personalizados
+      - Fluxos disparados por evento, agendados ou iniciados pelo usuário, com ações, ramificações, revisão humana e aprovações
+      - Orquestração entre agentes — agentes filhos, agentes conectados do Copilot Studio e integrações A2A
+      - Automação de aplicativos web ou desktop legados com computer use quando não existe API
+      - Experiências conversacionais de múltiplos turnos com orquestração generativa, contexto do Microsoft IQ e memória opcional por usuário na nova experiência
+      - Implantação para públicos internos e externos
+      - Conjuntos de teste de avaliação nativos, mapas de atividade, analytics, monitoramento e inventário de agentes em todo o tenant
     watch_out_for:
-      - Complex ML pipelines or custom model training require Foundry
-      - Highly custom, high-scale, or code-first multi-agent orchestration is better served by Foundry
-      - Supports curated GA, preview, and experimental models, including deep reasoning models; use Foundry for arbitrary bring-your-own model hosting, custom model training, model routing, and full runtime control
-      - Memory is available in the new experience preview with per-user/per-agent storage and lifecycle limits; use Foundry when you need custom memory architecture, longer retention, or application-controlled memory
-      - Computer use requires careful credential, supervision, access-control, observability, and cost governance
-      - Copilot Credits can scale quickly with generative answers, agent actions, tenant graph grounding, workflows, reasoning models, voice, and computer use
-      - Use Databricks Agent Bricks when the knowledge lives in a lakehouse and must stay under Unity Catalog governance; call it from Copilot Studio to reach employees
+      - Pipelines de ML complexos ou treinamento de modelos personalizados exigem o Foundry
+      - Orquestração multiagente muito personalizada, de larga escala ou code-first é melhor atendida pelo Foundry
+      - Suporta modelos curados em GA, preview e experimentais, incluindo modelos de raciocínio profundo; use o Foundry para hospedar modelos próprios arbitrários, treinar modelos personalizados, rotear modelos e ter controle total do runtime
+      - A memória está disponível no preview da nova experiência, com limites de armazenamento e ciclo de vida por usuário/por agente; use o Foundry quando precisar de arquitetura de memória personalizada, retenção mais longa ou memória controlada pela aplicação
+      - Computer use exige governança cuidadosa de credenciais, supervisão, controle de acesso, observabilidade e custo
+      - Os Copilot Credits podem crescer rápido com respostas generativas, ações de agente, fundamentação no grafo do tenant, fluxos, modelos de raciocínio, voz e computer use
+      - Use o Databricks Agent Bricks quando o conhecimento estiver em um lakehouse e precisar permanecer sob a governança do Unity Catalog; chame-o a partir do Copilot Studio para alcançar os funcionários
     persona_tips:
       q1c: >
-        🛠️ <strong>Developer tip:</strong> You can build Copilot Studio agents in YAML using the
-        <a href="https://learn.microsoft.com/microsoft-copilot-studio/authoring-overview" target="_blank" rel="noopener noreferrer">Copilot Studio extension for VS Code</a>
+        🛠️ <strong>Dica para desenvolvedores:</strong> você pode criar agentes do Copilot Studio em YAML usando a
+        <a href="https://learn.microsoft.com/microsoft-copilot-studio/authoring-overview" target="_blank" rel="noopener noreferrer">extensão do Copilot Studio para VS Code</a>
 
   foundry:
     headline: Microsoft Foundry
-    description: A developer platform and managed agent runtime for building, deploying, evaluating, and operating production-grade agents with full code, model, tool, identity, networking, and observability control
+    description: Uma plataforma de desenvolvimento e runtime gerenciado de agentes para construir, implantar, avaliar e operar agentes de nível produtivo com controle total de código, modelos, ferramentas, identidade, rede e observabilidade
     resources_url: https://microsoft.github.io/agent-resources/microsoft-foundry/
-    scoring_summary: The right choice when production agents need code-first control, managed hosting, custom retrieval, advanced tooling, identity, observability, or strict compliance.
-    exploration_best_for: Build and operate production-grade agentic systems
+    scoring_summary: A escolha certa quando agentes em produção precisam de controle code-first, hospedagem gerenciada, recuperação personalizada, ferramentas avançadas, identidade, observabilidade ou conformidade rigorosa.
+    exploration_best_for: Construa e opere sistemas agênticos de nível produtivo
     exploration_summary: >
-      Choose Microsoft Foundry when your team needs a managed agent runtime with
-      full developer control — prompt agents, hosted code agents, custom protocols,
-      Foundry models, toolboxes, MCP, Foundry IQ, private networking, agent identity,
-      tracing, evaluation, monitoring, and publishing to Microsoft 365 or custom apps.
-      Built for professional developers, architects, and ML engineers.
+      Escolha o Microsoft Foundry quando seu time precisar de um runtime gerenciado de agentes
+      com controle total de desenvolvimento — prompt agents, agentes de código hospedados,
+      protocolos personalizados, modelos do Foundry, toolboxes, MCP, Foundry IQ, rede privada,
+      identidade de agente, tracing, avaliação, monitoramento e publicação no Microsoft 365 ou
+      em apps personalizados. Feito para desenvolvedores profissionais, arquitetos e engenheiros de ML.
     summary: >
-      The right choice when your team needs to build and operate production-grade
-      agents as software — with managed endpoints, versioning, custom code, model
-      catalog access, custom retrieval, agent identity, private networking, tracing,
-      evaluation, and monitoring.
+      A escolha certa quando seu time precisa construir e operar agentes de nível produtivo
+      como software — com endpoints gerenciados, versionamento, código personalizado, acesso
+      ao catálogo de modelos, recuperação personalizada, identidade de agente, rede privada,
+      tracing, avaliação e monitoramento.
     best_for:
-      - Professional developers, architects, and ML engineers
-      - Prompt agents when you want Foundry to run the agent without maintaining application code
-      - Hosted agents when you need your own code, Agent Framework, LangGraph, OpenAI Agents SDK, Anthropic Agent SDK, GitHub Copilot SDK, or custom frameworks
-      - Agents embedded in custom-built applications, backend services, APIs, webhooks, voice systems, or custom protocols
-      - Custom RAG and enterprise retrieval with Foundry IQ, Azure AI Search, Azure Blob Storage, SharePoint, OneLake, web sources, citations, ACLs, and Purview sensitivity labels
-      - Foundry Toolboxes and MCP-compatible tool bundles with centralized authentication, versioning, and policy enforcement
-      - Dedicated Microsoft Entra agent identities, RBAC, private networking, content filters, and bring-your-own Azure resources
-      - Full development lifecycle — versioning, stable endpoints, rollback, publishing, tracing, evaluation, optimization, monitoring, and Application Insights integration
-      - Publishing agents to Microsoft 365 Copilot, Teams, custom apps, services, and the Entra Agent Registry
-      - Strict compliance, data residency, private networking, or security requirements
+      - Desenvolvedores profissionais, arquitetos e engenheiros de ML
+      - Prompt agents quando você quer que o Foundry execute o agente sem manter código de aplicação
+      - Agentes hospedados quando você precisa do seu próprio código, Agent Framework, LangGraph, OpenAI Agents SDK, Anthropic Agent SDK, GitHub Copilot SDK ou frameworks personalizados
+      - Agentes embarcados em aplicações próprias, serviços de backend, APIs, webhooks, sistemas de voz ou protocolos personalizados
+      - RAG personalizado e recuperação corporativa com Foundry IQ, Azure AI Search, Azure Blob Storage, SharePoint, OneLake, fontes web, citações, ACLs e rótulos de confidencialidade do Purview
+      - Foundry Toolboxes e pacotes de ferramentas compatíveis com MCP, com autenticação centralizada, versionamento e aplicação de políticas
+      - Identidades de agente dedicadas no Microsoft Entra, RBAC, rede privada, filtros de conteúdo e uso dos seus próprios recursos do Azure
+      - Ciclo de vida completo de desenvolvimento — versionamento, endpoints estáveis, rollback, publicação, tracing, avaliação, otimização, monitoramento e integração com o Application Insights
+      - Publicação de agentes no Microsoft 365 Copilot, Teams, apps personalizados, serviços e no Entra Agent Registry
+      - Requisitos rigorosos de conformidade, residência de dados, rede privada ou segurança
     watch_out_for:
-      - Higher implementation complexity and time-to-value
-      - Requires Azure expertise and development resources
-      - Hosted agents add container compute, framework, protocol, and operational responsibilities
-      - Some capabilities, including selected tools, optimizer, A2A, and portions of agentic retrieval, may be preview depending on API version, region, and setup
-      - Use Copilot Studio for low-code departmental workflows, Dataverse/custom connector automations, and fast maker-led delivery
-      - Use Agent Builder for simple no-code Microsoft 365 Copilot knowledge agents
-      - Use Databricks Agent Bricks when the agent's knowledge is lakehouse data governed in Unity Catalog and the data platform team owns the build
+      - Maior complexidade de implementação e tempo até gerar valor
+      - Exige conhecimento de Azure e recursos de desenvolvimento
+      - Agentes hospedados acrescentam responsabilidades de computação em contêiner, framework, protocolo e operação
+      - Alguns recursos, incluindo ferramentas selecionadas, otimizador, A2A e partes da recuperação agêntica, podem estar em preview dependendo da versão da API, região e configuração
+      - Use o Copilot Studio para fluxos departamentais low-code, automações com Dataverse/conectores personalizados e entrega rápida conduzida por criadores
+      - Use o Agent Builder para agentes de conhecimento simples e no-code no Microsoft 365 Copilot
+      - Use o Databricks Agent Bricks quando o conhecimento do agente forem dados de lakehouse governados no Unity Catalog e o time de plataforma de dados for o responsável pela construção
 
   databricks:
     headline: Databricks Agent Bricks
-    description: Build, evaluate, govern, and serve agents on the data platform — grounded in Unity Catalog governed tables and document collections, with lineage, evaluation, and serving handled where the data already lives
+    description: Construa, avalie, governe e sirva agentes na plataforma de dados — fundamentados em tabelas e coleções de documentos governadas pelo Unity Catalog, com linhagem, avaliação e serving resolvidos onde os dados já estão
     resources_url: https://www.databricks.com/product/artificial-intelligence/agent-bricks
-    scoring_summary: The right choice when the agent's value comes from the lakehouse — governed enterprise data, large document collections, and the team that owns them.
-    exploration_best_for: Build agents on your governed data platform
+    scoring_summary: A escolha certa quando o valor do agente vem do lakehouse — dados corporativos governados, grandes coleções de documentos e o time que é dono deles.
+    exploration_best_for: Crie agentes na sua plataforma de dados governada
     exploration_summary: >
-      Choose Databricks Agent Bricks when the agent's knowledge lives in your lakehouse
-      rather than in Microsoft 365. Managed builders such as Knowledge Assistant and
-      Supervisor Agent create domain agents over Unity Catalog data and document
-      collections, with evaluation, tracing, and serving handled on the same platform
-      that already governs the data. Built for data platform teams, data scientists,
-      and AI engineers.
+      Escolha o Databricks Agent Bricks quando o conhecimento do agente estiver no seu lakehouse
+      e não no Microsoft 365. Construtores gerenciados como Knowledge Assistant e Supervisor Agent
+      criam agentes de domínio sobre dados e coleções de documentos do Unity Catalog, com avaliação,
+      tracing e serving resolvidos na mesma plataforma que já governa os dados. Feito para times de
+      plataforma de dados, cientistas de dados e engenheiros de IA.
     summary: >
-      The right choice when the agent must reason over governed enterprise data — built,
-      evaluated, and served next to the lakehouse, under the same permissions and lineage
-      that already cover the data.
-    first_party_label: Agent Bricks builders and building blocks
+      A escolha certa quando o agente precisa raciocinar sobre dados corporativos governados —
+      construído, avaliado e servido ao lado do lakehouse, sob as mesmas permissões e linhagem
+      que já cobrem os dados.
+    first_party_label: Construtores e blocos do Agent Bricks
     first_party_agents:
       - label: Knowledge Assistant
-        description: Domain-specific assistant built over your documents and governed data through a guided interface, with quality tuning instead of hand-built RAG
+        description: Assistente de domínio construído sobre seus documentos e dados governados por uma interface guiada, com ajuste de qualidade em vez de RAG feito à mão
         url: https://docs.databricks.com/aws/en/generative-ai/agent-bricks/
       - label: Supervisor Agent
-        description: Orchestrates multiple agents, data-query agents, Unity Catalog functions, MCP servers, and custom agents behind a single entry point
+        description: Orquestra múltiplos agentes, agentes de consulta a dados, funções do Unity Catalog, servidores MCP e agentes personalizados atrás de um único ponto de entrada
         url: https://docs.databricks.com/aws/en/generative-ai/agent-bricks/
-      - label: Unity Catalog governance
-        description: One permission and lineage model across tables, documents, functions, and the agents that use them
+      - label: Governança do Unity Catalog
+        description: Um único modelo de permissão e linhagem para tabelas, documentos, funções e os agentes que os utilizam
         url: https://www.databricks.com/product/unity-catalog
-      - label: MLflow tracing and evaluation
-        description: Captures interactions, tool calls, and model invocations, with LLM-as-judge scoring, custom metrics, and human feedback loops
+      - label: Tracing e avaliação com MLflow
+        description: Captura interações, chamadas de ferramentas e invocações de modelo, com pontuação por LLM-como-juiz, métricas personalizadas e ciclos de feedback humano
         url: https://mlflow.org/docs/latest/llms/index.html
-      - label: Model serving and Databricks Apps
-        description: Serves agents as scaling REST endpoints or serverless apps without managing infrastructure
+      - label: Model serving e Databricks Apps
+        description: Serve agentes como endpoints REST escaláveis ou apps serverless, sem gerenciar infraestrutura
         url: https://www.databricks.com/product/artificial-intelligence/agent-bricks
-      - label: Model Context Protocol (MCP) support
-        description: Connects agents to APIs, databases, and SaaS tools through a standard tool-integration contract with unified authentication
+      - label: Suporte a Model Context Protocol (MCP)
+        description: Conecta agentes a APIs, bancos de dados e ferramentas SaaS por um contrato padrão de integração com autenticação unificada
         url: https://www.databricks.com/product/artificial-intelligence/agent-bricks
     best_for:
-      - Data platform teams, data scientists, and AI engineers who already run on Databricks
-      - Agents grounded in Unity Catalog tables, Delta tables, and large governed document collections
-      - Natural-language questions over enterprise data, and structured extraction from document collections at volume
-      - Multi-agent orchestration over data agents, Unity Catalog functions, MCP servers, and custom agents
-      - Scenarios where data governance, permissions, and lineage must cover the agent and its data with one model
-      - Continuous quality work — evaluation sets, LLM-as-judge scoring, tracing, and human feedback before and after release
-      - Serving agents as REST endpoints or serverless apps consumed by custom applications
+      - Times de plataforma de dados, cientistas de dados e engenheiros de IA que já rodam no Databricks
+      - Agentes fundamentados em tabelas do Unity Catalog, tabelas Delta e grandes coleções de documentos governadas
+      - Perguntas em linguagem natural sobre dados corporativos e extração estruturada de coleções de documentos em volume
+      - Orquestração multiagente sobre agentes de dados, funções do Unity Catalog, servidores MCP e agentes personalizados
+      - Cenários em que governança, permissões e linhagem precisam cobrir o agente e seus dados com um único modelo
+      - Trabalho contínuo de qualidade — conjuntos de avaliação, pontuação por LLM-como-juiz, tracing e feedback humano antes e depois do lançamento
+      - Servir agentes como endpoints REST ou apps serverless consumidos por aplicações personalizadas
     watch_out_for:
-      - Requires a Databricks workspace, Unity Catalog, and serving capacity — it is not a Microsoft 365 add-on
-      - No native grounding on Microsoft 365 content — SharePoint, OneDrive, Teams, and Outlook are reached through the Microsoft platforms instead
-      - No native publishing into Microsoft 365 Copilot chat; front it with a Copilot Studio or Foundry agent when employees must reach it from Teams or Copilot
-      - The Microsoft 365 Copilot connector catalog does not apply — integrations go through MCP, APIs, or your own pipelines
-      - Usage-based pricing across serving, compute, and evaluation can scale quickly without cost governance
-      - Adds a second agent platform to operate if your organization is already standardizing on Copilot Studio or Foundry
-      - Component availability varies by cloud, region, and workspace configuration — confirm before committing
+      - Exige um workspace Databricks, Unity Catalog e capacidade de serving — não é um complemento do Microsoft 365
+      - Sem fundamentação nativa em conteúdo do Microsoft 365 — SharePoint, OneDrive, Teams e Outlook são acessados pelas plataformas Microsoft
+      - Sem publicação nativa no chat do Microsoft 365 Copilot; coloque um agente do Copilot Studio ou do Foundry na frente quando os funcionários precisarem acessá-lo pelo Teams ou pelo Copilot
+      - O catálogo de conectores do Microsoft 365 Copilot não se aplica — as integrações passam por MCP, APIs ou seus próprios pipelines
+      - Preço por uso em serving, computação e avaliação pode crescer rápido sem governança de custos
+      - Acrescenta uma segunda plataforma de agentes para operar se a sua organização já está padronizando em Copilot Studio ou Foundry
+      - A disponibilidade dos componentes varia por nuvem, região e configuração do workspace — confirme antes de se comprometer
 
   # ---------------------------------------------------------------------------
-  # Ready-made agent entry points (entry-point wizard only) — Cowork and Scout
-  # are places an end user goes to get work done, not platforms you build agents
-  # on. (The wizard's third destination, Microsoft 365 Copilot, is defined above
-  # because it is also a scored-wizard platform.) They are NOT part of the scored wizard and
-  # never appear in meta.platforms. They are reached only via the prescreen
-  # "Help me find the right place to get work done" path, which asks about the
-  # work pattern (involvement, cadence, reach) instead of product names.
+  # Pontos de entrada de agentes prontos (somente no wizard de ponto de entrada) —
+  # Cowork e Scout são lugares aonde o usuário final vai para realizar trabalho, e não
+  # plataformas nas quais você cria agentes. (O terceiro destino do wizard, o
+  # Microsoft 365 Copilot, está definido acima porque também é uma plataforma do
+  # wizard pontuado.) Eles NÃO fazem parte do wizard pontuado e nunca aparecem em
+  # meta.platforms. São alcançados apenas pelo caminho de prescreen
+  # "Me ajude a encontrar o lugar certo para realizar meu trabalho", que pergunta sobre o
+  # padrão de trabalho (participação, cadência, alcance) em vez de nomes de produto.
   # ---------------------------------------------------------------------------
 
   cowork:
     headline: Copilot Cowork
-    description: A ready-made agent inside Microsoft 365 Copilot that plans and completes multi-step work on your behalf — and can be extended with custom skills and plugins
+    description: Um agente pronto dentro do Microsoft 365 Copilot que planeja e conclui trabalhos de várias etapas em seu nome — e pode ser estendido com skills e plugins personalizados
     resources_url: https://learn.microsoft.com/microsoft-365/copilot/cowork/
-    scoring_summary: Best for delegating a bounded, multi-step Microsoft 365 deliverable on demand.
-    exploration_best_for: Delegate multi-step Microsoft 365 work on demand
+    scoring_summary: Ideal para delegar sob demanda uma entrega delimitada de várias etapas no Microsoft 365.
+    exploration_best_for: Delegue trabalhos de várias etapas no Microsoft 365 sob demanda
     exploration_summary: >
-      Cowork acts as your AI delegate inside Microsoft 365 Copilot — you describe an
-      outcome, it creates a plan, works through the steps, and pauses for approval
-      before sensitive actions. Ideal for meeting prep, inbox and calendar cleanup,
-      deep research, and coordinated document sets, with human-in-the-loop checkpoints.
+      O Cowork atua como seu delegado de IA dentro do Microsoft 365 Copilot — você descreve um
+      resultado, ele cria um plano, executa as etapas e pausa para aprovação antes de ações
+      sensíveis. Ideal para preparação de reuniões, organização de caixa de entrada e agenda,
+      pesquisa aprofundada e conjuntos coordenados de documentos, com pontos de checagem humanos.
     summary: >
-      Delegate a defined, multi-step outcome across Microsoft 365 and get the work
-      package completed — with approvals and checkpoints before sensitive actions.
+      Delegue um resultado definido, de várias etapas, no Microsoft 365 e receba o pacote de
+      trabalho concluído — com aprovações e pontos de checagem antes de ações sensíveis.
     best_for:
-      - Handing off a bounded, multi-step Microsoft 365 deliverable on demand
-      - Meeting packets, inbox and calendar cleanup, deep research, coordinated document sets
-      - Human-in-the-loop control — progress updates, approval checkpoints, pause/resume/cancel
-      - Grounded in your Microsoft 365 context (email, meetings, files, messages) via Work IQ
-      - Extending the experience with custom skills and plugins
+      - Delegar sob demanda uma entrega delimitada de várias etapas no Microsoft 365
+      - Pacotes de reunião, organização de caixa de entrada e agenda, pesquisa aprofundada, conjuntos coordenados de documentos
+      - Controle com humano no circuito — atualizações de progresso, pontos de aprovação, pausar/retomar/cancelar
+      - Fundamentado no seu contexto do Microsoft 365 (e-mail, reuniões, arquivos, mensagens) via Work IQ
+      - Ampliação da experiência com skills e plugins personalizados
     watch_out_for:
-      - On demand and user-initiated — not always-on or proactively monitoring
-      - Centered on Microsoft 365 — no desktop, shell, browser, or local-file runtime
-      - Usage-based billing through Copilot Credits
-      - Take actions like sending email or posting in Teams require explicit approval
-      - Use Microsoft 365 Copilot (Copilot Chat) instead when you just want to ask and iterate yourself
-      - Use Scout instead when work should run continuously or reach beyond Microsoft 365
+      - Sob demanda e iniciado pelo usuário — não é sempre ativo nem monitora proativamente
+      - Centrado no Microsoft 365 — sem runtime de desktop, shell, navegador ou arquivos locais
+      - Cobrança por uso via Copilot Credits
+      - Ações como enviar e-mail ou publicar no Teams exigem aprovação explícita
+      - Use o Microsoft 365 Copilot (Copilot Chat) quando quiser apenas perguntar e iterar você mesmo
+      - Use o Scout quando o trabalho precisar rodar continuamente ou ir além do Microsoft 365
 
   scout:
     headline: Microsoft Scout
-    description: An always-on personal Autopilot desktop app that works autonomously across your files, shell, browser, and Microsoft 365 — and can be extended with custom skills and plugins
+    description: Um aplicativo desktop de Autopilot pessoal, sempre ativo, que trabalha de forma autônoma nos seus arquivos, shell, navegador e Microsoft 365 — e pode ser estendido com skills e plugins personalizados
     resources_url: https://learn.microsoft.com/microsoft-scout/overview
-    scoring_summary: Best for always-on, proactive follow-through across desktop, browser, and Microsoft 365.
-    exploration_best_for: An always-on personal autonomous agent 
+    scoring_summary: Ideal para acompanhamento proativo e sempre ativo no desktop, navegador e Microsoft 365.
+    exploration_best_for: Um agente autônomo pessoal sempre ativo
     exploration_summary: >
-      Scout is Microsoft's first Autopilot — an always-on personal agent with its own
-      identity that works autonomously across files, shell, browser, and Microsoft 365,
-      including in the background on schedules or triggers. Ideal for proactive
-      monitoring, coordination, and follow-through that spans local and cloud
-      environments. Currently a Frontier preview.
+      O Scout é o primeiro Autopilot da Microsoft — um agente pessoal sempre ativo, com identidade
+      própria, que trabalha de forma autônoma em arquivos, shell, navegador e Microsoft 365,
+      inclusive em segundo plano por agendamentos ou gatilhos. Ideal para monitoramento proativo,
+      coordenação e acompanhamento que atravessam os ambientes local e de nuvem. Atualmente em
+      preview do Frontier.
     summary: >
-      An always-on Autopilot that proactively keeps work moving across desktop,
-      browser, local files, and Microsoft 365 — even when you are not prompting it.
+      Um Autopilot sempre ativo que mantém o trabalho andando de forma proativa no desktop,
+      navegador, arquivos locais e Microsoft 365 — mesmo quando você não está pedindo nada.
     best_for:
-      - Continuous, proactive follow-through rather than one-time tasks
-      - Scheduled or condition-triggered work via heartbeat mode and automations
-      - Acting across local files, shell commands, browser automation, code, and Microsoft 365
-      - Delegating work to specialized sub-agents
-      - Monitoring for risks like stalled decisions and upcoming deliverables
-      - Extending the experience with custom skills and plugins
+      - Acompanhamento contínuo e proativo, em vez de tarefas pontuais
+      - Trabalho agendado ou disparado por condições, via modo heartbeat e automações
+      - Agir sobre arquivos locais, comandos de shell, automação de navegador, código e Microsoft 365
+      - Delegar trabalho a subagentes especializados
+      - Monitorar riscos como decisões travadas e entregas próximas do prazo
+      - Ampliação da experiência com skills e plugins personalizados
     watch_out_for:
-      - Frontier preview — capabilities, access, and commercialization details can change
-      - Gated through Frontier enrollment, Intune policy, attestation, and GitHub Copilot licensing
-      - Desktop application for Windows and macOS
-      - Sensitive actions (sending email, writing files, running commands) require approval
-      - Use Cowork instead when the work is a bounded Microsoft 365 deliverable done on demand
-      - Use Microsoft 365 Copilot (Copilot Chat) instead when you just want to ask and iterate yourself
+      - Preview do Frontier — recursos, acesso e detalhes de comercialização podem mudar
+      - Restrito por inscrição no Frontier, política do Intune, atestação e licenciamento do GitHub Copilot
+      - Aplicativo desktop para Windows e macOS
+      - Ações sensíveis (enviar e-mail, gravar arquivos, executar comandos) exigem aprovação
+      - Use o Cowork quando o trabalho for uma entrega delimitada do Microsoft 365 feita sob demanda
+      - Use o Microsoft 365 Copilot (Copilot Chat) quando quiser apenas perguntar e iterar você mesmo
 
 ################################################################################
