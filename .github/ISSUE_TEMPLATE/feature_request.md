@@ -1,17 +1,17 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: Pedido de funcionalidade
+about: Sugira uma ideia para este projeto
 title: ''
 labels: enhancement
-assignees: RobStand
+assignees: Iacan
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**Seu pedido está relacionado a algum problema? Descreva.**
+Uma descrição clara e concisa de qual é o problema. Ex.: fico sempre frustrado quando [...]
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+**Descreva a solução que você gostaria**
+Uma descrição clara e concisa do que você quer que aconteça.
 
-**Additional context**
-Add any other context or screenshots about the feature request here.
+**Contexto adicional**
+Acrescente aqui qualquer outro contexto ou captura de tela sobre o pedido.

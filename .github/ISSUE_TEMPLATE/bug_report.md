@@ -1,27 +1,27 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Relato de bug
+about: Crie um relato para nos ajudar a melhorar
 title: ''
 labels: bug
-assignees: RobStand
+assignees: Iacan
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Descreva o bug**
+Uma descrição clara e concisa de qual é o problema.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+**Como reproduzir**
+Passos para reproduzir o comportamento:
+1. Vá até '...'
+2. Clique em '....'
+3. Role até '....'
+4. Veja o erro
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Comportamento esperado**
+Uma descrição clara e concisa do que você esperava que acontecesse.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Capturas de tela**
+Se aplicável, adicione capturas de tela para ajudar a explicar o problema.
 
-**Additional context**
-Add any other context about the problem here.
+**Contexto adicional**
+Acrescente aqui qualquer outro contexto sobre o problema.

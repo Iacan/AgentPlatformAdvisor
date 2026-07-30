@@ -1,90 +1,96 @@
-# Copilot Instructions — Agent Platform Advisor
+# Instruções para o Copilot — Agent Platform Advisor
 
-## Architecture
+## Arquitetura
 
-A static single-page web app — no build step, no backend, no framework, no modules — deployed to GitHub Pages. `index.html` contains the markup for every section up front; `assets/apa.js` fetches `apa.yaml` at runtime, parses it with the js-yaml CDN script into one global `apa` object, and swaps sections with `showSection()`. Views are built as template-literal HTML strings assigned to `innerHTML`. All state and functions are file-level globals in `assets/apa.js`.
+Uma aplicação web estática de página única — sem etapa de build, sem backend, sem framework, sem módulos — publicada no GitHub Pages. O `index.html` já contém a marcação de todas as seções; o `assets/apa.js` busca o `apa.yaml` em tempo de execução, faz o parse com o script js-yaml vindo de CDN para dentro de um único objeto global `apa`, e alterna as seções com `showSection()`. As views são construídas como strings HTML de template literal atribuídas a `innerHTML`. Todo o estado e todas as funções são globais no nível do arquivo em `assets/apa.js`.
 
-Key files:
-- `apa.yaml` — source of truth for all content and scoring logic
-- `assets/apa.js` — all JavaScript (state, rendering, scoring engine)
-- `assets/apa.css` — all styles
-- `index.html` — app shell
+Arquivos principais:
+- `apa.yaml` — fonte da verdade de todo o conteúdo e da lógica de pontuação
+- `assets/apa.js` — todo o JavaScript (estado, renderização, motor de pontuação)
+- `assets/apa.css` — todos os estilos
+- `index.html` — estrutura da aplicação
 
-Content changes go in `apa.yaml`. UI logic goes in `assets/apa.js`. Styles go in `assets/apa.css`. Never hardcode user-facing platform copy in JS or HTML — it belongs in `apa.yaml` under `recommendations` or `questions`.
+Mudanças de conteúdo vão no `apa.yaml`. Lógica de interface vai em `assets/apa.js`. Estilos vão em `assets/apa.css`. Nunca deixe texto de plataforma visível ao usuário fixo no JS ou no HTML — o lugar dele é o `apa.yaml`, em `recommendations` ou `questions`.
 
-## Local development
+## Idioma
 
-There is nothing to build, but the app must be served over HTTP — opening `index.html` from the filesystem breaks the `fetch('./apa.yaml')` call:
+A interface e a documentação estão em **português do Brasil**. Nomes de produto permanecem em inglês (Microsoft 365 Copilot, Copilot Studio, Microsoft Foundry, Agent Builder, Databricks Agent Bricks, Copilot Cowork, Microsoft Scout, Copilot Chat), assim como termos técnicos consagrados: lakehouse, Unity Catalog, tabelas Delta, RAG, MCP, computer use, prompt agents, toolboxes.
 
-```bash
-npx serve . -l 4173      # then open http://localhost:4173
-```
+Os rótulos de faixa em `apa.yaml` ("Encaixe forte", "Bom encaixe", "Encaixe parcial", "Não recomendado") **são lidos pelo código**: `badgeClass()` casa pelas palavras `forte` / `bom` / `parcial`, e a constante `NOT_RECOMMENDED_LABEL` em `apa.js` precisa espelhar exatamente a menor faixa. Ao renomear qualquer rótulo de faixa, atualize os dois lugares e os testes.
 
-## Testing
+## Desenvolvimento local
 
-Playwright end-to-end tests. `playwright.config.js` starts the static server itself (`npx serve . -l 4173`, `reuseExistingServer` locally), so no separate server is needed.
+Não há nada para compilar, mas a aplicação precisa ser servida por HTTP — abrir o `index.html` pelo sistema de arquivos quebra a chamada `fetch('./apa.yaml')`:
 
 ```bash
-npm install                                              # install dependencies
-npm test                                                 # run all tests headless
-npm run test:headed                                      # run with browser visible
-npx playwright test tests/e2e/wizard-completion.spec.js  # single test file
-npx playwright test -g "completes full wizard"           # single test by name
+npx serve . -l 4173      # depois acesse http://localhost:4173
 ```
 
-Specs in `tests/e2e/`: `wizard-completion` (scored path), `delegate-path` (entry-point wizard), `shared-link` and `temporal-change` (URL-loaded results), `fast-track` (legacy `?ft=1`), `share-buttons`, `databricks-path` (the non-Microsoft platform and its disqualification rules).
+## Testes
 
-## Two paths through the app
+Testes end-to-end com Playwright. O `playwright.config.js` sobe o servidor estático sozinho (`npx serve . -l 4173`, com `reuseExistingServer` localmente), então não é preciso um servidor separado.
 
-**Scored wizard** — "Build a custom agent." Five questions score `agent_builder`, `copilot_studio`, `foundry`, and `databricks` (Databricks Agent Bricks — the one non-Microsoft platform, scored only for lakehouse-anchored scenarios).
+```bash
+npm install                                              # instala as dependências
+npm test                                                 # roda todos os testes headless
+npm run test:headed                                      # roda com o navegador visível
+npx playwright test tests/e2e/wizard-completion.spec.js  # um único arquivo de teste
+npx playwright test -g "completes full wizard"           # um único teste pelo nome
+```
 
-**Entry-point wizard** — "Help me find the right place to get work done." Non-scored routing to `m365_copilot`, `cowork`, `scout`, or a Cowork+Scout pair, based on work pattern (involvement → task type, or cadence → reach) rather than product names. Logic lives in `resolveDelegateResult()` / `resolveDelegateStart()`.
+Specs em `tests/e2e/`: `wizard-completion` (caminho pontuado), `delegate-path` (wizard de ponto de entrada), `shared-link` e `temporal-change` (resultados carregados por URL), `fast-track` (`?ft=1` legado), `share-buttons`, `databricks-path` (a plataforma não-Microsoft e suas regras de desqualificação).
 
-Copilot Chat and the built-in agents (Researcher, Analyst, Facilitator, Interpreter) are **surfaces of** Microsoft 365 Copilot, not separate destinations. The task-type answer selects a `start_here` surface (`chat` or `agents`) rendered in the "Start Here" spotlight on the single `m365_copilot` card. Do not reintroduce them as sibling platforms.
+## Dois caminhos pela aplicação
 
-## Scoring pipeline
+**Wizard pontuado** — "Criar um agente personalizado". Cinco perguntas pontuam `agent_builder`, `copilot_studio`, `foundry` e `databricks` (Databricks Agent Bricks — a única plataforma não-Microsoft, pontuada apenas em cenários ancorados no lakehouse).
 
-Documented in `docs/SCORING.md` and `docs/FLOWCHART.md`:
+**Wizard de ponto de entrada** — "Me ajude a encontrar o lugar certo para realizar meu trabalho". Roteamento não pontuado para `m365_copilot`, `cowork`, `scout` ou o par Cowork+Scout, com base no padrão de trabalho (participação → tipo de tarefa, ou cadência → alcance) em vez de nomes de produto. A lógica está em `resolveDelegateResult()` / `resolveDelegateStart()`.
 
-1. **Hard rules** zero out platforms for disqualifying answer combinations
-2. **Raw scores** sum across 5 questions (max 15 per platform)
-3. **Tiebreakers** in `apa.yaml` resolve equal scores using persona context
-4. **Thresholds** map scores to fit labels: Strong (12–15), Good (8–11), Partial (4–7), Not recommended (0–3)
+O Copilot Chat e os agentes nativos (Researcher, Analyst, Facilitator, Interpreter) são **superfícies do** Microsoft 365 Copilot, e não destinos separados. A resposta de tipo de tarefa seleciona uma superfície `start_here` (`chat` ou `agents`), renderizada no destaque "Comece por aqui" no card único do `m365_copilot`. Não os reintroduza como plataformas irmãs.
 
-`meta.platforms` lists five platforms, but `m365_copilot` is always zeroed in the scored wizard (`if (!fastTrack) zeroed['m365_copilot'] = true`), so only four can actually win. M365 Copilot is reached through the entry-point wizard, or via the legacy `?ft=1` / `?dt=copilot_chat` share links.
+## Pipeline de pontuação
 
-`databricks` is constrained by hard rules in both directions: it is zeroed by Microsoft 365 grounding (`q3a`, `q3b`, `q3d`) and by Microsoft 365 Copilot chat deployment (`q2a`), while the four options added for it (`q1e`, `q2e`, `q4f`, `q3g`) all zero `agent_builder`. Keep new options appended last within their question — answer indices and share links depend on the existing order.
+Documentado em `docs/SCORING.md` e `docs/FLOWCHART.md`:
 
-## Share-link contract
+1. **Regras rígidas** zeram plataformas em combinações de resposta desqualificantes
+2. **Pontuações brutas** somam as 5 perguntas (máx. 15 por plataforma)
+3. **Desempates** no `apa.yaml` resolvem pontuações iguais usando o contexto de perfil
+4. **Faixas** mapeiam pontuações em rótulos de encaixe: Encaixe forte (12–15), Bom encaixe (8–11), Encaixe parcial (4–7), Não recomendado (0–3)
 
-Result links are shared externally, so **old parameter shapes must keep resolving**. Add new params; don't repurpose existing ones.
+O `meta.platforms` lista cinco plataformas, mas o `m365_copilot` é sempre zerado no wizard pontuado (`if (!fastTrack) zeroed['m365_copilot'] = true`), então apenas quatro podem realmente vencer. O M365 Copilot é alcançado pelo wizard de ponto de entrada, ou pelos links legados `?ft=1` / `?dt=copilot_chat`.
 
-| Param | Meaning |
+O `databricks` é restringido por regras rígidas nos dois sentidos: é zerado por fundamentação no Microsoft 365 (`q3a`, `q3b`, `q3d`) e por implantação no chat do Microsoft 365 Copilot (`q2a`), enquanto as quatro opções adicionadas para ele (`q1e`, `q2e`, `q4f`, `q3g`) zeram o `agent_builder`. Mantenha novas opções sempre no final de suas perguntas — os índices de resposta e os links compartilhados dependem da ordem existente.
+
+## Contrato dos links de compartilhamento
+
+Links de resultado são compartilhados externamente, então **formatos antigos de parâmetro precisam continuar resolvendo**. Adicione novos parâmetros; não reaproveite os existentes.
+
+| Parâmetro | Significado |
 |---|---|
-| `q1`, `q8`, `q2`, `q4`, `q3` | Scored-wizard answers (option IDs) |
-| `dt=m365_copilot\|cowork\|scout\|both` | Entry-point destination |
-| `st=chat\|agents` | Which M365 Copilot surface to feature |
-| `r=<platform>` + `d=YYYYMMDD` | Original recommendation + date; drive the temporal-change banner |
-| `mode=card\|wizard` | Render a result card or replay the wizard |
-| `ft=1` (legacy), `dt=copilot_chat` (legacy) | Resolve to the M365 Copilot card |
+| `q1`, `q8`, `q2`, `q4`, `q3` | Respostas do wizard pontuado (IDs das opções) |
+| `dt=m365_copilot\|cowork\|scout\|both` | Destino do ponto de entrada |
+| `st=chat\|agents` | Qual superfície do M365 Copilot destacar |
+| `r=<plataforma>` + `d=AAAAMMDD` | Recomendação e data originais; alimentam o aviso de mudança temporal |
+| `mode=card\|wizard` | Renderizar um card de resultado ou reexecutar o wizard |
+| `ft=1` (legado), `dt=copilot_chat` (legado) | Resolvem para o card do M365 Copilot |
 
-Answers also persist in `sessionStorage` under `apa-answers`; URL params always win over stored answers.
+As respostas também persistem no `sessionStorage` sob `apa-answers`; parâmetros de URL sempre têm precedência sobre respostas armazenadas.
 
-## Design System
+## Design system
 
-Always read `docs/DESIGN.md` before making any visual or UI decision. Fonts, colors, spacing, radius, shadows, motion, and aesthetic direction are defined there. Do not deviate without explicit user approval. In QA mode, flag any code that doesn't match `docs/DESIGN.md`.
+Sempre leia `docs/DESIGN.md` antes de qualquer decisão visual ou de interface. Fontes, cores, espaçamento, raio, sombras, movimento e direção estética estão definidos lá. Não desvie sem aprovação explícita do usuário. Em modo QA, sinalize qualquer código que não siga o `docs/DESIGN.md`.
 
-Key constraints:
+Restrições principais:
 
-- Signal color is `#0078D4` in dark mode and `#005A9E` in light — one signal color only. Blue *text* on the dark canvas must use `#2B9AEE` (`#0078D4` is 3.94:1 and fails AA as text)
-- Canvas is warm matte charcoal `#1A1714` with a faint grid — not blue-black, and no colored glows or `box-shadow` bloom on the accent
-- Body font is `IBM Plex Sans`; `IBM Plex Mono` is only for scores, IDs, counters, badges, and diagnostic labels — not body text
-- Font sizes are always `rem` via the `--fs-*` tokens on `:root`, never `px`. 12px (`--fs-mono-sm`) is the floor, and type never shrinks at mobile breakpoints
+- A cor de sinal é `#0078D4` no modo escuro e `#005A9E` no claro — apenas uma cor de sinal. Texto azul sobre o canvas escuro precisa usar `#2B9AEE` (`#0078D4` fica em 3,94:1 e reprova no AA como texto)
+- O canvas é carvão fosco e quente `#1A1714` com uma grade sutil — não preto-azulado, e sem brilhos coloridos ou `box-shadow` no accent
+- A fonte de corpo é `IBM Plex Sans`; a `IBM Plex Mono` é só para pontuações, IDs, contadores, selos e rótulos diagnósticos — não para texto corrido
+- Tamanhos de fonte são sempre `rem` via os tokens `--fs-*` no `:root`, nunca `px`. 12px (`--fs-mono-sm`) é o piso, e a tipografia nunca encolhe nos breakpoints mobile
 
-## Conventions
+## Convenções
 
-- Always update `docs/CHANGELOG.md` after making changes. Sections are dated by commit date (`## 2026-07-24`); work in progress sits under `## Unreleased` until it's committed.
-- Always update `docs/FLOWCHART.md` and `docs/SCORING.md` after changes that affect user flow or scoring logic.
-- Question IDs in `apa.yaml` are not sequential (e.g., `q1, q8, q2, q4, q3`) — they preserve identity across schema changes. Display order is the array order in `apa.yaml`, not the numeric ID.
-- Entry-point cards (`ENTRY_POINT_PLATFORMS` in `apa.js`) render their accordions expanded; scored comparison cards stay collapsed.
-- In tests, don't identify a recommendation card by a headline substring alone — several destinations share "Microsoft 365 Copilot" wording. Assert exact `.rec-platform-name` text plus something distinguishing.
+- Sempre atualize o `docs/CHANGELOG.md` depois de fazer mudanças. As seções são datadas pela data do commit (`## 2026-07-24`); trabalho em andamento fica sob `## Unreleased` até ser commitado.
+- Sempre atualize `docs/FLOWCHART.md` e `docs/SCORING.md` depois de mudanças que afetem o fluxo do usuário ou a lógica de pontuação.
+- Os IDs de pergunta no `apa.yaml` não são sequenciais (ex.: `q1, q8, q2, q4, q3`) — eles preservam identidade entre mudanças de schema. A ordem de exibição é a ordem do array no `apa.yaml`, não a do ID numérico.
+- Cards de ponto de entrada (`ENTRY_POINT_PLATFORMS` no `apa.js`) renderizam seus acordeões expandidos; cards de comparação pontuada permanecem recolhidos.
+- Nos testes, não identifique um card de recomendação apenas por um trecho do título — vários destinos compartilham a expressão "Microsoft 365 Copilot". Verifique o texto exato de `.rec-platform-name` mais algo que os distinga.

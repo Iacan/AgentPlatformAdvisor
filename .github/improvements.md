@@ -1,26 +1,30 @@
-**How it presents**
+# Ideias de evolução
 
-Right now it lives at a GitHub Pages URL under the Microsoft org. That's fine for internal credibility but it reads as a project, not a product. A few things that shift that perception:
+Notas sobre o que separaria esta ferramenta de um produto. Não é backlog comprometido — é uma lista de ideias.
 
-- A proper domain or vanity URL that's yours (not just aka.ms which is Microsoft's)
-- A landing page that exists separately from the tool itself — explaining what it is, who it's for, what problem it solves, and who built it
-- A version number displayed visibly in the UI — signals active stewardship
-- A "last updated" indicator so users know it's current as the platform evolves
+**Como ele se apresenta**
 
-**How it feels to use**
+Hoje ele vive em uma URL do GitHub Pages. Isso é suficiente para credibilidade interna, mas lê como projeto, não como produto. Algumas coisas mudam essa percepção:
 
-Products feel different from tools in small ways that compound:
+- Um domínio próprio ou URL vanity que seja seu
+- Uma landing page separada da própria ferramenta — explicando o que é, para quem é, que problema resolve e quem construiu
+- Um número de versão exibido de forma visível na interface — sinaliza manutenção ativa
+- Um indicador de "última atualização", para que o usuário saiba que o conteúdo acompanha a evolução das plataformas
 
-- A loading or welcome experience that sets context before the first question
-- Progress indication through the wizard that feels intentional, not just "question 3 of 5"
-- A results page that feels like a deliverable — something you'd share with a stakeholder, not just read and close
-- An email or export option for the recommendation so it survives the browser session
-- A feedback mechanism — even a simple "was this helpful?" creates a feedback loop and signals you're listening
+**Como ele parece em uso**
 
-**How it exists in the world**
+Produtos se distinguem de ferramentas em detalhes pequenos que se acumulam:
 
-- A changelog that's public and dated — you have this, but is it prominently linked?
-- A Twitter/X or LinkedIn presence for the tool itself where updates get announced
-- A proper README that tells the story of why it was built, not just how it works
+- Uma experiência de carregamento ou boas-vindas que dá contexto antes da primeira pergunta
+- Uma indicação de progresso no wizard que pareça intencional, e não apenas "pergunta 3 de 5"
+- Uma página de resultados que pareça uma entrega — algo que você compartilharia com um stakeholder, não apenas leria e fecharia
+- Uma opção de e-mail ou exportação da recomendação, para que ela sobreviva à sessão do navegador
+- Um mecanismo de feedback — mesmo um simples "isso foi útil?" cria um ciclo de retorno e sinaliza que você está ouvindo
 
-The single highest-leverage move is probably the landing page. What's your current answer when someone asks "what is this and who made it?"
+**Como ele existe no mundo**
+
+- Um changelog público e datado — isso já existe, mas está linkado de forma visível?
+- Uma presença no LinkedIn ou no X para a própria ferramenta, onde as atualizações são anunciadas
+- Um README que conte a história de por que ele foi construído, e não só como funciona
+
+A ação de maior alavancagem provavelmente é a landing page. Qual é a sua resposta hoje quando alguém pergunta "o que é isso e quem fez?"
